@@ -1,2 +1,2 @@
 # campsite-booking
-Spring Boot REST API Sample Project
+Spring Boot REST API Sample Application

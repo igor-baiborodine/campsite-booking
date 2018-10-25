@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>campsite-booking</name>
-    <description>Spring Boot REST API Sample Project</description>
+    <description>Spring Boot REST API Sample Application</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
