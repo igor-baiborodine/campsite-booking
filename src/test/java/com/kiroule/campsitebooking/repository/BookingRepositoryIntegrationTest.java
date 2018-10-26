@@ -2,6 +2,8 @@ package com.kiroule.campsitebooking.repository;
 
 import com.kiroule.campsitebooking.model.Booking;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,17 +29,63 @@ public class BookingRepositoryIntegrationTest {
 
   @Test
   public void findById_savedBooking_savedBookingFound() {
-    Booking booking = repository.save(createBooking(
+    // given
+    Booking savedBooking = repository.save(createBooking(
         LocalDate.of(2018, 10, 1),
         LocalDate.of(2018, 10, 2)));
+    // when
+    Optional<Booking> foundBooking = repository.findById(savedBooking.getId());
+    // then
+    Assertions.assertThat(foundBooking).hasValue(savedBooking);
+  }
 
-    Assertions.assertThat(repository.findById(booking.getId())).hasValue(booking);
+  @Test
+  public void findForDateRange_bookingEndDateBeforeRangeStartDate_noBookingFound() {
+    // given
+    Booking savedBooking = repository.save(createBooking(
+        LocalDate.of(2018, 10, 1),
+        LocalDate.of(2018, 10, 2)));
+    // when
+    List<Booking> bookings = repository.findForDateRange(
+        LocalDate.of(2018, 10, 3),
+        LocalDate.of(2018, 10, 4));
+    // then
+    Assertions.assertThat(bookings).isEmpty();
+  }
+
+  @Test
+  public void findForDateRange_bookingEndDateEqualsRangeStartDate_noBookingFound() {
+    // given
+    Booking savedBooking = repository.save(createBooking(
+        LocalDate.of(2018, 10, 1),
+        LocalDate.of(2018, 10, 3)));
+    // when
+    List<Booking> bookings = repository.findForDateRange(
+        LocalDate.of(2018, 10, 3),
+        LocalDate.of(2018, 10, 4));
+    // then
+    Assertions.assertThat(bookings).isEmpty();
+  }
+
+  @Test
+  public void findForDateRange_bookingEndDateAfterRangeStartDate_oneBookingFound() {
+    // given
+    Booking savedBooking = repository.save(createBooking(
+        LocalDate.of(2018, 10, 1),
+        LocalDate.of(2018, 10, 3)));
+    // when
+    List<Booking> bookings = repository.findForDateRange(
+        LocalDate.of(2018, 10, 2),
+        LocalDate.of(2018, 10, 4));
+    // then
+    Assertions.assertThat(bookings).size().isEqualTo(1);
+    Assertions.assertThat(savedBooking).isIn(bookings);
   }
 
   private Booking createBooking(LocalDate startDate, LocalDate endDate) {
     return Booking.builder()
-        .fullName("Bender Rodriguez")
-        .email("brodriguez@futurama.com")
+        .fullName("John Smith")
+        .email("john.smith@domain.com")
         .startDate(startDate)
         .endDate(endDate)
         .active(true)

@@ -1,7 +1,7 @@
 package com.kiroule.campsitebooking.repository;
 
 import com.kiroule.campsitebooking.model.Booking;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -20,6 +20,8 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
    * @param endDateRange end date range
    * @return list of bookings for the given date range
    */
-  @Query("SELECT b FROM Booking b WHERE b.endDate > ?1 AND b.endDate <= ?2 ORDER BY b.startDate ASC")
-  List<Booking> findForDateRange(Date startDateRange, Date endDateRange);
+  @Query("SELECT b FROM Booking b "
+      + "WHERE b.endDate > ?1 AND b.endDate <= ?2 "
+      + "ORDER BY b.startDate ASC")
+  List<Booking> findForDateRange(LocalDate startDateRange, LocalDate endDateRange);
 }
