@@ -10,5 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CampsiteBookingApplicationTests {
 
   @Test
-  public void contextLoads() {}
+  public void contextLoads() {
+  }
 }
