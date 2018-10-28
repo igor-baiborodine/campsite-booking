@@ -20,8 +20,10 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
    * @param endDateRange end date range
    * @return list of bookings for the given date range
    */
-  @Query("SELECT b FROM Booking b "
-      + "WHERE b.endDate > ?1 AND b.endDate <= ?2 "
-      + "ORDER BY b.startDate ASC")
+  @Query("select b from Booking b "
+      + "where (b.startDate < ?1 and ?2 < b.endDate) "
+      + "or (?1 < b.endDate and b.endDate <= ?2) "
+      + "or (?1 <= b.startDate and b.startDate <=?2) "
+      + "order by b.startDate asc")
   List<Booking> findForDateRange(LocalDate startDateRange, LocalDate endDateRange);
 }
