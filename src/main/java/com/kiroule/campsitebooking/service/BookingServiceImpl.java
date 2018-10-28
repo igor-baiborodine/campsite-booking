@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author Igor Baiborodine
  */
+@Service
 public class BookingServiceImpl implements BookingService {
 
   private BookingRepository bookingRepository;
@@ -24,6 +26,7 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Collection<LocalDate> checkBookingAvailability(LocalDate startDate, LocalDate endDate) {
     return null;
   }
@@ -39,12 +42,18 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
+  @Transactional
   public Booking saveBooking(Booking booking) {
-    return null;
+    return bookingRepository.save(booking);
   }
 
   @Override
-  public Booking cancelBooking(long id) {
-    return null;
+  @Transactional
+  public boolean cancelBooking(long id) throws BookingNotFoundException {
+    Booking booking = findBookingById(id);
+    booking.setActive(false);
+    booking = bookingRepository.save(booking);
+    return !booking.isActive();
   }
+
 }

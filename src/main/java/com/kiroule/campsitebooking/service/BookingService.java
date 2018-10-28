@@ -13,5 +13,5 @@ public interface BookingService {
 
   Booking saveBooking(Booking booking);
 
-  Booking cancelBooking(long id);
+  boolean cancelBooking(long id) throws BookingNotFoundException;
 }
