@@ -1,5 +1,6 @@
 package com.kiroule.campsitebooking.repository;
 
+import com.kiroule.campsitebooking.AbstractTest;
 import com.kiroule.campsitebooking.model.Booking;
 import java.time.LocalDate;
 import java.util.List;
@@ -8,21 +9,19 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Integration test for {@link BookingRepository}.
+ * Integration tests for {@link BookingRepository}.
  *
  * @author Igor Baiborodine
  */
 @RunWith(SpringRunner.class)
 @Transactional
-@SpringBootTest
 @ActiveProfiles("hsqldb")
-public class BookingRepositoryIntegrationTest {
+public class BookingRepositoryIntegrationTest extends AbstractTest {
 
   @Autowired
   private BookingRepository repository;
@@ -186,13 +185,4 @@ public class BookingRepositoryIntegrationTest {
     Assertions.assertThat(savedBooking).isIn(bookings);
   }
 
-  private Booking createBooking(LocalDate startDate, LocalDate endDate) {
-    return Booking.builder()
-        .fullName("John Smith")
-        .email("john.smith@domain.com")
-        .startDate(startDate)
-        .endDate(endDate)
-        .active(true)
-        .build();
-  }
 }
