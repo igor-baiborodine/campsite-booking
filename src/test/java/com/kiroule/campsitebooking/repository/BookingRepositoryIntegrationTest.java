@@ -68,7 +68,7 @@ public class BookingRepositoryIntegrationTest extends AbstractTest {
   }
 
   @Test
-  public void findForDateRange_bookingStartDateBeforeRangeStardDateAndBookingEndDateWithinRangeDates_bookingFound() {
+  public void findForDateRange_bookingStartDateBeforeRangeStartDateAndBookingEndDateWithinRangeDates_bookingFound() {
     // given: -S|-|E---|-|--
     Booking savedBooking = bookingRepository.save(createBooking(
         LocalDate.of(2018, 10, 1),

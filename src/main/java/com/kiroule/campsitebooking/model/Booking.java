@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
@@ -29,6 +30,10 @@ public class Booking {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @Version
+  @Column(name = "version", nullable = false)
+  private Long version;
 
   /**
    * Holds value of property email.
@@ -64,4 +69,5 @@ public class Booking {
   @NotNull
   @Column(name = "active", nullable = false)
   private boolean active;
+
 }

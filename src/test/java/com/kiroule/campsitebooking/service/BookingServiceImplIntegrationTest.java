@@ -40,4 +40,5 @@ public class BookingServiceImplIntegrationTest extends AbstractTest {
     // then
     assertThat(cancelled).isTrue();
   }
+
 }

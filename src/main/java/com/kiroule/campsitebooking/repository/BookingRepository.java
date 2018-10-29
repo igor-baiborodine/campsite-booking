@@ -14,16 +14,17 @@ import org.springframework.data.repository.CrudRepository;
 public interface BookingRepository extends CrudRepository<Booking, Long> {
 
   /**
-   * Find bookings for the given date range.
+   * Find active bookings for the given date range.
    *
    * @param startDate range start date
    * @param endDate range end date
-   * @return list of bookings for the given date range
+   * @return list of active bookings for the given date range
    */
   @Query("select b from Booking b "
-      + "where (b.startDate < ?1 and ?2 < b.endDate) "
+      + "where ((b.startDate < ?1 and ?2 < b.endDate) "
       + "or (?1 < b.endDate and b.endDate <= ?2) "
-      + "or (?1 <= b.startDate and b.startDate <=?2) "
+      + "or (?1 <= b.startDate and b.startDate <=?2)) "
+      + "and b.active = true "
       + "order by b.startDate asc")
   List<Booking> findForDateRange(LocalDate startDate, LocalDate endDate);
 }

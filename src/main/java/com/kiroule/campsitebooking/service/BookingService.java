@@ -3,11 +3,11 @@ package com.kiroule.campsitebooking.service;
 import com.kiroule.campsitebooking.exception.BookingNotFoundException;
 import com.kiroule.campsitebooking.model.Booking;
 import java.time.LocalDate;
-import java.util.Collection;
+import java.util.List;
 
 public interface BookingService {
 
-  Collection<LocalDate> checkBookingAvailability(LocalDate startDate, LocalDate endDate);
+  List<LocalDate> checkBookingAvailability(LocalDate startDate, LocalDate endDate);
 
   Booking findBookingById(long id) throws BookingNotFoundException;
 

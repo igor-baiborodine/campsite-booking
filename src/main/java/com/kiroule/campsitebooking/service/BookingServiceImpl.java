@@ -4,8 +4,9 @@ import com.kiroule.campsitebooking.exception.BookingNotFoundException;
 import com.kiroule.campsitebooking.model.Booking;
 import com.kiroule.campsitebooking.repository.BookingRepository;
 import java.time.LocalDate;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +28,19 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   @Transactional(readOnly = true)
-  public Collection<LocalDate> checkBookingAvailability(LocalDate startDate, LocalDate endDate) {
-    return null;
+  public List<LocalDate> checkBookingAvailability(LocalDate startDate, LocalDate endDate) {
+    List<LocalDate> result = startDate
+        .datesUntil(endDate.plusDays(1))
+        .collect(Collectors.toList());
+    List<Booking> bookings = bookingRepository.findForDateRange(startDate, endDate);
+
+    bookings.forEach(b -> {
+      List<LocalDate> bookedDates = b.getStartDate()
+          .datesUntil(b.getEndDate())
+          .collect(Collectors.toList());
+      result.removeAll(bookedDates);
+    });
+    return result;
   }
 
   @Override
@@ -44,6 +56,7 @@ public class BookingServiceImpl implements BookingService {
   @Override
   @Transactional
   public Booking saveBooking(Booking booking) {
+    // TODO: add booking dates availability validation
     return bookingRepository.save(booking);
   }
 
