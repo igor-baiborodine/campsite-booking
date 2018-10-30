@@ -1,6 +1,8 @@
 package com.kiroule.campsitebooking.model;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -64,10 +66,29 @@ public class Booking {
   private LocalDate endDate;
 
   /**
-   * Holds value of property active
+   * Holds value of property active.
    */
   @NotNull
   @Column(name = "active", nullable = false)
   private boolean active;
+
+  /**
+   * Checks if the booking is new.
+   *
+   * @return true if the booking is new, otherwise false
+   */
+  public boolean isNew() {
+    return this.id == null;
+  }
+
+  /**
+   * Returns a list of booking dates. The returned list starts from the booking start date
+   * (inclusive) and goes to the booking end date (exclusive).
+   *
+   * @return a list of booking dates
+   */
+  public List<LocalDate> getBookingDates() {
+    return this.startDate.datesUntil(this.endDate).collect(Collectors.toList());
+  }
 
 }

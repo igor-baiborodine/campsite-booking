@@ -3,7 +3,9 @@ package com.kiroule.campsitebooking.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.kiroule.campsitebooking.AbstractTest;
+import com.kiroule.campsitebooking.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsitebooking.exception.BookingNotFoundException;
+import com.kiroule.campsitebooking.exception.IllegalBookingStateException;
 import com.kiroule.campsitebooking.model.Booking;
 import java.time.LocalDate;
 import org.junit.Test;
@@ -28,9 +30,9 @@ public class BookingServiceImplIntegrationTest extends AbstractTest {
 
   @Test
   public void cancelBooking_existingActiveBooking_bookingCancelled()
-      throws BookingNotFoundException {
+      throws BookingNotFoundException, BookingDatesNotAvailableException, IllegalBookingStateException {
     // given
-    Booking savedBooking = bookingService.saveBooking(createBooking(
+    Booking savedBooking = bookingService.createBooking(createBooking(
         LocalDate.of(2018, 10, 3),
         LocalDate.of(2018, 10, 4)));
     assertThat(savedBooking.getId()).isNotNull();

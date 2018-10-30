@@ -2,10 +2,14 @@ package com.kiroule.campsitebooking.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import com.google.common.collect.Lists;
 import com.kiroule.campsitebooking.AbstractTest;
+import com.kiroule.campsitebooking.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsitebooking.exception.BookingNotFoundException;
+import com.kiroule.campsitebooking.exception.IllegalBookingStateException;
 import com.kiroule.campsitebooking.model.Booking;
 import com.kiroule.campsitebooking.repository.BookingRepository;
 import java.time.LocalDate;
@@ -40,8 +44,8 @@ public class BookingServiceImplTest extends AbstractTest {
   @Test
   public void findBookingById_nonExistingBookingId_bookingNotFoundExceptionThrown()
       throws BookingNotFoundException {
-    // given
     exception.expect(BookingNotFoundException.class);
+    // given
     long id = 1L;
     doReturn(Optional.empty()).when(bookingRepository).findById(id);
     // when
@@ -71,7 +75,7 @@ public class BookingServiceImplTest extends AbstractTest {
         Lists.newArrayList(createBooking(LocalDate.of(2018, 10, 1), LocalDate.of(2018, 10, 4))))
         .when(bookingRepository).findForDateRange(startDate, endDate);
     // then
-    List<LocalDate> vacantDates = bookingService.checkBookingAvailability(startDate, endDate);
+    List<LocalDate> vacantDates = bookingService.findVacantDays(startDate, endDate);
     // when
     assertThat(vacantDates).isEmpty();
   }
@@ -85,7 +89,7 @@ public class BookingServiceImplTest extends AbstractTest {
         Lists.newArrayList(createBooking(startDate, endDate)))
         .when(bookingRepository).findForDateRange(startDate, endDate);
     // then
-    List<LocalDate> vacantDates = bookingService.checkBookingAvailability(startDate, endDate);
+    List<LocalDate> vacantDates = bookingService.findVacantDays(startDate, endDate);
     // when
     assertThat(vacantDates).size().isEqualTo(1);
     assertThat(vacantDates).contains(endDate);
@@ -99,11 +103,52 @@ public class BookingServiceImplTest extends AbstractTest {
     doReturn(Lists.newArrayList())
         .when(bookingRepository).findForDateRange(startDate, endDate);
     // when
-    List<LocalDate> vacantDates = bookingService.checkBookingAvailability(startDate, endDate);
+    List<LocalDate> vacantDates = bookingService.findVacantDays(startDate, endDate);
     // then
     List<LocalDate> expected = startDate
         .datesUntil(endDate.plusDays(1))
         .collect(Collectors.toList());
     assertThat(vacantDates).isEqualTo(expected);
   }
+
+  @Test
+  public void createBooking_bookingIsNotNew_illegalBookingStateExceptionThrown()
+      throws BookingDatesNotAvailableException, IllegalBookingStateException {
+    exception.expect(IllegalBookingStateException.class);
+    // given
+    Booking booking = createBooking(LocalDate.now(), LocalDate.now().plusDays(1));
+    booking.setId(1L);
+    // when
+    bookingService.createBooking(booking);
+    // then
+    // IllegalBookingStateException thrown
+  }
+
+  @Test
+  public void createBooking_bookingDatesNotAvailable_bookingDatesNotAvailableExceptionThrown()
+      throws BookingDatesNotAvailableException, IllegalBookingStateException {
+    exception.expect(BookingDatesNotAvailableException.class);
+    // given
+    Booking booking = createBooking(LocalDate.now(), LocalDate.now().plusDays(3));
+    doReturn(Lists.newArrayList(createBooking(LocalDate.now(), LocalDate.now().plusDays(1))))
+        .when(bookingRepository).findForDateRange(booking.getStartDate(), booking.getEndDate());
+    // when
+    bookingService.createBooking(booking);
+    // then
+    // BookingDatesNotAvailableException thrown
+  }
+
+  @Test
+  public void createBooking_bookingDatesAvailable_bookingCreated()
+      throws BookingDatesNotAvailableException, IllegalBookingStateException {
+    // given
+    Booking booking = createBooking(LocalDate.now(), LocalDate.now().plusDays(3));
+    doReturn(Lists.newArrayList())
+        .when(bookingRepository).findForDateRange(booking.getStartDate(), booking.getEndDate());
+    // when
+    bookingService.createBooking(booking);
+    // then
+    verify(bookingRepository, times(1)).save(booking);
+  }
+
 }

@@ -1,6 +1,8 @@
 package com.kiroule.campsitebooking.service;
 
+import com.kiroule.campsitebooking.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsitebooking.exception.BookingNotFoundException;
+import com.kiroule.campsitebooking.exception.IllegalBookingStateException;
 import com.kiroule.campsitebooking.model.Booking;
 import com.kiroule.campsitebooking.repository.BookingRepository;
 import java.time.LocalDate;
@@ -28,19 +30,14 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<LocalDate> checkBookingAvailability(LocalDate startDate, LocalDate endDate) {
-    List<LocalDate> result = startDate
+  public List<LocalDate> findVacantDays(LocalDate startDate, LocalDate endDate) {
+    List<LocalDate> vacantDays = startDate
         .datesUntil(endDate.plusDays(1))
         .collect(Collectors.toList());
     List<Booking> bookings = bookingRepository.findForDateRange(startDate, endDate);
 
-    bookings.forEach(b -> {
-      List<LocalDate> bookedDates = b.getStartDate()
-          .datesUntil(b.getEndDate())
-          .collect(Collectors.toList());
-      result.removeAll(bookedDates);
-    });
-    return result;
+    bookings.forEach(b -> vacantDays.removeAll(b.getBookingDates()));
+    return vacantDays;
   }
 
   @Override
@@ -48,15 +45,49 @@ public class BookingServiceImpl implements BookingService {
   public Booking findBookingById(long id) throws BookingNotFoundException {
     Optional<Booking> booking = bookingRepository.findById(id);
     if (!booking.isPresent()) {
-      throw new BookingNotFoundException(String.format("Cannot find booking for ID [%d]", id));
+      throw new BookingNotFoundException(String.format("Cannot find booking with ID[%d]", id));
     }
     return booking.get();
   }
 
   @Override
   @Transactional
-  public Booking saveBooking(Booking booking) {
-    // TODO: add booking dates availability validation
+  public Booking createBooking(Booking booking)
+      throws IllegalBookingStateException, BookingDatesNotAvailableException {
+    if (!booking.isNew()) {
+      throw new IllegalBookingStateException("New booking must not have ID");
+    }
+    List<LocalDate> vacantDays = findVacantDays(booking.getStartDate(), booking.getEndDate());
+
+    if (!vacantDays.containsAll(booking.getBookingDates())) {
+      String message = String.format("No vacant dates available from [%s] to [%s]",
+          booking.getStartDate(), booking.getEndDate());
+      throw new BookingDatesNotAvailableException(message);
+    }
+    return bookingRepository.save(booking);
+  }
+
+  @Override
+  @Transactional
+  public Booking updateBooking(Booking booking)
+      throws IllegalBookingStateException, BookingNotFoundException, BookingDatesNotAvailableException {
+    if (booking.isNew()) {
+      throw new IllegalBookingStateException("Existing booking must have ID");
+    }
+    Booking persistedBooking = findBookingById(booking.getId());
+
+    if (!persistedBooking.isActive()) {
+      String message = String.format("Booking with ID[%d] is cancelled", booking.getId());
+      throw new IllegalBookingStateException(message);
+    }
+    List<LocalDate> vacantDays = findVacantDays(booking.getStartDate(), booking.getEndDate());
+    vacantDays.addAll(persistedBooking.getBookingDates());
+
+    if (!vacantDays.containsAll(booking.getBookingDates())) {
+      String message = String.format("No vacant dates available from [%t] to [%t]",
+          booking.getStartDate(), booking.getEndDate());
+      throw new BookingDatesNotAvailableException(message);
+    }
     return bookingRepository.save(booking);
   }
 
