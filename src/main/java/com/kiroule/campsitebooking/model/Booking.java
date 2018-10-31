@@ -1,5 +1,6 @@
 package com.kiroule.campsitebooking.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,6 +78,7 @@ public class Booking {
    *
    * @return true if the booking is new, otherwise false
    */
+  @JsonIgnore
   public boolean isNew() {
     return this.id == null;
   }
@@ -87,6 +89,7 @@ public class Booking {
    *
    * @return a list of booking dates
    */
+  @JsonIgnore
   public List<LocalDate> getBookingDates() {
     return this.startDate.datesUntil(this.endDate).collect(Collectors.toList());
   }
