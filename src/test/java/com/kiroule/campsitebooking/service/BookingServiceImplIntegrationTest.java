@@ -32,9 +32,8 @@ public class BookingServiceImplIntegrationTest extends AbstractTest {
   public void cancelBooking_existingActiveBooking_bookingCancelled()
       throws BookingNotFoundException, BookingDatesNotAvailableException, IllegalBookingStateException {
     // given
-    Booking savedBooking = bookingService.createBooking(createBooking(
-        LocalDate.of(2018, 10, 3),
-        LocalDate.of(2018, 10, 4)));
+    Booking savedBooking = bookingService.createBooking(getBooking(
+        LocalDate.now(), LocalDate.now().plusDays(1)));
     assertThat(savedBooking.getId()).isNotNull();
     assertThat(savedBooking).hasFieldOrPropertyWithValue("active", true);
     // when

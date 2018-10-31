@@ -30,7 +30,7 @@ public class BookingRepositoryIntegrationTest extends AbstractTest {
   @Test
   public void findById_savedBooking_savedBookingFound() {
     // given
-    Booking savedBooking = bookingRepository.save(createBooking(
+    Booking savedBooking = bookingRepository.save(getBooking(
         LocalDate.of(2018, 10, 1),
         LocalDate.of(2018, 10, 2)));
     // when
@@ -42,7 +42,7 @@ public class BookingRepositoryIntegrationTest extends AbstractTest {
   @Test
   public void findForDateRange_bookingDatesBeforeRangeStartDate_noBookingFound() {
     // given: -S-E|-|----|-|--
-    Booking savedBooking = bookingRepository.save(createBooking(
+    Booking savedBooking = bookingRepository.save(getBooking(
         LocalDate.of(2018, 10, 1),
         LocalDate.of(2018, 10, 2)));
     // when
@@ -56,7 +56,7 @@ public class BookingRepositoryIntegrationTest extends AbstractTest {
   @Test
   public void findForDateRange__bookingStartBeforeRangeStartDateAndBookingEndDateEqualsToRangeStartDate_noBookingFound() {
     // given: -S|E|----|-|--
-    Booking savedBooking = bookingRepository.save(createBooking(
+    Booking savedBooking = bookingRepository.save(getBooking(
         LocalDate.of(2018, 10, 1),
         LocalDate.of(2018, 10, 2)));
     // when
@@ -70,7 +70,7 @@ public class BookingRepositoryIntegrationTest extends AbstractTest {
   @Test
   public void findForDateRange_bookingStartDateBeforeRangeStartDateAndBookingEndDateWithinRangeDates_bookingFound() {
     // given: -S|-|E---|-|--
-    Booking savedBooking = bookingRepository.save(createBooking(
+    Booking savedBooking = bookingRepository.save(getBooking(
         LocalDate.of(2018, 10, 1),
         LocalDate.of(2018, 10, 3)));
     // when
@@ -85,7 +85,7 @@ public class BookingRepositoryIntegrationTest extends AbstractTest {
   @Test
   public void findForDateRange_bookingStartDateEqualsToRangeStartDateAndBookingEndDateWithinRangeDates_bookingFound() {
     // given: --|S|E---|-|--
-    Booking savedBooking = bookingRepository.save(createBooking(
+    Booking savedBooking = bookingRepository.save(getBooking(
         LocalDate.of(2018, 10, 1),
         LocalDate.of(2018, 10, 2)));
     // when
@@ -100,7 +100,7 @@ public class BookingRepositoryIntegrationTest extends AbstractTest {
   @Test
   public void findForDateRange_bookingDatesWithinRangeDates_bookingFound() {
     // given: --|-|S--E|-|--
-    Booking savedBooking = bookingRepository.save(createBooking(
+    Booking savedBooking = bookingRepository.save(getBooking(
         LocalDate.of(2018, 10, 2),
         LocalDate.of(2018, 10, 3)));
     // when
@@ -115,7 +115,7 @@ public class BookingRepositoryIntegrationTest extends AbstractTest {
   @Test
   public void findForDateRange__startBookingDateWithinRangeDatesAndBookingEndDateEqualsToRangeEndDate_bookingFound() {
     // given: --|-|---S|E|--
-    Booking savedBooking = bookingRepository.save(createBooking(
+    Booking savedBooking = bookingRepository.save(getBooking(
         LocalDate.of(2018, 10, 2),
         LocalDate.of(2018, 10, 3)));
     // when
@@ -130,7 +130,7 @@ public class BookingRepositoryIntegrationTest extends AbstractTest {
   @Test
   public void findForDateRange_bookingStartDateBeforeRangeEndDateAndBookingEndDateAfterRangeEndDate_bookingFound() {
     // given: --|-|---S|-|E-
-    Booking savedBooking = bookingRepository.save(createBooking(
+    Booking savedBooking = bookingRepository.save(getBooking(
         LocalDate.of(2018, 10, 2),
         LocalDate.of(2018, 10, 4)));
     // when
@@ -145,7 +145,7 @@ public class BookingRepositoryIntegrationTest extends AbstractTest {
   @Test
   public void findForDateRange_bookingStartDateEqualsToRangeEndDateAndBookingEndDateAfterRangeEndDate_bookingFound() {
     // given: --|-|----|S|E-
-    Booking savedBooking = bookingRepository.save(createBooking(
+    Booking savedBooking = bookingRepository.save(getBooking(
         LocalDate.of(2018, 10, 3),
         LocalDate.of(2018, 10, 4)));
     // when
@@ -160,7 +160,7 @@ public class BookingRepositoryIntegrationTest extends AbstractTest {
   @Test
   public void findForDateRange__bookingDatesAfterRangeEndDate_noBookingFound() {
     // given: --|-|----|-|S-E-
-    Booking savedBooking = bookingRepository.save(createBooking(
+    Booking savedBooking = bookingRepository.save(getBooking(
         LocalDate.of(2018, 10, 3),
         LocalDate.of(2018, 10, 4)));
     // when
@@ -174,7 +174,7 @@ public class BookingRepositoryIntegrationTest extends AbstractTest {
   @Test
   public void findForDateRange_bookingDatesOverlapRangeDates_bookingFound() {
     // given: -S|-|----|-|E-
-    Booking savedBooking = bookingRepository.save(createBooking(
+    Booking savedBooking = bookingRepository.save(getBooking(
         LocalDate.of(2018, 10, 1),
         LocalDate.of(2018, 10, 4)));
     // when

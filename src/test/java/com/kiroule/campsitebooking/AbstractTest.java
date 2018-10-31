@@ -7,11 +7,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public abstract class AbstractTest {
 
-  protected Booking createBooking(LocalDate startDate, LocalDate endDate) {
-    return createBooking("John Smith", "john.smith@domain.com", startDate, endDate);
+  protected Booking getBooking(LocalDate startDate, LocalDate endDate) {
+    return getBooking("John Smith", "john.smith@domain.com", startDate, endDate);
   }
 
-  protected Booking createBooking(
+  protected Booking getBooking(
       String fullName, String email, LocalDate startDate, LocalDate endDate) {
     return Booking.builder()
         .fullName(fullName)

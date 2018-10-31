@@ -84,7 +84,7 @@ public class BookingServiceImpl implements BookingService {
     vacantDays.addAll(persistedBooking.getBookingDates());
 
     if (!vacantDays.containsAll(booking.getBookingDates())) {
-      String message = String.format("No vacant dates available from [%t] to [%t]",
+      String message = String.format("No vacant dates available from [%s] to [%s]",
           booking.getStartDate(), booking.getEndDate());
       throw new BookingDatesNotAvailableException(message);
     }
