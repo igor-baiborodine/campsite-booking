@@ -1,6 +1,7 @@
 package com.kiroule.campsitebooking.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +28,7 @@ import lombok.Data;
 @Table(name = "bookings")
 @Data
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Booking {
 
   /**

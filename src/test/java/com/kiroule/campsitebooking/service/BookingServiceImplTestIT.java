@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.kiroule.campsitebooking.TestHelper;
 import com.kiroule.campsitebooking.model.Booking;
+import com.kiroule.campsitebooking.repository.BookingRepository;
 import java.time.LocalDate;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,14 @@ public class BookingServiceImplTestIT {
 
   @Autowired
   private BookingService bookingService;
+
+  @Autowired
+  private BookingRepository bookingRepository;
+
+  @Before
+  public void setUp() {
+    bookingRepository.deleteAll();
+  }
 
   @Test
   public void cancelBooking_existingActiveBooking_bookingCancelled() {
