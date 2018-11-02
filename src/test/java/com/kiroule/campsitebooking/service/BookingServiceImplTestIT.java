@@ -34,7 +34,7 @@ public class BookingServiceImplTestIT {
   public void cancelBooking_existingActiveBooking_bookingCancelled() {
     // given
     Booking savedBooking = bookingService.createBooking(helper.buildBooking(
-        LocalDate.now(), LocalDate.now().plusDays(1)));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2)));
     assertThat(savedBooking.getId()).isNotNull();
     assertThat(savedBooking).hasFieldOrPropertyWithValue("active", true);
     // when

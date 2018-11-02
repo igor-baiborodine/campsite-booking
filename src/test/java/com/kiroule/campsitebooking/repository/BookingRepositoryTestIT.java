@@ -33,8 +33,7 @@ public class BookingRepositoryTestIT extends TestHelper {
   public void findById_savedBooking_savedBookingFound() {
     // given
     Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.of(2018, 10, 1),
-        LocalDate.of(2018, 10, 2)));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2)));
     // when
     Optional<Booking> foundBooking = bookingRepository.findById(savedBooking.getId());
     // then
@@ -45,12 +44,10 @@ public class BookingRepositoryTestIT extends TestHelper {
   public void findForDateRange_bookingDatesBeforeRangeStartDate_noBookingFound() {
     // given: -S-E|-|----|-|--
     Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.of(2018, 10, 1),
-        LocalDate.of(2018, 10, 2)));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2)));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
-        LocalDate.of(2018, 10, 3),
-        LocalDate.of(2018, 10, 4));
+        LocalDate.now().plusDays(3), LocalDate.now().plusDays(4));
     // then
     assertThat(bookings).isEmpty();
   }
@@ -59,12 +56,10 @@ public class BookingRepositoryTestIT extends TestHelper {
   public void findForDateRange__bookingStartBeforeRangeStartDateAndBookingEndDateEqualsToRangeStartDate_noBookingFound() {
     // given: -S|E|----|-|--
     Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.of(2018, 10, 1),
-        LocalDate.of(2018, 10, 2)));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2)));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
-        LocalDate.of(2018, 10, 2),
-        LocalDate.of(2018, 10, 3));
+        LocalDate.now().plusDays(2), LocalDate.now().plusDays(3));
     // then
     assertThat(bookings).isEmpty();
   }
@@ -73,12 +68,10 @@ public class BookingRepositoryTestIT extends TestHelper {
   public void findForDateRange_bookingStartDateBeforeRangeStartDateAndBookingEndDateWithinRangeDates_bookingFound() {
     // given: -S|-|E---|-|--
     Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.of(2018, 10, 1),
-        LocalDate.of(2018, 10, 3)));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(3)));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
-        LocalDate.of(2018, 10, 2),
-        LocalDate.of(2018, 10, 4));
+        LocalDate.now().plusDays(2), LocalDate.now().plusDays(4));
     // then
     assertThat(bookings).size().isEqualTo(1);
     assertThat(savedBooking).isIn(bookings);
@@ -88,12 +81,10 @@ public class BookingRepositoryTestIT extends TestHelper {
   public void findForDateRange_bookingStartDateEqualsToRangeStartDateAndBookingEndDateWithinRangeDates_bookingFound() {
     // given: --|S|E---|-|--
     Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.of(2018, 10, 1),
-        LocalDate.of(2018, 10, 2)));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2)));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
-        LocalDate.of(2018, 10, 1),
-        LocalDate.of(2018, 10, 3));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(3));
     // then
     assertThat(bookings).size().isEqualTo(1);
     assertThat(savedBooking).isIn(bookings);
@@ -103,12 +94,10 @@ public class BookingRepositoryTestIT extends TestHelper {
   public void findForDateRange_bookingDatesWithinRangeDates_bookingFound() {
     // given: --|-|S--E|-|--
     Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.of(2018, 10, 2),
-        LocalDate.of(2018, 10, 3)));
+        LocalDate.now().plusDays(2), LocalDate.now().plusDays(3)));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
-        LocalDate.of(2018, 10, 1),
-        LocalDate.of(2018, 10, 4));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(4));
     // then
     assertThat(bookings).size().isEqualTo(1);
     assertThat(savedBooking).isIn(bookings);
@@ -118,12 +107,10 @@ public class BookingRepositoryTestIT extends TestHelper {
   public void findForDateRange__startBookingDateWithinRangeDatesAndBookingEndDateEqualsToRangeEndDate_bookingFound() {
     // given: --|-|---S|E|--
     Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.of(2018, 10, 2),
-        LocalDate.of(2018, 10, 3)));
+        LocalDate.now().plusDays(2), LocalDate.now().plusDays(3)));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
-        LocalDate.of(2018, 10, 1),
-        LocalDate.of(2018, 10, 3));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(3));
     // then
     assertThat(bookings).size().isEqualTo(1);
     assertThat(savedBooking).isIn(bookings);
@@ -133,12 +120,10 @@ public class BookingRepositoryTestIT extends TestHelper {
   public void findForDateRange_bookingStartDateBeforeRangeEndDateAndBookingEndDateAfterRangeEndDate_bookingFound() {
     // given: --|-|---S|-|E-
     Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.of(2018, 10, 2),
-        LocalDate.of(2018, 10, 4)));
+        LocalDate.now().plusDays(2), LocalDate.now().plusDays(4)));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
-        LocalDate.of(2018, 10, 1),
-        LocalDate.of(2018, 10, 3));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(3));
     // then
     assertThat(bookings).size().isEqualTo(1);
     assertThat(savedBooking).isIn(bookings);
@@ -148,27 +133,23 @@ public class BookingRepositoryTestIT extends TestHelper {
   public void findForDateRange_bookingStartDateEqualsToRangeEndDateAndBookingEndDateAfterRangeEndDate_bookingFound() {
     // given: --|-|----|S|E-
     Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.of(2018, 10, 3),
-        LocalDate.of(2018, 10, 4)));
+        LocalDate.now().plusDays(3), LocalDate.now().plusDays(4)));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
-        LocalDate.of(2018, 10, 1),
-        LocalDate.of(2018, 10, 3));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(3));
     // then
     assertThat(bookings).size().isEqualTo(1);
     assertThat(savedBooking).isIn(bookings);
   }
 
   @Test
-  public void findForDateRange__bookingDatesAfterRangeEndDate_noBookingFound() {
+  public void findForDateRange_bookingDatesAfterRangeEndDate_noBookingFound() {
     // given: --|-|----|-|S-E-
     Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.of(2018, 10, 3),
-        LocalDate.of(2018, 10, 4)));
+        LocalDate.now().plusDays(3), LocalDate.now().plusDays(4)));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
-        LocalDate.of(2018, 10, 1),
-        LocalDate.of(2018, 10, 2));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2));
     // then
     assertThat(bookings).isEmpty();
   }
@@ -177,12 +158,10 @@ public class BookingRepositoryTestIT extends TestHelper {
   public void findForDateRange_bookingDatesOverlapRangeDates_bookingFound() {
     // given: -S|-|----|-|E-
     Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.of(2018, 10, 1),
-        LocalDate.of(2018, 10, 4)));
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(4)));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
-        LocalDate.of(2018, 10, 2),
-        LocalDate.of(2018, 10, 3));
+        LocalDate.now().plusDays(2), LocalDate.now().plusDays(3));
     // then
     assertThat(bookings).size().isEqualTo(1);
     assertThat(savedBooking).isIn(bookings);
