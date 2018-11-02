@@ -6,7 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.google.common.collect.Lists;
-import com.kiroule.campsitebooking.AbstractTest;
+import com.kiroule.campsitebooking.TestHelper;
 import com.kiroule.campsitebooking.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsitebooking.exception.BookingNotFoundException;
 import com.kiroule.campsitebooking.exception.IllegalBookingStateException;
@@ -30,7 +30,7 @@ import org.mockito.junit.MockitoJUnitRunner;
  * @author Igor Baiborodine
  */
 @RunWith(MockitoJUnitRunner.class)
-public class BookingServiceImplTest extends AbstractTest {
+public class BookingServiceImplTest {
 
   @Mock
   private BookingRepository bookingRepository;
@@ -41,9 +41,10 @@ public class BookingServiceImplTest extends AbstractTest {
   @Rule
   public ExpectedException exception = ExpectedException.none();
 
+  private TestHelper helper = new TestHelper();
+
   @Test
-  public void findBookingById_nonExistingBookingId_bookingNotFoundExceptionThrown()
-      throws BookingNotFoundException {
+  public void findBookingById_nonExistingBookingId_bookingNotFoundExceptionThrown() {
     exception.expect(BookingNotFoundException.class);
     // given
     long id = 1L;
@@ -55,10 +56,10 @@ public class BookingServiceImplTest extends AbstractTest {
   }
 
   @Test
-  public void findBookingById_existingBookingId_bookingFound() throws BookingNotFoundException {
+  public void findBookingById_existingBookingId_bookingFound() {
     // given
     long id = 1L;
-    Booking savedBooking = getBooking(LocalDate.now(), LocalDate.now().plusDays(1));
+    Booking savedBooking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(1));
     doReturn(Optional.of(savedBooking)).when(bookingRepository).findById(id);
     // when
     Booking booking = bookingService.findBookingById(id);
@@ -72,7 +73,7 @@ public class BookingServiceImplTest extends AbstractTest {
     LocalDate startDate = LocalDate.of(2018, 10, 2);
     LocalDate endDate = LocalDate.of(2018, 10, 3);
     doReturn(
-        Lists.newArrayList(getBooking(LocalDate.of(2018, 10, 1), LocalDate.of(2018, 10, 4))))
+        Lists.newArrayList(helper.buildBooking(LocalDate.of(2018, 10, 1), LocalDate.of(2018, 10, 4))))
         .when(bookingRepository).findForDateRange(startDate, endDate);
     // then
     List<LocalDate> vacantDates = bookingService.findVacantDays(startDate, endDate);
@@ -86,7 +87,7 @@ public class BookingServiceImplTest extends AbstractTest {
     LocalDate startDate = LocalDate.of(2018, 10, 1);
     LocalDate endDate = LocalDate.of(2018, 10, 4);
     doReturn(
-        Lists.newArrayList(getBooking(startDate, endDate)))
+        Lists.newArrayList(helper.buildBooking(startDate, endDate)))
         .when(bookingRepository).findForDateRange(startDate, endDate);
     // then
     List<LocalDate> vacantDates = bookingService.findVacantDays(startDate, endDate);
@@ -112,11 +113,10 @@ public class BookingServiceImplTest extends AbstractTest {
   }
 
   @Test
-  public void createBooking_bookingIsNotNew_illegalBookingStateExceptionThrown()
-      throws BookingDatesNotAvailableException, IllegalBookingStateException {
+  public void createBooking_bookingIsNotNew_illegalBookingStateExceptionThrown() {
     exception.expect(IllegalBookingStateException.class);
     // given
-    Booking booking = getBooking(LocalDate.now(), LocalDate.now().plusDays(1));
+    Booking booking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(1));
     booking.setId(1L);
     // when
     bookingService.createBooking(booking);
@@ -125,12 +125,11 @@ public class BookingServiceImplTest extends AbstractTest {
   }
 
   @Test
-  public void createBooking_bookingDatesNotAvailable_bookingDatesNotAvailableExceptionThrown()
-      throws BookingDatesNotAvailableException, IllegalBookingStateException {
+  public void createBooking_bookingDatesNotAvailable_bookingDatesNotAvailableExceptionThrown() {
     exception.expect(BookingDatesNotAvailableException.class);
     // given
-    Booking booking = getBooking(LocalDate.now(), LocalDate.now().plusDays(3));
-    doReturn(Lists.newArrayList(getBooking(LocalDate.now(), LocalDate.now().plusDays(1))))
+    Booking booking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(3));
+    doReturn(Lists.newArrayList(helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(1))))
         .when(bookingRepository).findForDateRange(booking.getStartDate(), booking.getEndDate());
     // when
     bookingService.createBooking(booking);
@@ -139,10 +138,9 @@ public class BookingServiceImplTest extends AbstractTest {
   }
 
   @Test
-  public void createBooking_bookingDatesAvailable_bookingCreated()
-      throws BookingDatesNotAvailableException, IllegalBookingStateException {
+  public void createBooking_bookingDatesAvailable_bookingCreated() {
     // given
-    Booking booking = getBooking(LocalDate.now(), LocalDate.now().plusDays(3));
+    Booking booking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(3));
     doReturn(Lists.newArrayList())
         .when(bookingRepository).findForDateRange(booking.getStartDate(), booking.getEndDate());
     // when
@@ -152,78 +150,59 @@ public class BookingServiceImplTest extends AbstractTest {
   }
 
   @Test
-  public void updateBooking_bookingIsNew_illegalBookingStateExceptionThrown()
-      throws BookingDatesNotAvailableException, IllegalBookingStateException,
-      BookingNotFoundException {
-    exception.expect(IllegalBookingStateException.class);
-    // given
-    Booking booking = getBooking(LocalDate.now(), LocalDate.now().plusDays(1));
-    // when
-    bookingService.updateBooking(booking);
-    // then
-    // IllegalBookingStateException thrown
-  }
-
-  @Test
-  public void updateBooking_bookingIsCancelled_illegalBookingStateExceptionThrown()
-      throws BookingNotFoundException, BookingDatesNotAvailableException,
-      IllegalBookingStateException {
+  public void updateBooking_bookingIsCancelled_illegalBookingStateExceptionThrown() {
     exception.expect(IllegalBookingStateException.class);
     // given
     Long id = 1L;
-    Booking booking = getBooking(LocalDate.now(), LocalDate.now().plusDays(1));
+    Booking booking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(1));
     booking.setId(id);
 
-    Booking persistedBooking = getBooking(LocalDate.now(), LocalDate.now().plusDays(1));
+    Booking persistedBooking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(1));
     persistedBooking.setId(id);
     persistedBooking.setActive(false);
     doReturn(Optional.of(persistedBooking)).when(bookingRepository).findById(id);
     // when
-    bookingService.updateBooking(booking);
+    bookingService.updateBooking(id, booking);
     // then
     // IllegalBookingStateException thrown
   }
 
   @Test
-  public void updateBooking_bookingDatesNotAvailable_bookingDatesNotAvailableExceptionThrown()
-      throws BookingNotFoundException, BookingDatesNotAvailableException,
-      IllegalBookingStateException {
+  public void updateBooking_bookingDatesNotAvailable_bookingDatesNotAvailableExceptionThrown() {
     exception.expect(BookingDatesNotAvailableException.class);
     // given
     Long id = 1L;
-    Booking booking = getBooking(LocalDate.now(), LocalDate.now().plusDays(2));
+    Booking booking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(2));
     booking.setId(id);
 
-    Booking persistedBooking = getBooking(LocalDate.now(), LocalDate.now().plusDays(1));
+    Booking persistedBooking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(1));
     persistedBooking.setId(id);
     doReturn(Optional.of(persistedBooking)).when(bookingRepository).findById(id);
 
-    Booking otherBooking = getBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2));
+    Booking otherBooking = helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2));
     doReturn(Lists.newArrayList(persistedBooking, otherBooking))
         .when(bookingRepository).findForDateRange(booking.getStartDate(), booking.getEndDate());
     // when
-    bookingService.updateBooking(booking);
+    bookingService.updateBooking(id, booking);
     // then
     // IllegalBookingStateException thrown
   }
 
   @Test
-  public void updateBooking_bookingDatesAvailable_bookingUpdated()
-      throws BookingNotFoundException, BookingDatesNotAvailableException,
-      IllegalBookingStateException {
+  public void updateBooking_bookingDatesAvailable_bookingUpdated() {
     // given
     Long id = 1L;
-    Booking booking = getBooking(LocalDate.now(), LocalDate.now().plusDays(2));
+    Booking booking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(2));
     booking.setId(id);
 
-    Booking persistedBooking = getBooking(LocalDate.now(), LocalDate.now().plusDays(1));
+    Booking persistedBooking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(1));
     persistedBooking.setId(id);
     doReturn(Optional.of(persistedBooking)).when(bookingRepository).findById(id);
 
     doReturn(Lists.newArrayList(persistedBooking))
         .when(bookingRepository).findForDateRange(booking.getStartDate(), booking.getEndDate());
     // when
-    bookingService.updateBooking(booking);
+    bookingService.updateBooking(id, booking);
     // then
     verify(bookingRepository, times(1)).save(booking);
   }

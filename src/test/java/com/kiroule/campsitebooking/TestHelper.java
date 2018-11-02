@@ -2,16 +2,16 @@ package com.kiroule.campsitebooking;
 
 import com.kiroule.campsitebooking.model.Booking;
 import java.time.LocalDate;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.stereotype.Component;
 
-@SpringBootTest
-public abstract class AbstractTest {
+@Component
+public class TestHelper {
 
-  protected Booking getBooking(LocalDate startDate, LocalDate endDate) {
-    return getBooking("John Smith", "john.smith@domain.com", startDate, endDate);
+  public Booking buildBooking(LocalDate startDate, LocalDate endDate) {
+    return buildBooking("John Smith", "john.smith@domain.com", startDate, endDate);
   }
 
-  protected Booking getBooking(
+  public Booking buildBooking(
       String fullName, String email, LocalDate startDate, LocalDate endDate) {
     return Booking.builder()
         .fullName(fullName)

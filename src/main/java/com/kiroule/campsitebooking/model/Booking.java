@@ -11,8 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
@@ -42,6 +44,7 @@ public class Booking {
    * Holds value of property email.
    */
   @NotEmpty
+  @Size(max = 50)
   @Column(name = "email", nullable = false, length = 50)
   private String email;
 
@@ -49,6 +52,7 @@ public class Booking {
    * Holds value of property full name.
    */
   @NotEmpty
+  @Size(max = 50)
   @Column(name = "full_name", nullable = false, length = 50)
   private String fullName;
 
@@ -56,6 +60,7 @@ public class Booking {
    * Holds value of property start date.
    */
   @NotNull
+  @Future
   @Column(name = "start_date", nullable = false)
   private LocalDate startDate;
 
@@ -63,13 +68,13 @@ public class Booking {
    * Holds value of property end date.
    */
   @NotNull
+  @Future
   @Column(name = "end_date", nullable = false)
   private LocalDate endDate;
 
   /**
    * Holds value of property active.
    */
-  @NotNull
   @Column(name = "active", nullable = false)
   private boolean active;
 

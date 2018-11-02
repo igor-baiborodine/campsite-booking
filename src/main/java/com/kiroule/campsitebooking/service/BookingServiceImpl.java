@@ -31,6 +31,7 @@ public class BookingServiceImpl implements BookingService {
   @Override
   @Transactional(readOnly = true)
   public List<LocalDate> findVacantDays(LocalDate startDate, LocalDate endDate) {
+
     List<LocalDate> vacantDays = startDate
         .datesUntil(endDate.plusDays(1))
         .collect(Collectors.toList());
@@ -42,58 +43,60 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   @Transactional(readOnly = true)
-  public Booking findBookingById(long id) throws BookingNotFoundException {
+  public Booking findBookingById(long id) {
+
     Optional<Booking> booking = bookingRepository.findById(id);
     if (!booking.isPresent()) {
-      throw new BookingNotFoundException(String.format("Cannot find booking with ID[%d]", id));
+      throw new BookingNotFoundException(String.format("Booking was not found for id=%d", id));
     }
     return booking.get();
   }
 
   @Override
   @Transactional
-  public Booking createBooking(Booking booking)
-      throws IllegalBookingStateException, BookingDatesNotAvailableException {
+  public Booking createBooking(Booking booking) {
+
     if (!booking.isNew()) {
-      throw new IllegalBookingStateException("New booking must not have ID");
+      throw new IllegalBookingStateException("New booking must not have id");
     }
     List<LocalDate> vacantDays = findVacantDays(booking.getStartDate(), booking.getEndDate());
 
     if (!vacantDays.containsAll(booking.getBookingDates())) {
-      String message = String.format("No vacant dates available from [%s] to [%s]",
+      String message = String.format("No vacant dates available from %s to %s",
           booking.getStartDate(), booking.getEndDate());
       throw new BookingDatesNotAvailableException(message);
     }
+    booking.setActive(true);
     return bookingRepository.save(booking);
   }
 
   @Override
   @Transactional
-  public Booking updateBooking(Booking booking)
-      throws IllegalBookingStateException, BookingNotFoundException, BookingDatesNotAvailableException {
-    if (booking.isNew()) {
-      throw new IllegalBookingStateException("Existing booking must have ID");
-    }
+  public Booking updateBooking(Long id, Booking booking) {
+
     Booking persistedBooking = findBookingById(booking.getId());
 
     if (!persistedBooking.isActive()) {
-      String message = String.format("Booking with ID[%d] is cancelled", booking.getId());
+      String message = String.format("Booking with id=%d is cancelled", booking.getId());
       throw new IllegalBookingStateException(message);
     }
     List<LocalDate> vacantDays = findVacantDays(booking.getStartDate(), booking.getEndDate());
     vacantDays.addAll(persistedBooking.getBookingDates());
 
     if (!vacantDays.containsAll(booking.getBookingDates())) {
-      String message = String.format("No vacant dates available from [%s] to [%s]",
+      String message = String.format("No vacant dates available from %s to %s",
           booking.getStartDate(), booking.getEndDate());
       throw new BookingDatesNotAvailableException(message);
     }
+    booking.setId(id);
+    booking.setActive(persistedBooking.isActive());
     return bookingRepository.save(booking);
   }
 
   @Override
   @Transactional
-  public boolean cancelBooking(long id) throws BookingNotFoundException {
+  public boolean cancelBooking(long id) {
+
     Booking booking = findBookingById(id);
     booking.setActive(false);
     booking = bookingRepository.save(booking);
