@@ -20,7 +20,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 @ComponentScan(basePackages = "com.kiroule.campsitebooking.api.rest")
-public class ApplicationSwaggerConfig {
+public class Swagger2Config {
 
   @Bean
   public Docket customDocket() {
