@@ -2,6 +2,7 @@ package com.kiroule.campsitebooking.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.kiroule.campsitebooking.model.validator.BookingStartDateBeforeEndDate;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
+@BookingStartDateBeforeEndDate
 public class Booking {
 
   /**
@@ -62,7 +64,7 @@ public class Booking {
    * Holds value of property start date.
    */
   @NotNull
-  @Future
+  @Future(message = "Booking start date must be a future date")
   @Column(name = "start_date", nullable = false)
   private LocalDate startDate;
 
@@ -70,7 +72,7 @@ public class Booking {
    * Holds value of property end date.
    */
   @NotNull
-  @Future
+  @Future(message = "Booking end date must be a future date")
   @Column(name = "end_date", nullable = false)
   private LocalDate endDate;
 
