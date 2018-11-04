@@ -7,9 +7,13 @@ import com.kiroule.campsitebooking.TestHelper;
 import com.kiroule.campsitebooking.model.Booking;
 import com.kiroule.campsitebooking.repository.BookingRepository;
 import io.restassured.RestAssured;
+import io.restassured.parsing.Parser;
 import io.restassured.response.ValidatableResponse;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +47,7 @@ public class BookingRestControllerTestIT {
   public void setUp() {
     RestAssured.port = port;
     RestAssured.basePath = basePath;
+    RestAssured.defaultParser = Parser.JSON;
     bookingRepository.deleteAll();
   }
 
@@ -54,6 +59,25 @@ public class BookingRestControllerTestIT {
             .then();
     response.statusCode(HttpStatus.OK.value());
     response.body("status", equalTo("UP"));
+  }
+
+  @Test
+  public void getVacantDates_noBookingsWithinDateRange_datesWithinDateRangeInclusive() {
+    // given
+    LocalDate startDate = LocalDate.now().plusDays(1);
+    LocalDate endDate = LocalDate.now().plusDays(3);
+    // when
+    List<String> vacantDates = Lists.newArrayList();
+    vacantDates = given()
+        .param("start_date", startDate.toString()).param("end_date", endDate.toString())
+        .when().get(controllerPath + "/vacant-dates")
+        .then().extract().body().as(vacantDates.getClass());
+    // then
+    List<String> expected = startDate
+        .datesUntil(endDate.plusDays(1))
+        .map(String::valueOf)
+        .collect(Collectors.toList());
+    Assertions.assertThat(vacantDates).isEqualTo(expected);
   }
 
   @Test

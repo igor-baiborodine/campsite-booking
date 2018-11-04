@@ -3,7 +3,11 @@ package com.kiroule.campsitebooking.api.rest;
 import com.kiroule.campsitebooking.model.Booking;
 import com.kiroule.campsitebooking.service.BookingService;
 import java.net.URI;
+import java.time.LocalDate;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -32,6 +37,23 @@ public class BookingRestController {
   @Autowired
   public BookingRestController(BookingService bookingService) {
     this.bookingService = bookingService;
+  }
+
+  @GetMapping(value = "/vacant-dates", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<List<LocalDate>> getVacantDates(
+      @RequestParam(name = "start_date", required = false)
+      @DateTimeFormat(iso = ISO.DATE) LocalDate startDate,
+      @RequestParam(name = "end_date", required = false)
+      @DateTimeFormat(iso = ISO.DATE) LocalDate endDate) {
+
+    if (startDate == null) {
+      startDate = LocalDate.now().plusDays(1);
+    }
+    if (endDate == null) {
+      endDate = startDate.plusMonths(1);
+    }
+    List<LocalDate> vacantDates = bookingService.findVacantDays(startDate, endDate);
+    return new ResponseEntity<>(vacantDates, HttpStatus.OK);
   }
 
   @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

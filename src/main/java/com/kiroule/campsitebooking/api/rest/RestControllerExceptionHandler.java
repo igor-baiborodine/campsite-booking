@@ -36,7 +36,9 @@ public class RestControllerExceptionHandler extends ResponseEntityExceptionHandl
     return buildResponseEntity(apiError);
   }
 
-  @ExceptionHandler({IllegalBookingStateException.class, BookingDatesNotAvailableException.class})
+  @ExceptionHandler({IllegalBookingStateException.class,
+      BookingDatesNotAvailableException.class,
+      IllegalArgumentException.class})
   protected ResponseEntity<Object> handleBookingDatesNotAvailable(RuntimeException ex) {
 
     ApiError apiError = ApiError.builder()

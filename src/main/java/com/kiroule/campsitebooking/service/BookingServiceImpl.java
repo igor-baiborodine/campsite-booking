@@ -1,5 +1,6 @@
 package com.kiroule.campsitebooking.service;
 
+import com.google.common.base.Preconditions;
 import com.kiroule.campsitebooking.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsitebooking.exception.BookingNotFoundException;
 import com.kiroule.campsitebooking.exception.IllegalBookingStateException;
@@ -31,6 +32,11 @@ public class BookingServiceImpl implements BookingService {
   @Override
   @Transactional(readOnly = true)
   public List<LocalDate> findVacantDays(LocalDate startDate, LocalDate endDate) {
+    LocalDate now = LocalDate.now();
+    Preconditions.checkArgument(startDate.isAfter(now), "Start date must be in the future");
+    Preconditions.checkArgument(endDate.isAfter(now), "End date must be in the future");
+    Preconditions.checkArgument(startDate.isEqual(endDate) || startDate.isBefore(endDate),
+        "End date must be equal to start date or greater than start date");
 
     List<LocalDate> vacantDays = startDate
         .datesUntil(endDate.plusDays(1))

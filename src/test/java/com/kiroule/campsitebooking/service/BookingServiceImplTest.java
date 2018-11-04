@@ -68,12 +68,48 @@ public class BookingServiceImplTest {
   }
 
   @Test
+  public void findVacantDate_rangeStartDateIsNow_illegalArgumentExceptionThrown() {
+    exception.expect(IllegalArgumentException.class);
+    // given
+    LocalDate startDate = LocalDate.now();
+    LocalDate endDate = LocalDate.now().plusDays(2);
+    // when
+    bookingService.findVacantDays(startDate, endDate);
+    // then
+    // IllegalArgumentException is thrown
+  }
+
+  @Test
+  public void findVacantDate_rangeEndDateIsNow_illegalArgumentExceptionThrown() {
+    exception.expect(IllegalArgumentException.class);
+    // given
+    LocalDate startDate = LocalDate.now().plusDays(2);
+    LocalDate endDate = LocalDate.now();
+    // when
+    bookingService.findVacantDays(startDate, endDate);
+    // then
+    // IllegalArgumentException is thrown
+  }
+
+  @Test
+  public void findVacantDate_rangeEndDateIsBeforeRangeStartDate_illegalArgumentExceptionThrown() {
+    exception.expect(IllegalArgumentException.class);
+    // given
+    LocalDate startDate = LocalDate.now().plusDays(2);
+    LocalDate endDate = LocalDate.now().plusDays(1);
+    // when
+    bookingService.findVacantDays(startDate, endDate);
+    // then
+    // IllegalArgumentException is thrown
+  }
+
+  @Test
   public void findVacantDates_bookingDatesOverlapRangeDates_noVacantDates() {
     // given: -S|-|----|-|E-
-    LocalDate startDate = LocalDate.of(2018, 10, 2);
-    LocalDate endDate = LocalDate.of(2018, 10, 3);
-    doReturn(
-        Lists.newArrayList(helper.buildBooking(LocalDate.of(2018, 10, 1), LocalDate.of(2018, 10, 4))))
+    LocalDate startDate = LocalDate.now().plusDays(2);
+    LocalDate endDate = LocalDate.now().plusDays(3);
+    doReturn(Lists.newArrayList(helper.buildBooking(
+            LocalDate.now().plusDays(1), LocalDate.now().plusDays(4))))
         .when(bookingRepository).findForDateRange(startDate, endDate);
     // then
     List<LocalDate> vacantDates = bookingService.findVacantDays(startDate, endDate);
@@ -84,8 +120,8 @@ public class BookingServiceImplTest {
   @Test
   public void findVacantDates_bookingDatesSameAsRangeDates_vacantRangeEndDate() {
     // given: --|S|----|E|--
-    LocalDate startDate = LocalDate.of(2018, 10, 1);
-    LocalDate endDate = LocalDate.of(2018, 10, 4);
+    LocalDate startDate = LocalDate.now().plusDays(1);
+    LocalDate endDate = LocalDate.now().plusDays(4);
     doReturn(
         Lists.newArrayList(helper.buildBooking(startDate, endDate)))
         .when(bookingRepository).findForDateRange(startDate, endDate);
@@ -99,8 +135,8 @@ public class BookingServiceImplTest {
   @Test
   public void findVacantDates_noBookingsFound_vacantDatesWithinDateRangeInclusive() {
     // given: --|-|----|-|--
-    LocalDate startDate = LocalDate.of(2018, 10, 1);
-    LocalDate endDate = LocalDate.of(2018, 10, 4);
+    LocalDate startDate = LocalDate.now().plusDays(1);
+    LocalDate endDate = LocalDate.now().plusDays(4);
     doReturn(Lists.newArrayList())
         .when(bookingRepository).findForDateRange(startDate, endDate);
     // when
@@ -128,8 +164,9 @@ public class BookingServiceImplTest {
   public void createBooking_bookingDatesNotAvailable_bookingDatesNotAvailableExceptionThrown() {
     exception.expect(BookingDatesNotAvailableException.class);
     // given
-    Booking booking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(3));
-    doReturn(Lists.newArrayList(helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(1))))
+    Booking booking = helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(4));
+    doReturn(Lists.newArrayList(helper.buildBooking(
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2))))
         .when(bookingRepository).findForDateRange(booking.getStartDate(), booking.getEndDate());
     // when
     bookingService.createBooking(booking);
@@ -140,7 +177,7 @@ public class BookingServiceImplTest {
   @Test
   public void createBooking_bookingDatesAvailable_bookingCreated() {
     // given
-    Booking booking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(3));
+    Booking booking = helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(4));
     doReturn(Lists.newArrayList())
         .when(bookingRepository).findForDateRange(booking.getStartDate(), booking.getEndDate());
     // when
@@ -154,10 +191,11 @@ public class BookingServiceImplTest {
     exception.expect(IllegalBookingStateException.class);
     // given
     Long id = 1L;
-    Booking booking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(1));
+    Booking booking = helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2));
     booking.setId(id);
 
-    Booking persistedBooking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(1));
+    Booking persistedBooking = helper.buildBooking(
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2));
     persistedBooking.setId(id);
     persistedBooking.setActive(false);
     doReturn(Optional.of(persistedBooking)).when(bookingRepository).findById(id);
@@ -172,14 +210,17 @@ public class BookingServiceImplTest {
     exception.expect(BookingDatesNotAvailableException.class);
     // given
     Long id = 1L;
-    Booking booking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(2));
+    Booking booking = helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(3));
     booking.setId(id);
 
-    Booking persistedBooking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(1));
+    Booking persistedBooking = helper.buildBooking(
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2));
     persistedBooking.setId(id);
     doReturn(Optional.of(persistedBooking)).when(bookingRepository).findById(id);
 
-    Booking otherBooking = helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2));
+    Booking otherBooking = helper.buildBooking(
+        LocalDate.now().plusDays(2), LocalDate.now().plusDays(3));
+    otherBooking.setId(2L);
     doReturn(Lists.newArrayList(persistedBooking, otherBooking))
         .when(bookingRepository).findForDateRange(booking.getStartDate(), booking.getEndDate());
     // when
@@ -192,10 +233,11 @@ public class BookingServiceImplTest {
   public void updateBooking_bookingDatesAvailable_bookingUpdated() {
     // given
     Long id = 1L;
-    Booking booking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(2));
+    Booking booking = helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(3));
     booking.setId(id);
 
-    Booking persistedBooking = helper.buildBooking(LocalDate.now(), LocalDate.now().plusDays(1));
+    Booking persistedBooking = helper.buildBooking(
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2));
     persistedBooking.setId(id);
     doReturn(Optional.of(persistedBooking)).when(bookingRepository).findById(id);
 
