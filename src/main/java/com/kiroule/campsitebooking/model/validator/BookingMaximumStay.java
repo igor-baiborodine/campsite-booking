@@ -13,11 +13,11 @@ import javax.validation.Payload;
  */
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {BookingStartDateBeforeEndDateValidator.class})
+@Constraint(validatedBy = {BookingMaximumStayValidator.class})
 @Documented
-public @interface BookingStartDateBeforeEndDate {
+public @interface BookingMaximumStay {
 
-  String message() default "Booking start date must be before end date";
+  String message() default "Booking stay length must be less or equal to three days";
 
   Class<?>[] groups() default { };
 

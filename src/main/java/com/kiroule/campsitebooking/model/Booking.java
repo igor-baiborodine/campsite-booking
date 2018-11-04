@@ -2,6 +2,8 @@ package com.kiroule.campsitebooking.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.kiroule.campsitebooking.model.validator.BookingAllowedStartDate;
+import com.kiroule.campsitebooking.model.validator.BookingMaximumStay;
 import com.kiroule.campsitebooking.model.validator.BookingStartDateBeforeEndDate;
 import java.time.LocalDate;
 import java.util.List;
@@ -31,6 +33,8 @@ import lombok.Data;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @BookingStartDateBeforeEndDate
+@BookingAllowedStartDate
+@BookingMaximumStay
 public class Booking {
 
   /**
