@@ -1,4 +1,4 @@
-package com.kiroule.campsitebooking.config;
+package com.kiroule.campsitebooking.util;
 
 import com.google.common.collect.Lists;
 import org.springframework.context.annotation.Bean;

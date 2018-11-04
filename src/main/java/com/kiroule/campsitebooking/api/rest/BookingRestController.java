@@ -5,6 +5,7 @@ import com.kiroule.campsitebooking.service.BookingService;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -69,7 +70,7 @@ public class BookingRestController {
   }
 
   @PostMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<Resource<Booking>> addBooking(@RequestBody() Booking booking) {
+  public ResponseEntity<Resource<Booking>> addBooking(@RequestBody() @Valid Booking booking) {
 
     Booking addedBooking = bookingService.createBooking(booking);
     Resource<Booking> resource = new Resource<>(addedBooking);
@@ -85,7 +86,7 @@ public class BookingRestController {
 
   @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<Resource<Booking>> updateBooking(
-      @PathVariable("id") long id, @RequestBody Booking booking) {
+      @PathVariable("id") long id, @RequestBody @Valid Booking booking) {
 
     Booking updatedBooking = bookingService.updateBooking(id, booking);
     Resource<Booking> resource = new Resource<>(updatedBooking);

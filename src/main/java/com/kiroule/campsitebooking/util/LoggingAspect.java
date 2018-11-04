@@ -35,7 +35,8 @@ public class LoggingAspect {
     log.info("{}: result[{}]", jp.getSignature().toShortString(), result);
   }
 
-  @AfterThrowing(value = "serviceLoggingTargets()", throwing = "ex")
+  @AfterThrowing(
+      value = "execution(public * com.kiroule.campsitebooking..*(..))", throwing = "ex")
   public void logThrowException(JoinPoint jp, Exception ex) {
     log.error("{}: error[{}]", jp.getSignature().toShortString(), ex.getMessage(), ex);
   }
