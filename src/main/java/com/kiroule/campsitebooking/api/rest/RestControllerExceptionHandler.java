@@ -13,15 +13,18 @@ import javax.validation.ConstraintViolation;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.StaleObjectStateException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -96,6 +99,34 @@ public class RestControllerExceptionHandler extends ResponseEntityExceptionHandl
         .status(HttpStatus.BAD_REQUEST)
         .message("Validation error")
         .subErrors(subErrors)
+        .build();
+
+    return buildResponseEntity(apiError);
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+      HttpHeaders headers, HttpStatus status, WebRequest request) {
+    ServletWebRequest servletWebRequest = (ServletWebRequest) request;
+    log.info("{} to {}", servletWebRequest.getHttpMethod(),
+        servletWebRequest.getRequest().getServletPath());
+
+    ApiError apiError = ApiError.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.BAD_REQUEST)
+        .message("Malformed JSON request")
+        .build();
+
+    return buildResponseEntity(apiError);
+  }
+
+  @ExceptionHandler(StaleObjectStateException.class)
+  protected ResponseEntity<Object> handleStaleObjectStateException(StaleObjectStateException ex) {
+
+    ApiError apiError = ApiError.builder()
+        .timestamp(LocalDateTime.now())
+        .status(HttpStatus.CONFLICT)
+        .message("Optimistic locking error - booking was updated by another transaction")
         .build();
 
     return buildResponseEntity(apiError);
