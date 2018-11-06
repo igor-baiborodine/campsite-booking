@@ -25,8 +25,8 @@ date(s). Demonstrate with appropriate test cases that the system can gracefully 
 * There are no restrictions on how reservations are stored as as long as system constraints are not violated.
 
 ### Running Project
-* Default active profile: h2
-* URL to access Campsite Booking service: http://localhost:8090/campsite/api/bookings/
+* Default active profile: **h2**
+* URL to access Campsite Booking service: **http://localhost:8090/campsite/api/bookings/**
 #### With Maven
 ```bash
 git clone https://github.com/igor-baiborodine/campsite-booking.git
@@ -43,14 +43,14 @@ java -jar target/campsite-booking-0.0.1-SNAPSHOT.jar
 
 ### Accessing Data in H2 Database
 #### H2 Console
-URL to access H2 console: http://localhost:8090/campsite/h2-console
+URL to access H2 console: **http://localhost:8090/campsite/h2-console**
 
 Fill in the login form as follows and click on Connect:
-* Saved Settings: Generic H2 (Embedded)
-* Setting Name: Generic H2 (Embedded)
-* Driver class: org.h2.Driver
-* JDBC URL: jdbc:h2:mem:campsite;MODE=MySQL
-* User Name: sa
+* Saved Settings: **Generic H2 (Embedded)**
+* Setting Name: **Generic H2 (Embedded)**
+* Driver class: **org.h2.Driver**
+* JDBC URL: **jdbc:h2:mem:campsite;MODE=MySQL**
+* User Name: **sa**
 * Password:
 
 ![H2 Console Login](/images/h2-console-login.bmp)
@@ -58,12 +58,28 @@ Fill in the login form as follows and click on Connect:
 
 ### Exploring API
 #### Swagger UI
-#### Endpoints
+URL to access Swagger UI: **http://localhost:8090/campsite/swagger-ui.html**
 
 ### Testing API
-#### Maven
+#### With Maven
+* Run only unit tests:
+```bash
+mvn test
+```
+* Run unit and integration tests:
+```bash
+mvn integration-test
+```
+* Run only integration tests:
+```bash
+mvn failsafe:integration-test
+```
+* Run any checks on results of integration tests to ensure quality criteria are met:
+```bash
+mvn clean verify
+```
 #### Unit & Integration Tests Coverage
-#### Concurrent Bookings Creation
+#### Concurrent Bookings Creation Test
 #### Basic Load Testing
 
 
