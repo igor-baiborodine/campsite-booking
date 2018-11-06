@@ -154,6 +154,37 @@ public class BookingRestControllerTestIT {
   }
 
   @Test
+  public void updateBooking_existingBookingAndBookingDatesNotAvailable_statusBadRequest() {
+    // given
+    LocalDate startDate = LocalDate.now().plusDays(1);
+    LocalDate endDate = LocalDate.now().plusDays(2);
+
+    Booking addedBooking = given()
+        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .body(helper.buildBooking(startDate, endDate))
+        .when().post(controllerPath)
+        .as(Booking.class);
+    addedBooking.setEndDate(endDate.plusDays(1));
+
+    // other booking
+    given()
+        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .body(helper.buildBooking(endDate, endDate.plusDays(1)))
+        .when().post(controllerPath)
+        .then().statusCode(HttpStatus.CREATED.value());
+    // when
+    ApiError apiError = given().pathParam("id", addedBooking.getId())
+        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .body(addedBooking)
+        .when().put(controllerPath + "/{id}")
+        .as(ApiError.class);
+    // then
+    Assertions.assertThat(apiError.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    Assertions.assertThat(apiError.getMessage()).isEqualTo(
+        String.format("No vacant dates available from %s to %s", startDate, endDate.plusDays(1)));
+  }
+
+  @Test
   public void cancelBooking_existingBooking_bookingCancelled() {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
