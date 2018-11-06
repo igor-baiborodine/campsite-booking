@@ -53,8 +53,8 @@ Fill in the login form as follows and click on Connect:
 * User Name: sa
 * Password:
 
-![alt text](../campsite-booking/images/h2-console-login.bmp)
-![alt text](../campsite-booking/images/h2-console-main-view.bmp)
+![H2 Console Login](/images/h2-console-login.bmp)
+![H2 Console Main View](/images/h2-console-main-view.bmp)
 
 ### Exploring API
 #### Swagger UI
