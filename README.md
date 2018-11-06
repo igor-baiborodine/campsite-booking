@@ -23,3 +23,47 @@ date(s). Demonstrate with appropriate test cases that the system can gracefully 
 * Provide appropriate error messages to the caller to indicate the error cases.
 * The system should be able to handle large volume of requests for getting the campsite availability.
 * There are no restrictions on how reservations are stored as as long as system constraints are not violated.
+
+### Running Project
+* Default active profile: h2
+* URL to access Campsite Booking service: http://localhost:8090/campsite/api/bookings/
+#### With Maven
+```bash
+git clone https://github.com/igor-baiborodine/campsite-booking.git
+cd campsite-booking
+mvn spring-boot:run
+```
+#### With Executable JAR
+```bash
+git clone https://github.com/igor-baiborodine/campsite-booking.git
+cd campsite-booking
+mvn package -DskipTests
+java -jar target/campsite-booking-0.0.1-SNAPSHOT.jar
+```
+
+### Accessing Data in H2 Database
+#### H2 Console
+URL to access H2 console: http://localhost:8090/campsite/h2-console
+
+Fill in the login form as follows and click on Connect:
+* Saved Settings: Generic H2 (Embedded)
+* Setting Name: Generic H2 (Embedded)
+* Driver class: org.h2.Driver
+* JDBC URL: jdbc:h2:mem:campsite;MODE=MySQL
+* User Name: sa
+* Password:
+
+![alt text](../campsite-booking/images/h2-console-login.bmp)
+![alt text](../campsite-booking/images/h2-console-main-view.bmp)
+
+### Exploring API
+#### Swagger UI
+#### Endpoints
+
+### Testing API
+#### Maven
+#### Unit & Integration Tests Coverage
+#### Concurrent Bookings Creation
+#### Basic Load Testing
+
+
