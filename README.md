@@ -45,7 +45,7 @@ java -jar target/campsite-booking-0.0.1-SNAPSHOT.jar
 #### H2 Console
 URL to access H2 console: **http://localhost:8090/campsite/h2-console**
 
-Fill in the login form as follows and click on Connect:
+Fill the login form as follows and click on Connect:
 * Saved Settings: **Generic H2 (Embedded)**
 * Setting Name: **Generic H2 (Embedded)**
 * Driver class: **org.h2.Driver**
@@ -79,6 +79,9 @@ mvn failsafe:integration-test
 mvn clean verify
 ```
 #### Unit & Integration Tests Coverage
+Results of running test with coverage in IntelliJ IDEA:
+![Test Coverage Results](/images/test-coverage-results.bmp)
+
 #### Concurrent Bookings Creation Test
 #### Basic Load Testing
 
