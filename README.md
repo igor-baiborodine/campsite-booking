@@ -64,22 +64,22 @@ URL to access Swagger UI: **http://localhost:8090/campsite/swagger-ui.html**
 #### With Maven
 * Run only unit tests:
 ```bash
-mvn test
+mvn clean test
 ```
 * Run unit and integration tests:
 ```bash
-mvn integration-test
+mvn clean integration-test
 ```
 * Run only integration tests:
 ```bash
-mvn failsafe:integration-test
+mvn clean failsafe:integration-test
 ```
 * Run any checks on results of integration tests to ensure quality criteria are met:
 ```bash
 mvn clean verify
 ```
 #### Unit & Integration Tests Coverage
-Results of running test with coverage in IntelliJ IDEA:
+Results of running tests with coverage in IntelliJ IDEA:
 ![Test Coverage Results](/images/test-coverage-results.bmp)
 
 #### Concurrent Bookings Creation Test
