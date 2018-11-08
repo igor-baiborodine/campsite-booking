@@ -29,9 +29,9 @@ date(s). Demonstrate with appropriate test cases that the system can gracefully 
 * URL to access Campsite Booking service: **http://localhost:8090/campsite/api/bookings/**
 #### With Maven
 ```bash
-git clone https://github.com/igor-baiborodine/campsite-booking.git
-cd campsite-booking
-mvn spring-boot:run
+$ git clone https://github.com/igor-baiborodine/campsite-booking.git
+$ cd campsite-booking
+$ mvn spring-boot:run
 ```
 #### With Executable JAR
 ```bash
@@ -64,25 +64,87 @@ URL to access Swagger UI: **http://localhost:8090/campsite/swagger-ui.html**
 #### With Maven
 * Run only unit tests:
 ```bash
-mvn clean test
+$ mvn clean test
 ```
 * Run unit and integration tests:
 ```bash
-mvn clean integration-test
+$ mvn clean integration-test
 ```
 * Run only integration tests:
 ```bash
-mvn clean failsafe:integration-test
+$ mvn clean failsafe:integration-test
 ```
 * Run any checks on results of integration tests to ensure quality criteria are met:
 ```bash
-mvn clean verify
+$ mvn clean verify
 ```
 #### Unit & Integration Tests Coverage
-Results of running tests with coverage in IntelliJ IDEA:
+Results of running of all tests with coverage in IntelliJ IDEA:
 ![Test Coverage Results](/images/test-coverage-results.bmp)
 
 #### Concurrent Bookings Creation Test
+Note: should be executed with **mysql** active profile
+
+To simulate concurrent bookings creation for the same booking dates, create three JSON files with booking data as follows:
+```bash
+$ cat booking-john-smith-1.json
+{
+  "email": "john.smith.1@email.com",
+  "fullName": "John Smith 1",
+  "startDate": "2018-11-11",
+  "endDate": "2018-11-13"
+}
+```
+```Bash
+$ cat booking-john-smith-2.json
+{
+  "email": "john.smith.2@email.com",
+  "fullName": "John Smith 2",
+  "startDate": "2018-11-11",
+  "endDate": "2018-11-13"
+}
+```
+```Bash
+$ cat booking-john-smith-3.json
+{
+  "email": "john.smith.3@email.com",
+  "fullName": "John Smith 3",
+  "startDate": "2018-11-11",
+  "endDate": "2018-11-13"
+}
+```
+Then execute the following command to send three concurrent HTTP POST requests:
+```Bash
+$ curl -H "Content-Type: application/json" -d @booking-john-smith-1.json http://localhost:8090/campsite/api/bookings & curl -H "Content-Type: application/json" -d @booking-john-smith-2.json http://localhost:8090/campsite/api/bookings & curl -H "Content-Type: application/json" -d @booking-john-smith-3.json http://localhost:8090/campsite/api/bookings
+```
+The response should be as follows after formatting, i.e., only one booking was created:
+```json
+{  
+   "id":2,
+   "version":0,
+   "email":"john.smith.1@email.com",
+   "fullName":"John Smith 1",
+   "startDate":"2018-11-11",
+   "endDate":"2018-11-13",
+   "active":true,
+   "_links":{  
+      "self":{  
+         "href":"http://localhost:8090/campsite/api/bookings/2"
+      }
+   }
+}
+{  
+   "status":"BAD_REQUEST",
+   "timestamp":"2018-11-07T23:02:57.592462",
+   "message":"No vacant dates available from 2018-11-11 to 2018-11-13"
+}
+{  
+   "status":"BAD_REQUEST",
+   "timestamp":"2018-11-07T23:02:57.618991",
+   "message":"No vacant dates available from 2018-11-11 to 2018-11-13"
+}
+```
+
 #### Basic Load Testing
 
 
