@@ -3,7 +3,11 @@ package com.kiroule.campsitebooking.repository;
 import com.kiroule.campsitebooking.model.Booking;
 import java.time.LocalDate;
 import java.util.List;
+import javax.persistence.LockModeType;
+import javax.persistence.QueryHint;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -20,6 +24,8 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
    * @param endDate range end date
    * @return list of active bookings for the given date range
    */
+  @Lock(LockModeType.PESSIMISTIC_READ)
+  @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="100")})
   @Query("select b from Booking b "
       + "where ((b.startDate < ?1 and ?2 < b.endDate) "
       + "or (?1 < b.endDate and b.endDate <= ?2) "

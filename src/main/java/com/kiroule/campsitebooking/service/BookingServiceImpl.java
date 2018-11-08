@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.CannotAcquireLockException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,9 +62,10 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  @Transactional
+  @Transactional()
+  @Retryable(include = CannotAcquireLockException.class,
+      maxAttempts = 2, backoff=@Backoff(delay = 150, maxDelay = 300))
   public Booking createBooking(Booking booking) {
-
     if (!booking.isNew()) {
       throw new IllegalBookingStateException("New booking must not have id");
     }
