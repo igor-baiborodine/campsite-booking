@@ -145,6 +145,66 @@ The response should be as follows after formatting, i.e., only one booking was c
 }
 ```
 
-#### Basic Load Testing
+#### Basic Load Testing 
+Basic load testing for retrieving vacant dates can performed with ApacheBench by executing the following command:
+```Bash
+$ ab -n 10000 -c 100 -k http://localhost:8090/campsite/api/bookings/vacant-dates
+```
+* **-n 10000** is the number of requests to make
+* **-c 100** is the number of concurrent requests to make at a time
+* **-k** sends the **KeepAlive** header, which asks the web server to not shut down the connection after each request is done, but to instead keep reusing it
 
+Result:
+```
+Benchmarking localhost (be patient)
+Completed 1000 requests
+Completed 2000 requests
+Completed 3000 requests
+Completed 4000 requests
+Completed 5000 requests
+Completed 6000 requests
+Completed 7000 requests
+Completed 8000 requests
+Completed 9000 requests
+Completed 10000 requests
+Finished 10000 requests
+
+
+Server Software:        
+Server Hostname:        localhost
+Server Port:            8090
+
+Document Path:          /campsite/api/bookings/vacant-dates
+Document Length:        404 bytes
+
+Concurrency Level:      100
+Time taken for tests:   5.760 seconds
+Complete requests:      10000
+Failed requests:        0
+Keep-Alive requests:    0
+Total transferred:      5230000 bytes
+HTML transferred:       4040000 bytes
+Requests per second:    1736.24 [#/sec] (mean)
+Time per request:       57.596 [ms] (mean)
+Time per request:       0.576 [ms] (mean, across all concurrent requests)
+Transfer rate:          886.77 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       3
+Processing:     4   57  42.2     47     373
+Waiting:        3   53  40.5     43     368
+Total:          4   57  42.2     47     373
+
+Percentage of the requests served within a certain time (ms)
+  50%     47
+  66%     62
+  75%     76
+  80%     85
+  90%    113
+  95%    142
+  98%    180
+  99%    201
+ 100%    373 (longest request)
+```
 
