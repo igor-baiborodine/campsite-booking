@@ -146,7 +146,7 @@ The response should be as follows after formatting, i.e., only one booking was c
 ```
 
 #### Basic Load Testing 
-Basic load testing for retrieving vacant dates can performed with ApacheBench by executing the following command:
+Basic load testing for retrieving vacant dates can be performed with the ApacheBench by executing the following command:
 ```Bash
 $ ab -n 10000 -c 100 -k http://localhost:8090/campsite/api/bookings/vacant-dates
 ```
