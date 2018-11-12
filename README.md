@@ -3,7 +3,7 @@
 [![Build
 Status](https://travis-ci.org/igor-baiborodine/campsite-booking.svg?branch=master)](https://travis-ci.org/igor-baiborodine/campsite-booking)
 
-A REST service that manages campsite bookings. 
+A RESTful web service that manages campsite bookings. 
 
 ### Technical Task
 #### Booking Constraints
