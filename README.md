@@ -87,31 +87,34 @@ Note: should be executed with **mysql** active profile
 
 To simulate concurrent bookings creation for the same booking dates, create three JSON files with booking data as follows:
 ```bash
-$ cat booking-john-smith-1.json
-{
-  "email": "john.smith.1@email.com",
-  "fullName": "John Smith 1",
-  "startDate": "2018-11-11",
-  "endDate": "2018-11-13"
-}
+$ {
+  echo '{'
+  echo '  "email": "john.smith.1@email.com"'
+  echo '  "fullName": "John Smith 1"'
+  echo '  "startDate": "2018-11-11"'
+  echo '  "endDate": "2018-11-13"'
+  echo '}'
+} > booking-john-smith-1.json
 ```
 ```Bash
-$ cat booking-john-smith-2.json
-{
-  "email": "john.smith.2@email.com",
-  "fullName": "John Smith 2",
-  "startDate": "2018-11-11",
-  "endDate": "2018-11-13"
-}
+$ {
+  echo '{'
+  echo '  "email": "john.smith.2@email.com"'
+  echo '  "fullName": "John Smith 2"'
+  echo '  "startDate": "2018-11-11"'
+  echo '  "endDate": "2018-11-13"'
+  echo '}'
+} > booking-john-smith-2.json
 ```
 ```Bash
-$ cat booking-john-smith-3.json
-{
-  "email": "john.smith.3@email.com",
-  "fullName": "John Smith 3",
-  "startDate": "2018-11-11",
-  "endDate": "2018-11-13"
-}
+$ {
+  echo '{'
+  echo '  "email": "john.smith.3@email.com"'
+  echo '  "fullName": "John Smith 3"'
+  echo '  "startDate": "2018-11-11"'
+  echo '  "endDate": "2018-11-13"'
+  echo '}'
+} > booking-john-smith-3.json
 ```
 Then execute the following command to send three concurrent HTTP POST requests:
 ```Bash
