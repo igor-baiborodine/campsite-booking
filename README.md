@@ -118,7 +118,9 @@ $ {
 ```
 Then execute the following command to send three concurrent HTTP POST requests:
 ```Bash
-$ curl -H "Content-Type: application/json" -d @booking-john-smith-1.json http://localhost:8090/campsite/api/bookings & curl -H "Content-Type: application/json" -d @booking-john-smith-2.json http://localhost:8090/campsite/api/bookings & curl -H "Content-Type: application/json" -d @booking-john-smith-3.json http://localhost:8090/campsite/api/bookings
+$ curl -H "Content-Type: application/json" -d @booking-john-smith-1.json http://localhost:8090/campsite/api/bookings & \
+  curl -H "Content-Type: application/json" -d @booking-john-smith-2.json http://localhost:8090/campsite/api/bookings & \
+  curl -H "Content-Type: application/json" -d @booking-john-smith-3.json http://localhost:8090/campsite/api/bookings &
 ```
 The response should be as follows after formatting, i.e., only one booking was created:
 ```json
