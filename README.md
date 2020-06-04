@@ -3,7 +3,7 @@
 [![Build
 Status](https://travis-ci.org/igor-baiborodine/campsite-booking.svg?branch=master)](https://travis-ci.org/igor-baiborodine/campsite-booking)
 
-#### Developed with
+#### Developed with pleasure!
 ![IntelliJ IDEA Logo](https://www.kiroule.com/img/content/page/projects/intellij-idea-logo.png)
 
 ## A RESTful web service that manages campsite bookings. 
