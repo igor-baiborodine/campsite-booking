@@ -2,11 +2,13 @@ package com.kiroule.campsitebooking.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.common.base.Objects;
 import com.kiroule.campsitebooking.model.validator.BookingAllowedStartDate;
 import com.kiroule.campsitebooking.model.validator.BookingMaximumStay;
 import com.kiroule.campsitebooking.model.validator.BookingStartDateBeforeEndDate;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,8 +21,8 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Data;
+
+import lombok.*;
 
 /**
  * Simple JavaBean domain object representing a booking.
@@ -29,8 +31,13 @@ import lombok.Data;
  */
 @Entity
 @Table(name = "bookings")
-@Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 @BookingStartDateBeforeEndDate
 @BookingAllowedStartDate
@@ -42,6 +49,7 @@ public class Booking {
    */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @EqualsAndHashCode.Include
   private Long id;
 
   @Version
