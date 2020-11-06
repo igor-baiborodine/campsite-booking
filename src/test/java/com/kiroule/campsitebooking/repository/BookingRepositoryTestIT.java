@@ -7,6 +7,9 @@ import com.kiroule.campsitebooking.model.Booking;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import org.assertj.core.util.Lists;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,11 @@ public class BookingRepositoryTestIT extends TestHelper {
 
   @Autowired
   private BookingRepository bookingRepository;
+
+  @Before
+  public void setUp() {
+    bookingRepository.deleteAll();
+  }
 
   @Test
   public void findById_savedBooking_savedBookingFound() {
