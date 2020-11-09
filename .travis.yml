@@ -1,9 +1,15 @@
-language: java
+dist: xenial
 
-jdk:
-- openjdk11
+addons:
+  sonarcloud:
+    organization: "igor-baiborodine-github"
 
-script: mvn clean integration-test
+env:
+  global:
+    secure: my4Vv6wvjgCZVqhwkzESO9d1wqnXh2otPrLaX2CF1yhJu61K6sTxrGkDlzD6ZfZOZR7ilOQjLXw8eU5QgO6NsP5Ba/yKwfrN8wfZoTM8Ejbv4kgYFG8w7rXeFySNixCu5YcvheM+L36iYXJclOGfIV5usv17fXi3GEbhO1rBpKUTUMtm/E6bTmkME81HImR/Z9wjgDQxGCx4C3//iXsPCn+l1mROLegbaWYmYWaD/TtiTqUgG5Im6ai22CvfCEcvhgLUG108oXsxKxzZqUP7xdZv4gUKVjbiH6FMNj0056UmNE395I9yr/twFjEeDgpAQc1hjxYG9kL9cOPknoVTT2f047i77vUKymzcy0rD02lq8ioe2YzV61fT3PZ+j7IeGVyHdvhpdQ178ndujtpfKZiwYA94qRAx1X7pk1UFQrNvSWMpV2Bwx9oZuyqgqNdHVvcgek4HXSei3c2d9Z25VJ3ptWKYWIF7wBiuU1+f3sCFpXZwTDWDJzZRUKO9hNlMKeguJU3xSFDfD3xNTlySOwqjMXOJVn10XaTXve1z2rv3ah3fPb2c5AKqX7OTv0Gojd0fTkszJ9/4IEDKiyGR5g4CSJdTkKxLRGF9DJxhmCaSuZitRE5bgEw3p78ZplU/3N2PRLXAtibmj3TVeESpqc246ACYf55tcKimNubqb7c=
+
+script:
+  - mvn clean verify sonar:sonar -Pcoverage
 
 notifications:
   email: false
