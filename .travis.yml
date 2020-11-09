@@ -1,8 +1,17 @@
+language: java
+
 dist: xenial
+
+jdk: openjdk11
 
 addons:
   sonarcloud:
     organization: "igor-baiborodine-github"
+
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.sonar/cache
 
 env:
   global:
