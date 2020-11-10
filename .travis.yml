@@ -16,7 +16,7 @@ cache:
   - "$HOME/.sonar/cache"
 
 script:
-- mvn clean verify sonar:sonar -Pcoverage
+- mvn clean verify
 
 notifications:
   email: false
