@@ -66,21 +66,18 @@ URL to access Swagger UI: **http://localhost:8090/campsite/swagger-ui.html**
 ```bash
 $ mvn clean test
 ```
-* Run unit and integration tests:
-```bash
-$ mvn clean integration-test
-```
 * Run only integration tests:
 ```bash
 $ mvn clean failsafe:integration-test
 ```
-* Run any checks on results of integration tests to ensure quality criteria are met:
+* Run unit and integration tests:
 ```bash
 $ mvn clean verify
 ```
-#### Unit & Integration Tests Coverage
-Results of running of all tests with coverage in IntelliJ IDEA:
-![Test Coverage Results](/images/test-coverage-results.bmp)
+* Run SonarCloud analysis, including test coverage, code smells, vulnerabilities, etc.:
+```bash
+$ mvn clean verfify sonar:sonar -Dsonar.login=<SONAR_TOKEN> -Pcoverage
+```
 
 #### Concurrent Bookings Creation Test
 Note: should be executed with **mysql** active profile
