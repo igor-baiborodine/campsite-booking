@@ -17,12 +17,12 @@ availability of the campsite for a given date range with the default being 1 mon
 * Provide an end point for reserving the campsite. The user will provide his/her email & full name at the time of reserving the campsite
 along with intended arrival date and departure date. Return a unique booking identifier back to the caller if the reservation is successful.
 * The unique booking identifier can be used to modify or cancel the reservation later on. Provide appropriate end point(s) to allow
-modification/cancellation of an existing reservation
+modification/cancellation of an existing reservation.
 * Due to the popularity of the campsite, there is a high likelihood of multiple users attempting to reserve the campsite for the same/overlapping
 date(s). Demonstrate with appropriate test cases that the system can gracefully handle concurrent requests to reserve the campsite.
 * Provide appropriate error messages to the caller to indicate the error cases.
 * The system should be able to handle large volume of requests for getting the campsite availability.
-* There are no restrictions on how reservations are stored as as long as system constraints are not violated.
+* There are no restrictions on how reservations are stored as long as system constraints are not violated.
 
 ### Running Project
 * Default active profile: **h2**
@@ -66,21 +66,18 @@ URL to access Swagger UI: **http://localhost:8090/campsite/swagger-ui.html**
 ```bash
 $ mvn clean test
 ```
-* Run unit and integration tests:
-```bash
-$ mvn clean integration-test
-```
 * Run only integration tests:
 ```bash
 $ mvn clean failsafe:integration-test
 ```
-* Run any checks on results of integration tests to ensure quality criteria are met:
+* Run unit and integration tests:
 ```bash
 $ mvn clean verify
 ```
-#### Unit & Integration Tests Coverage
-Results of running of all tests with coverage in IntelliJ IDEA:
-![Test Coverage Results](/images/test-coverage-results.bmp)
+* Run SonarCloud analysis, including test coverage, code smells, vulnerabilities, etc.:
+```bash
+$ mvn clean verfify sonar:sonar -Dsonar.login=<SONAR_TOKEN> -Pcoverage
+```
 
 #### Concurrent Bookings Creation Test
 Note: should be executed with **mysql** active profile
