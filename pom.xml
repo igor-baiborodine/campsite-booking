@@ -23,7 +23,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
-    <sonar.projectKey>igor-baiborodine-github_campsite-booking</sonar.projectKey>
+    <sonar.projectKey>igor-baiborodine_campsite-booking</sonar.projectKey>
   </properties>
 
   <dependencies>
