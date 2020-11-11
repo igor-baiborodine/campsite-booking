@@ -10,7 +10,7 @@ public class BookingAllowedStartDateValidator
 
   @Override
   public void initialize(BookingAllowedStartDate constraintAnnotation) {
-
+    // no additional initialization needed
   }
 
   @Override

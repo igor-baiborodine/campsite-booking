@@ -39,7 +39,7 @@ public class BookingMaximumStayValidatorTest {
     // when
     Set<ConstraintViolation<Booking>> violations = validator.validate(booking);
     // then
-    assertThat(violations.size()).isEqualTo(0);
+    assertThat(violations.size()).isZero();
   }
 
   @Test

@@ -13,7 +13,7 @@ public class BookingMaximumStayValidator
 
   @Override
   public void initialize(BookingMaximumStay constraintAnnotation) {
-
+    // no additional initialization needed
   }
 
   @Override
