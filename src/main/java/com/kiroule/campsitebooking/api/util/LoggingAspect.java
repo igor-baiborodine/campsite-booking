@@ -19,8 +19,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoggingAspect {
 
-  @Pointcut("execution(public * com.kiroule.campsitebooking.service..*(..))")
-  private void serviceLoggingTargets() {}
+  @Pointcut("execution(public * com.kiroule.campsitebooking.api.service..*(..))")
+  private void serviceLoggingTargets() {
+    // marker method, should be empty
+  }
 
   @Before("serviceLoggingTargets()")
   public void logEnterMethod(JoinPoint jp) {

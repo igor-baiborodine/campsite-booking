@@ -12,7 +12,7 @@ public class BookingStartDateBeforeEndDateValidator implements
 
   @Override
   public void initialize(BookingStartDateBeforeEndDate constraintAnnotation) {
-
+    // no additional initialization needed
   }
 
   @Override
