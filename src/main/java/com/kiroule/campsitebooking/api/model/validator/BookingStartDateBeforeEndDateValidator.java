@@ -17,9 +17,6 @@ public class BookingStartDateBeforeEndDateValidator implements
 
   @Override
   public boolean isValid(Booking booking, ConstraintValidatorContext constraintValidatorContext) {
-    if (booking == null) {
-      return true;
-    }
     return booking.getStartDate().isBefore(booking.getEndDate());
   }
 }

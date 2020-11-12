@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.org/igor-baiborodine/campsite-booking.svg?branch=master)](https://travis-ci.org/igor-baiborodine/campsite-booking) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=alert_status)](https://sonarcloud.io/dashboard?id=igor-baiborodine_campsite-booking)
-# Campsite Booking API  
-
 #### Developed with pleasure!
 ![IntelliJ IDEA Logo](https://www.kiroule.com/img/content/page/projects/intellij-idea-logo.png)
+ 
+# Campsite Booking API  
+[![Build Status](https://travis-ci.org/igor-baiborodine/campsite-booking.svg?branch=master)](https://travis-ci.org/igor-baiborodine/campsite-booking) [![Test Coverage](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=igor-baiborodine_campsite-booking)
 
 ## A RESTful web service that manages campsite bookings. 
 

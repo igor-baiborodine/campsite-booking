@@ -1,17 +1,12 @@
 package com.kiroule.campsitebooking.api.controller;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.equalTo;
-
 import com.kiroule.campsitebooking.api.TestHelper;
+import com.kiroule.campsitebooking.api.model.ApiError;
 import com.kiroule.campsitebooking.api.model.Booking;
 import com.kiroule.campsitebooking.api.repository.BookingRepository;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import io.restassured.response.ValidatableResponse;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
@@ -24,6 +19,13 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -131,6 +133,23 @@ public class BookingControllerTestIT {
   }
 
   @Test
+  public void addBooking_bookingDatesExceedMaximumStay_statusBadRequest() {
+    // given
+    LocalDate startDate = LocalDate.now().plusDays(1);
+    LocalDate endDate = LocalDate.now().plusDays(5);
+
+    // when
+    ApiError apiError = given()
+            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+            .body(helper.buildBooking(startDate, endDate))
+            .when().post(controllerPath)
+            .as(ApiError.class);
+    // then
+    Assertions.assertThat(apiError.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    Assertions.assertThat(apiError.getMessage()).isEqualTo("Validation error");
+  }
+
+  @Test
   public void updateBooking_existingBooking_bookingUpdated() {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
@@ -182,6 +201,39 @@ public class BookingControllerTestIT {
     Assertions.assertThat(apiError.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
     Assertions.assertThat(apiError.getMessage()).isEqualTo(
         String.format("No vacant dates available from %s to %s", startDate, endDate.plusDays(1)));
+  }
+
+  @Test
+  public void updateBooking_bookingWasUpdatedByAnotherTransaction_statusConflict() {
+    // given
+    LocalDate startDate = LocalDate.now().plusDays(1);
+    LocalDate endDate = LocalDate.now().plusDays(2);
+
+    Booking addedBooking = given()
+            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+            .body(helper.buildBooking(startDate, endDate))
+            .when().post(controllerPath)
+            .as(Booking.class);
+    addedBooking.setEndDate(endDate.plusDays(1));
+
+    Booking updatedBooking = given().pathParam("id", addedBooking.getId())
+            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+            .body(addedBooking)
+            .when().put(controllerPath + "/{id}")
+            .as(Booking.class);
+
+    addedBooking.setEndDate(endDate.plusDays(2));
+
+    // when
+    ApiError apiError = given().pathParam("id", addedBooking.getId())
+            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+            .body(addedBooking)
+            .when().put(controllerPath + "/{id}")
+            .as(ApiError.class);
+    // then
+    Assertions.assertThat(apiError.getStatus()).isEqualTo(HttpStatus.CONFLICT);
+    Assertions.assertThat(apiError.getMessage()).isEqualTo(
+            "Optimistic locking error - booking was updated by another transaction");
   }
 
   @Test

@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 @BookingStartDateBeforeEndDate
 @BookingAllowedStartDate
 @BookingMaximumStay
+@Generated
 public class Booking {
 
   /**
