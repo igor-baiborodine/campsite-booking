@@ -15,9 +15,6 @@ public class BookingAllowedStartDateValidator
 
   @Override
   public boolean isValid(Booking booking, ConstraintValidatorContext constraintValidatorContext) {
-    if (booking == null) {
-      return true;
-    }
     return LocalDate.now().isBefore(booking.getStartDate())
         && booking.getStartDate().isBefore(LocalDate.now().plusMonths(1).plusDays(1));
   }

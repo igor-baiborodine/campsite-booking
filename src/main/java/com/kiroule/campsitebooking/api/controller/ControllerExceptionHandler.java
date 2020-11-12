@@ -1,18 +1,9 @@
 package com.kiroule.campsitebooking.api.controller;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.kiroule.campsitebooking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsitebooking.api.exception.BookingNotFoundException;
 import com.kiroule.campsitebooking.api.exception.IllegalBookingStateException;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.validation.ConstraintViolation;
-import lombok.Builder;
-import lombok.Data;
+import com.kiroule.campsitebooking.api.model.ApiError;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -28,6 +19,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Igor Baiborodine
@@ -82,26 +77,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         .subErrors(subErrors)
         .build();
 
-    log.error("error[Validation error]", ex);
-    return buildResponseEntity(apiError);
-  }
-
-  @ExceptionHandler(javax.validation.ConstraintViolationException.class)
-  protected ResponseEntity<Object> handleConstraintViolation(
-      javax.validation.ConstraintViolationException ex) {
-
-    List<String> subErrors = ex.getConstraintViolations()
-        .stream()
-        .map(ConstraintViolation::getMessage)
-        .collect(Collectors.toList());
-
-    ApiError apiError = ApiError.builder()
-        .timestamp(LocalDateTime.now())
-        .status(HttpStatus.BAD_REQUEST)
-        .message("Validation error")
-        .subErrors(subErrors)
-        .build();
-
+    log.error("Validation error for {}", ex.getBindingResult().getTarget());
     return buildResponseEntity(apiError);
   }
 
@@ -139,18 +115,3 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
 }
 
-@Data
-@Builder
-class ApiError {
-
-  private HttpStatus status;
-
-  @JsonFormat(shape = JsonFormat.Shape.STRING)
-  private LocalDateTime timestamp;
-
-  private String message;
-
-  @JsonInclude(Include.NON_NULL)
-  private List<String> subErrors;
-
-}
