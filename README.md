@@ -87,30 +87,33 @@ To simulate concurrent bookings creation for the same booking dates, create thre
 ```bash
 $ {
   echo '{'
-  echo '  "email": "john.smith.1@email.com"'
-  echo '  "fullName": "John Smith 1"'
-  echo '  "startDate": "2018-11-11"'
-  echo '  "endDate": "2018-11-13"'
+  echo '  "uuid": "8db6b1f4-27ba-11eb-adc1-0242ac120002",'  
+  echo '  "email": "john.smith.1@email.com",'
+  echo '  "fullName": "John Smith 1",'
+  echo '  "startDate": "2020-12-11",'
+  echo '  "endDate": "2020-12-13"'
   echo '}'
 } > booking-john-smith-1.json
 ```
 ```Bash
 $ {
   echo '{'
-  echo '  "email": "john.smith.2@email.com"'
-  echo '  "fullName": "John Smith 2"'
-  echo '  "startDate": "2018-11-11"'
-  echo '  "endDate": "2018-11-13"'
+  echo '  "uuid": "acc07a12-27ba-11eb-adc1-0242ac120002",'
+  echo '  "email": "john.smith.2@email.com",'
+  echo '  "fullName": "John Smith 2",'
+  echo '  "startDate": "2020-12-11",'
+  echo '  "endDate": "2020-12-13"'
   echo '}'
 } > booking-john-smith-2.json
 ```
 ```Bash
 $ {
   echo '{'
-  echo '  "email": "john.smith.3@email.com"'
-  echo '  "fullName": "John Smith 3"'
-  echo '  "startDate": "2018-11-11"'
-  echo '  "endDate": "2018-11-13"'
+  echo '  "uuid": "c7fe1e6a-27ba-11eb-adc1-0242ac120002",'
+  echo '  "email": "john.smith.3@email.com",'
+  echo '  "fullName": "John Smith 3",'
+  echo '  "startDate": "2020-12-11",'
+  echo '  "endDate": "2020-12-13",'
   echo '}'
 } > booking-john-smith-3.json
 ```
@@ -127,8 +130,8 @@ The response should be as follows after formatting, i.e., only one booking was c
    "version":0,
    "email":"john.smith.1@email.com",
    "fullName":"John Smith 1",
-   "startDate":"2018-11-11",
-   "endDate":"2018-11-13",
+   "startDate":"2020-12-11",
+   "endDate":"2020-12-13",
    "active":true,
    "_links":{  
       "self":{  
@@ -138,13 +141,13 @@ The response should be as follows after formatting, i.e., only one booking was c
 }
 {  
    "status":"BAD_REQUEST",
-   "timestamp":"2018-11-07T23:02:57.592462",
-   "message":"No vacant dates available from 2018-11-11 to 2018-11-13"
+   "timestamp":"2020-11-15T23:02:57.592462",
+   "message":"No vacant dates available from 2020-12-11 to 2020-12-13"
 }
 {  
    "status":"BAD_REQUEST",
-   "timestamp":"2018-11-07T23:02:57.618991",
-   "message":"No vacant dates available from 2018-11-11 to 2018-11-13"
+   "timestamp":"2020-11-15T23:02:57.618991",
+   "message":"No vacant dates available from 2020-12-11 to 2020-12-13"
 }
 ```
 

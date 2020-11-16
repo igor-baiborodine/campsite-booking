@@ -1,15 +1,16 @@
 package com.kiroule.campsitebooking.api.service;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.kiroule.campsitebooking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsitebooking.api.exception.BookingNotFoundException;
 import com.kiroule.campsitebooking.api.exception.IllegalBookingStateException;
 import com.kiroule.campsitebooking.api.model.Booking;
 import com.kiroule.campsitebooking.api.repository.BookingRepository;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.CannotAcquireLockException;
@@ -36,10 +37,11 @@ public class BookingServiceImpl implements BookingService {
   @Override
   @Transactional(readOnly = true)
   public List<LocalDate> findVacantDays(LocalDate startDate, LocalDate endDate) {
+
     LocalDate now = LocalDate.now();
-    Preconditions.checkArgument(startDate.isAfter(now), "Start date must be in the future");
-    Preconditions.checkArgument(endDate.isAfter(now), "End date must be in the future");
-    Preconditions.checkArgument(startDate.isEqual(endDate) || startDate.isBefore(endDate),
+    checkArgument(startDate.isAfter(now), "Start date must be in the future");
+    checkArgument(endDate.isAfter(now), "End date must be in the future");
+    checkArgument(startDate.isEqual(endDate) || startDate.isBefore(endDate),
         "End date must be equal to start date or greater than start date");
 
     List<LocalDate> vacantDays = startDate
@@ -53,11 +55,11 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   @Transactional(readOnly = true)
-  public Booking findBookingById(long id) {
+  public Booking findBookingByUuid(UUID uuid) {
 
-    Optional<Booking> booking = bookingRepository.findById(id);
-    if (!booking.isPresent()) {
-      throw new BookingNotFoundException(String.format("Booking was not found for id=%d", id));
+    Optional<Booking> booking = bookingRepository.findByUuid(uuid);
+    if (booking.isEmpty()) {
+      throw new BookingNotFoundException(String.format("Booking was not found for uuid=%s", uuid));
     }
     return booking.get();
   }
@@ -67,8 +69,9 @@ public class BookingServiceImpl implements BookingService {
   @Retryable(include = CannotAcquireLockException.class,
       maxAttempts = 2, backoff=@Backoff(delay = 150, maxDelay = 300))
   public Booking createBooking(Booking booking) {
+
     if (!booking.isNew()) {
-      throw new IllegalBookingStateException("New booking must not have id");
+      throw new IllegalBookingStateException("New booking must not have persistence id");
     }
     List<LocalDate> vacantDays = findVacantDays(booking.getStartDate(), booking.getEndDate());
 
@@ -83,12 +86,12 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   @Transactional
-  public Booking updateBooking(Long id, Booking booking) {
+  public Booking updateBooking(Booking booking) {
 
-    Booking persistedBooking = findBookingById(booking.getId());
+    Booking persistedBooking = findBookingByUuid(booking.getUuid());
 
     if (!persistedBooking.isActive()) {
-      String message = String.format("Booking with id=%d is cancelled", booking.getId());
+      String message = String.format("Booking with uuid=%s is cancelled", booking.getUuid());
       throw new IllegalBookingStateException(message);
     }
     List<LocalDate> vacantDays = findVacantDays(booking.getStartDate(), booking.getEndDate());
@@ -99,16 +102,16 @@ public class BookingServiceImpl implements BookingService {
           booking.getStartDate(), booking.getEndDate());
       throw new BookingDatesNotAvailableException(message);
     }
-    booking.setId(id);
+    // cancelBooking method should be used to cancel booking
     booking.setActive(persistedBooking.isActive());
     return bookingRepository.save(booking);
   }
 
   @Override
   @Transactional
-  public boolean cancelBooking(long id) {
+  public boolean cancelBooking(UUID uuid) {
 
-    Booking booking = findBookingById(id);
+    Booking booking = findBookingByUuid(uuid);
     booking.setActive(false);
     booking = bookingRepository.save(booking);
     return !booking.isActive();

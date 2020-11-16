@@ -41,7 +41,7 @@ public class Swagger2Config {
         new Contact(
             "Igor Baiborodine",
             "https://github.com/igor-baiborodine/campsite-booking",
-            "igor dot baiborodine at yandex dot com"),
+            "igor at kiroule dot com"),
         "Apache 2.0",
         "http://www.apache.org/licenses/LICENSE-2.0",
         Lists.newArrayList());

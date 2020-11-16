@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.kiroule.campsitebooking.api.TestHelper;
 import com.kiroule.campsitebooking.api.model.Booking;
+import com.kiroule.campsitebooking.api.model.mapper.BookingMapper;
 import com.kiroule.campsitebooking.api.repository.BookingRepository;
 import java.time.LocalDate;
 import org.junit.Before;
@@ -41,12 +42,13 @@ public class BookingServiceImplTestIT {
   @Test
   public void cancelBooking_existingActiveBooking_bookingCancelled() {
     // given
-    Booking savedBooking = bookingService.createBooking(helper.buildBooking(
-        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2)));
+    Booking booking = BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2)));
+    Booking savedBooking = bookingService.createBooking(booking);
     assertThat(savedBooking.getId()).isNotNull();
-    assertThat(savedBooking).hasFieldOrPropertyWithValue("active", true);
+    assertThat(savedBooking.isActive()).isTrue();
     // when
-    boolean cancelled = bookingService.cancelBooking(savedBooking.getId());
+    boolean cancelled = bookingService.cancelBooking(savedBooking.getUuid());
     // then
     assertThat(cancelled).isTrue();
   }

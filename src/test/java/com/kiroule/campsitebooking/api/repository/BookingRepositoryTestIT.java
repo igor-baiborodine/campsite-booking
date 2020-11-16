@@ -4,10 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.kiroule.campsitebooking.api.TestHelper;
 import com.kiroule.campsitebooking.api.model.Booking;
+import com.kiroule.campsitebooking.api.model.mapper.BookingMapper;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
-public class BookingRepositoryTestIT extends TestHelper {
+public class BookingRepositoryTestIT {
+
+  @Autowired
+  private TestHelper helper;
 
   @Autowired
   private BookingRepository bookingRepository;
@@ -37,8 +41,9 @@ public class BookingRepositoryTestIT extends TestHelper {
   @Test
   public void findById_savedBooking_savedBookingFound() {
     // given
-    Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2)));
+    Booking savedBooking = bookingRepository.save(
+        BookingMapper.INSTANCE.toBooking(
+            helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2))));
     // when
     Optional<Booking> foundBooking = bookingRepository.findById(savedBooking.getId());
     // then
@@ -46,10 +51,22 @@ public class BookingRepositoryTestIT extends TestHelper {
   }
 
   @Test
+  public void findByUuid_savedBooking_savedBookingFound() {
+    // given
+    UUID uuid = UUID.randomUUID();
+    Booking savedBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(uuid, LocalDate.now().plusDays(1), LocalDate.now().plusDays(2))));
+    // when
+    Optional<Booking> foundBooking = bookingRepository.findByUuid(uuid);
+    // then
+    assertThat(foundBooking).hasValue(savedBooking);
+  }
+
+  @Test
   public void findForDateRange_bookingDatesBeforeRangeStartDate_noBookingFound() {
     // given: -S-E|-|----|-|--
-    Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2)));
+    bookingRepository.save(BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2))));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
         LocalDate.now().plusDays(3), LocalDate.now().plusDays(4));
@@ -58,10 +75,11 @@ public class BookingRepositoryTestIT extends TestHelper {
   }
 
   @Test
-  public void findForDateRange__bookingStartBeforeRangeStartDateAndBookingEndDateEqualsToRangeStartDate_noBookingFound() {
+  public void
+      findForDateRange_bookingStartBeforeRangeStartDateAndBookingEndDateEqualsToRangeStartDate_noBookingFound() {
     // given: -S|E|----|-|--
-    Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2)));
+    bookingRepository.save(BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2))));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
         LocalDate.now().plusDays(2), LocalDate.now().plusDays(3));
@@ -72,8 +90,8 @@ public class BookingRepositoryTestIT extends TestHelper {
   @Test
   public void findForDateRange_bookingStartDateBeforeRangeStartDateAndBookingEndDateWithinRangeDates_bookingFound() {
     // given: -S|-|E---|-|--
-    Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.now().plusDays(1), LocalDate.now().plusDays(3)));
+    Booking savedBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(3))));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
         LocalDate.now().plusDays(2), LocalDate.now().plusDays(4));
@@ -85,8 +103,8 @@ public class BookingRepositoryTestIT extends TestHelper {
   @Test
   public void findForDateRange_bookingStartDateEqualsToRangeStartDateAndBookingEndDateWithinRangeDates_bookingFound() {
     // given: --|S|E---|-|--
-    Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.now().plusDays(1), LocalDate.now().plusDays(2)));
+    Booking savedBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2))));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
         LocalDate.now().plusDays(1), LocalDate.now().plusDays(3));
@@ -98,8 +116,8 @@ public class BookingRepositoryTestIT extends TestHelper {
   @Test
   public void findForDateRange_bookingDatesWithinRangeDates_bookingFound() {
     // given: --|-|S--E|-|--
-    Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.now().plusDays(2), LocalDate.now().plusDays(3)));
+    Booking savedBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(LocalDate.now().plusDays(2), LocalDate.now().plusDays(3))));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
         LocalDate.now().plusDays(1), LocalDate.now().plusDays(4));
@@ -111,8 +129,8 @@ public class BookingRepositoryTestIT extends TestHelper {
   @Test
   public void findForDateRange__startBookingDateWithinRangeDatesAndBookingEndDateEqualsToRangeEndDate_bookingFound() {
     // given: --|-|---S|E|--
-    Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.now().plusDays(2), LocalDate.now().plusDays(3)));
+    Booking savedBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(LocalDate.now().plusDays(2), LocalDate.now().plusDays(3))));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
         LocalDate.now().plusDays(1), LocalDate.now().plusDays(3));
@@ -124,8 +142,8 @@ public class BookingRepositoryTestIT extends TestHelper {
   @Test
   public void findForDateRange_bookingStartDateBeforeRangeEndDateAndBookingEndDateAfterRangeEndDate_bookingFound() {
     // given: --|-|---S|-|E-
-    Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.now().plusDays(2), LocalDate.now().plusDays(4)));
+    Booking savedBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(LocalDate.now().plusDays(2), LocalDate.now().plusDays(4))));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
         LocalDate.now().plusDays(1), LocalDate.now().plusDays(3));
@@ -137,8 +155,8 @@ public class BookingRepositoryTestIT extends TestHelper {
   @Test
   public void findForDateRange_bookingStartDateEqualsToRangeEndDateAndBookingEndDateAfterRangeEndDate_bookingFound() {
     // given: --|-|----|S|E-
-    Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.now().plusDays(3), LocalDate.now().plusDays(4)));
+    Booking savedBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(LocalDate.now().plusDays(3), LocalDate.now().plusDays(4))));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
         LocalDate.now().plusDays(1), LocalDate.now().plusDays(3));
@@ -150,8 +168,8 @@ public class BookingRepositoryTestIT extends TestHelper {
   @Test
   public void findForDateRange_bookingDatesAfterRangeEndDate_noBookingFound() {
     // given: --|-|----|-|S-E-
-    Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.now().plusDays(3), LocalDate.now().plusDays(4)));
+    Booking savedBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(LocalDate.now().plusDays(3), LocalDate.now().plusDays(4))));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
         LocalDate.now().plusDays(1), LocalDate.now().plusDays(2));
@@ -162,8 +180,8 @@ public class BookingRepositoryTestIT extends TestHelper {
   @Test
   public void findForDateRange_bookingDatesOverlapRangeDates_bookingFound() {
     // given: -S|-|----|-|E-
-    Booking savedBooking = bookingRepository.save(buildBooking(
-        LocalDate.now().plusDays(1), LocalDate.now().plusDays(4)));
+    Booking savedBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(4))));
     // when
     List<Booking> bookings = bookingRepository.findForDateRange(
         LocalDate.now().plusDays(2), LocalDate.now().plusDays(3));

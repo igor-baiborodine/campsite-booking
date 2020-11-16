@@ -1,14 +1,17 @@
 package com.kiroule.campsitebooking.api.repository;
 
 import com.kiroule.campsitebooking.api.model.Booking;
-import java.time.LocalDate;
-import java.util.List;
-import javax.persistence.LockModeType;
-import javax.persistence.QueryHint;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.CrudRepository;
+
+import javax.persistence.LockModeType;
+import javax.persistence.QueryHint;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Repository interface for {@link Booking} instances.
@@ -16,6 +19,15 @@ import org.springframework.data.repository.CrudRepository;
  * @author Igor Baiborodine
  */
 public interface BookingRepository extends CrudRepository<Booking, Long> {
+
+  /**
+   * Find a booking for the given UUID.
+   *
+   * @param uuid booking uuid
+   * @return booking for the given UUID
+   */
+  @Lock(LockModeType.PESSIMISTIC_READ)
+  Optional<Booking> findByUuid(UUID uuid);
 
   /**
    * Find active bookings for the given date range.
