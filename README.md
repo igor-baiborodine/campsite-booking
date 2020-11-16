@@ -2,7 +2,11 @@
 ![IntelliJ IDEA Logo](https://www.kiroule.com/img/content/page/projects/intellij-idea-logo.png)
  
 # Campsite Booking API  
-[![Build Status](https://travis-ci.org/igor-baiborodine/campsite-booking.svg?branch=master)](https://travis-ci.org/igor-baiborodine/campsite-booking) [![Test Coverage](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=igor-baiborodine_campsite-booking)
+[![Build Status](https://travis-ci.org/igor-baiborodine/campsite-booking.svg?branch=master)](https://travis-ci.org/igor-baiborodine/campsite-booking) 
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=alert_status)](https://sonarcloud.io/dashboard?id=igor-baiborodine_campsite-booking) 
+[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=igor-baiborodine_campsite-booking)
+[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=igor-baiborodine_campsite-booking)
+[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=igor-baiborodine_campsite-booking)
 
 ## A RESTful web service that manages campsite bookings. 
 
