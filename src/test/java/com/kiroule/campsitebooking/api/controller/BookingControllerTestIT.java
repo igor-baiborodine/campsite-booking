@@ -1,13 +1,20 @@
 package com.kiroule.campsitebooking.api.controller;
 
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
+
 import com.kiroule.campsitebooking.api.TestHelper;
 import com.kiroule.campsitebooking.api.model.ApiError;
-import com.kiroule.campsitebooking.api.model.Booking;
+import com.kiroule.campsitebooking.api.model.dto.BookingDto;
 import com.kiroule.campsitebooking.api.repository.BookingRepository;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import io.restassured.response.ValidatableResponse;
-import org.assertj.core.api.Assertions;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,13 +26,6 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.equalTo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -55,10 +55,9 @@ public class BookingControllerTestIT {
 
   @Test
   public void getActuatorHealth_statusOkAndBodyContainsStatusUp() {
-    ValidatableResponse response =
-        given()
-            .when().get("/actuator/health")
-            .then();
+    ValidatableResponse response = given()
+        .when().get("/actuator/health")
+        .then();
     response.statusCode(HttpStatus.OK.value());
     response.body("status", equalTo("UP"));
   }
@@ -79,14 +78,15 @@ public class BookingControllerTestIT {
         .datesUntil(endDate.plusDays(1))
         .map(String::valueOf)
         .collect(Collectors.toList());
-    Assertions.assertThat(vacantDates).isEqualTo(expected);
+    assertThat(vacantDates).isEqualTo(expected);
   }
 
   @Test
   public void getBooking_nonExistingBooking_statusNotFound() {
-    Long nonExistingBookingId = Long.MAX_VALUE;
-    given().pathParam("id", nonExistingBookingId)
-        .when().get(controllerPath + "/{id}")
+    UUID nonExistingBookingUuid = UUID.randomUUID();
+    given()
+        .pathParam("uuid", nonExistingBookingUuid)
+        .when().get(controllerPath + "/{uuid}")
         .then().statusCode(HttpStatus.NOT_FOUND.value());
   }
 
@@ -95,18 +95,19 @@ public class BookingControllerTestIT {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(2);
+    UUID uuid = UUID.randomUUID();
 
-    Booking addedBooking = given()
+    BookingDto addedBooking = given()
         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-        .body(helper.buildBooking(startDate, endDate))
+        .body(helper.buildBooking(uuid, startDate, endDate))
         .when().post(controllerPath)
-        .as(Booking.class);
+        .as(BookingDto.class);
     // when
-    Booking foundBooking = given().pathParam("id", addedBooking.getId())
-        .when().get(controllerPath + "/{id}")
-        .as(Booking.class);
+    BookingDto foundBooking = given().pathParam("uuid", uuid)
+        .when().get(controllerPath + "/{uuid}")
+        .as(BookingDto.class);
     // then
-    Assertions.assertThat(foundBooking).isEqualTo(addedBooking);
+    assertThat(foundBooking).isEqualTo(addedBooking);
   }
 
   @Test
@@ -127,8 +128,8 @@ public class BookingControllerTestIT {
         .when().post(controllerPath)
         .as(ApiError.class);
     // then
-    Assertions.assertThat(apiError.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
-    Assertions.assertThat(apiError.getMessage()).isEqualTo(
+    assertThat(apiError.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(apiError.getMessage()).isEqualTo(
         String.format("No vacant dates available from %s to %s", startDate, endDate));
   }
 
@@ -137,16 +138,15 @@ public class BookingControllerTestIT {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(5);
-
     // when
     ApiError apiError = given()
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .body(helper.buildBooking(startDate, endDate))
-            .when().post(controllerPath)
-            .as(ApiError.class);
+        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .body(helper.buildBooking(startDate, endDate))
+        .when().post(controllerPath)
+        .as(ApiError.class);
     // then
-    Assertions.assertThat(apiError.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
-    Assertions.assertThat(apiError.getMessage()).isEqualTo("Validation error");
+    assertThat(apiError.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(apiError.getMessage()).isEqualTo("Validation error");
   }
 
   @Test
@@ -154,22 +154,25 @@ public class BookingControllerTestIT {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(2);
+    UUID uuid = UUID.randomUUID();
 
-    Booking addedBooking = given()
+    BookingDto addedBooking = given()
         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-        .body(helper.buildBooking(startDate, endDate))
+        .body(helper.buildBooking(uuid, startDate, endDate))
         .when().post(controllerPath)
-        .as(Booking.class);
+        .as(BookingDto.class);
     addedBooking.setEndDate(endDate.plusDays(1));
     // when
-    Booking updatedBooking = given().pathParam("id", addedBooking.getId())
+    BookingDto updatedBooking = given()
+        .pathParam("uuid", uuid)
         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
         .body(addedBooking)
-        .when().put(controllerPath + "/{id}")
-        .as(Booking.class);
+        .when().put(controllerPath + "/{uuid}")
+        .as(BookingDto.class);
     // then
-    Assertions.assertThat(updatedBooking.getVersion()).isEqualTo(addedBooking.getVersion() + 1);
-    Assertions.assertThat(updatedBooking.getEndDate()).isEqualTo(endDate.plusDays(1));
+    assertThat(updatedBooking.getUuid()).isEqualTo(addedBooking.getUuid());
+    assertThat(updatedBooking.getVersion()).isEqualTo(addedBooking.getVersion() + 1);
+    assertThat(updatedBooking.getEndDate()).isEqualTo(endDate.plusDays(1));
   }
 
   @Test
@@ -177,29 +180,30 @@ public class BookingControllerTestIT {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(2);
+    UUID uuid = UUID.randomUUID();
 
-    Booking addedBooking = given()
+    BookingDto addedBooking = given()
         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-        .body(helper.buildBooking(startDate, endDate))
+        .body(helper.buildBooking(uuid, startDate, endDate))
         .when().post(controllerPath)
-        .as(Booking.class);
+        .as(BookingDto.class);
     addedBooking.setEndDate(endDate.plusDays(1));
-
     // other booking
     given()
         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-        .body(helper.buildBooking(endDate, endDate.plusDays(1)))
+        .body(helper.buildBooking(UUID.randomUUID(), endDate, endDate.plusDays(1)))
         .when().post(controllerPath)
         .then().statusCode(HttpStatus.CREATED.value());
     // when
-    ApiError apiError = given().pathParam("id", addedBooking.getId())
+    ApiError apiError = given()
+        .pathParam("uuid", addedBooking.getUuid())
         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
         .body(addedBooking)
-        .when().put(controllerPath + "/{id}")
+        .when().put(controllerPath + "/{uuid}")
         .as(ApiError.class);
     // then
-    Assertions.assertThat(apiError.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
-    Assertions.assertThat(apiError.getMessage()).isEqualTo(
+    assertThat(apiError.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(apiError.getMessage()).isEqualTo(
         String.format("No vacant dates available from %s to %s", startDate, endDate.plusDays(1)));
   }
 
@@ -208,31 +212,33 @@ public class BookingControllerTestIT {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(2);
+    UUID uuid = UUID.randomUUID();
 
-    Booking addedBooking = given()
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .body(helper.buildBooking(startDate, endDate))
-            .when().post(controllerPath)
-            .as(Booking.class);
+    BookingDto addedBooking = given()
+        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .body(helper.buildBooking(uuid, startDate, endDate))
+        .when().post(controllerPath)
+        .as(BookingDto.class);
     addedBooking.setEndDate(endDate.plusDays(1));
 
-    Booking updatedBooking = given().pathParam("id", addedBooking.getId())
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .body(addedBooking)
-            .when().put(controllerPath + "/{id}")
-            .as(Booking.class);
+    given()
+        .pathParam("uuid", uuid)
+        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .body(addedBooking)
+        .when().put(controllerPath + "/{uuid}")
+        .as(BookingDto.class);
 
     addedBooking.setEndDate(endDate.plusDays(2));
-
     // when
-    ApiError apiError = given().pathParam("id", addedBooking.getId())
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .body(addedBooking)
-            .when().put(controllerPath + "/{id}")
-            .as(ApiError.class);
+    ApiError apiError = given()
+        .pathParam("uuid", uuid)
+        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .body(addedBooking)
+        .when().put(controllerPath + "/{uuid}")
+        .as(ApiError.class);
     // then
-    Assertions.assertThat(apiError.getStatus()).isEqualTo(HttpStatus.CONFLICT);
-    Assertions.assertThat(apiError.getMessage()).isEqualTo(
+    assertThat(apiError.getStatus()).isEqualTo(HttpStatus.CONFLICT);
+    assertThat(apiError.getMessage()).isEqualTo(
             "Optimistic locking error - booking was updated by another transaction");
   }
 
@@ -241,15 +247,16 @@ public class BookingControllerTestIT {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(2);
+    UUID uuid = UUID.randomUUID();
 
-    Booking addedBooking = given()
+    given()
         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-        .body(helper.buildBooking(startDate, endDate))
+        .body(helper.buildBooking(uuid, startDate, endDate))
         .when().post(controllerPath)
-        .as(Booking.class);
+        .as(BookingDto.class);
     // when
-    ValidatableResponse response = given().pathParam("id", addedBooking.getId())
-        .when().delete(controllerPath + "/{id}").then();
+    ValidatableResponse response = given().pathParam("uuid", uuid)
+        .when().delete(controllerPath + "/{uuid}").then();
     // then
     response.statusCode(HttpStatus.NO_CONTENT.value());
   }

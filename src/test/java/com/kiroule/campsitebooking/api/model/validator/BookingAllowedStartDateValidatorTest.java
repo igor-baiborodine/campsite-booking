@@ -3,7 +3,7 @@ package com.kiroule.campsitebooking.api.model.validator;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.kiroule.campsitebooking.api.TestHelper;
-import com.kiroule.campsitebooking.api.model.Booking;
+import com.kiroule.campsitebooking.api.model.dto.BookingDto;
 import java.lang.annotation.Annotation;
 import java.time.LocalDate;
 import java.util.Set;
@@ -35,9 +35,10 @@ public class BookingAllowedStartDateValidatorTest {
   @Test
   public void isValid_bookingStartDateIsTomorrow_noValidationErrors() {
     // given
-    Booking booking = helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(4));
+    BookingDto bookingDto = helper.buildBooking(
+        LocalDate.now().plusDays(1), LocalDate.now().plusDays(4));
     // when
-    Set<ConstraintViolation<Booking>> violations = validator.validate(booking);
+    Set<ConstraintViolation<BookingDto>> violations = validator.validate(bookingDto);
     // then
     assertThat(violations.size()).isZero();
   }
@@ -45,10 +46,10 @@ public class BookingAllowedStartDateValidatorTest {
   @Test
   public void isValid_bookingStartDateOneMonthAhead_noValidationErrors() {
     // given
-    Booking booking = helper.buildBooking(
+    BookingDto bookingDto = helper.buildBooking(
         LocalDate.now().plusMonths(1), LocalDate.now().plusMonths(1).plusDays(3));
     // when
-    Set<ConstraintViolation<Booking>> violations = validator.validate(booking);
+    Set<ConstraintViolation<BookingDto>> violations = validator.validate(bookingDto);
     // then
     assertThat(violations.size()).isZero();
   }
@@ -56,13 +57,13 @@ public class BookingAllowedStartDateValidatorTest {
   @Test
   public void isValid_bookingStartDateOneMonthAndOneDayAhead_bookingAllowedStartDateErrorThrown() {
     // given
-    Booking booking = helper.buildBooking(
+    BookingDto bookingDto = helper.buildBooking(
         LocalDate.now().plusMonths(1).plusDays(1), LocalDate.now().plusMonths(1).plusDays(3));
     // when
-    Set<ConstraintViolation<Booking>> violations = validator.validate(booking);
+    Set<ConstraintViolation<BookingDto>> violations = validator.validate(bookingDto);
     // then
     assertThat(violations.size()).isEqualTo(1);
-    ConstraintViolation<Booking> violation = violations.iterator().next();
+    ConstraintViolation<BookingDto> violation = violations.iterator().next();
     Annotation annotation = violation.getConstraintDescriptor().getAnnotation();
     assertThat(annotation.annotationType().getCanonicalName())
         .isEqualTo(BookingAllowedStartDate.class.getCanonicalName());

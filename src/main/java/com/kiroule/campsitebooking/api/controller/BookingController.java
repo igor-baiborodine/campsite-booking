@@ -1,12 +1,9 @@
 package com.kiroule.campsitebooking.api.controller;
 
 import com.kiroule.campsitebooking.api.model.Booking;
+import com.kiroule.campsitebooking.api.model.dto.BookingDto;
+import com.kiroule.campsitebooking.api.model.mapper.BookingMapper;
 import com.kiroule.campsitebooking.api.service.BookingService;
-
-import java.net.URI;
-import java.time.LocalDate;
-import java.util.List;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -17,15 +14,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Igor Baiborodine
@@ -58,54 +53,50 @@ public class BookingController {
     return new ResponseEntity<>(vacantDates, HttpStatus.OK);
   }
 
-  @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<Resource<Booking>> getBooking(@PathVariable() long id) {
+  @GetMapping(value = "/{uuid}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<Resource<BookingDto>> getBooking(@PathVariable() UUID uuid) {
 
-    Booking booking = bookingService.findBookingById(id);
-    Resource<Booking> resource = new Resource<>(booking);
-
-    Link selfLink = ControllerLinkBuilder.linkTo(
-        ControllerLinkBuilder.methodOn(this.getClass()).getBooking(id)).withSelfRel();
-    resource.add(selfLink);
-    return new ResponseEntity<>(resource, HttpStatus.OK);
+    Booking booking = bookingService.findBookingByUuid(uuid);
+    return new ResponseEntity<>(getResource(booking), HttpStatus.OK);
   }
 
   @PostMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<Resource<Booking>> addBooking(@RequestBody() @Valid Booking booking) {
+  public ResponseEntity<Resource<BookingDto>> addBooking(@RequestBody() @Valid BookingDto bookingDto) {
 
-    Booking addedBooking = bookingService.createBooking(booking);
-    Resource<Booking> resource = new Resource<>(addedBooking);
-
-    Link selfLink = ControllerLinkBuilder
-        .linkTo(this.getClass()).slash(addedBooking.getId()).withSelfRel();
-    resource.add(selfLink);
-
+    Booking addedBooking = bookingService.createBooking(BookingMapper.INSTANCE.toBooking(bookingDto));
+    Resource<BookingDto> resource = getResource(addedBooking);
     HttpHeaders headers = new HttpHeaders();
-    headers.setLocation(URI.create(selfLink.getHref()));
+    headers.setLocation(URI.create(resource.getLinks().get(0).getHref()));
+
     return new ResponseEntity<>(resource, headers, HttpStatus.CREATED);
   }
 
-  @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<Resource<Booking>> updateBooking(
-      @PathVariable("id") long id, @RequestBody @Valid Booking booking) {
+  @PutMapping(value = "/{uuid}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<Resource<BookingDto>> updateBooking(
+      @PathVariable("uuid") UUID uuid, @RequestBody @Valid BookingDto bookingDto) {
 
-    Booking updatedBooking = bookingService.updateBooking(id, booking);
-    Resource<Booking> resource = new Resource<>(updatedBooking);
-
-    Link selfLink = ControllerLinkBuilder
-        .linkTo(this.getClass()).slash(updatedBooking.getId()).withSelfRel();
-    resource.add(selfLink);
-    return new ResponseEntity<>(resource, HttpStatus.OK);
+    Booking updatedBooking = bookingService.updateBooking(
+        BookingMapper.INSTANCE.toBooking(bookingDto));
+    return new ResponseEntity<>(getResource(updatedBooking), HttpStatus.OK);
   }
 
-  @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<Void> updateBooking(@PathVariable("id") long id) {
+  @DeleteMapping(value = "/{uuid}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<Void> updateBooking(@PathVariable("uuid") UUID uuid) {
 
-    boolean cancelled = bookingService.cancelBooking(id);
+    boolean cancelled = bookingService.cancelBooking(uuid);
     if (cancelled) {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+  }
+
+  private Resource<BookingDto> getResource(Booking booking) {
+    Resource<BookingDto> resource = new Resource<>(BookingMapper.INSTANCE.toBookingDto(booking));
+
+    Link selfLink = ControllerLinkBuilder
+        .linkTo(this.getClass()).slash(booking.getUuid()).withSelfRel();
+    resource.add(selfLink);
+    return resource;
   }
 
 }

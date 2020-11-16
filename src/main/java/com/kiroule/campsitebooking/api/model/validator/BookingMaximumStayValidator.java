@@ -1,16 +1,15 @@
 package com.kiroule.campsitebooking.api.model.validator;
 
-import com.kiroule.campsitebooking.api.model.Booking;
-
+import com.kiroule.campsitebooking.api.model.dto.BookingDto;
+import java.time.Period;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.time.Period;
 
 /**
  * @author Igor Baiborodine
  */
 public class BookingMaximumStayValidator
-    implements ConstraintValidator<BookingMaximumStay, Booking> {
+    implements ConstraintValidator<BookingMaximumStay, BookingDto> {
 
   @Override
   public void initialize(BookingMaximumStay constraintAnnotation) {
@@ -18,7 +17,7 @@ public class BookingMaximumStayValidator
   }
 
   @Override
-  public boolean isValid(Booking booking, ConstraintValidatorContext constraintValidatorContext) {
+  public boolean isValid(BookingDto booking, ConstraintValidatorContext constraintValidatorContext) {
     return Period.between(booking.getStartDate(), booking.getEndDate()).getDays() <= 3;
   }
 }
