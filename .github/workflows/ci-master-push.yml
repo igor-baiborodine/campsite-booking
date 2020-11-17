@@ -1,4 +1,4 @@
-name: Master Branch - Pull Requests
+name: Master Branch - Push
 
 on:
   push:
