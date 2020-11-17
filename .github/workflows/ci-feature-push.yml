@@ -4,12 +4,11 @@ on:
   push:
     branches-ignore:
       - 'master'
-      - 'release*'
 
 jobs:
 
   test:
-    name: Unit Test
+    name: Test - Unit & Integration
     runs-on: ubuntu-18.04
 
     steps:
