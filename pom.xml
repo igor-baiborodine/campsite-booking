@@ -10,7 +10,7 @@
   <packaging>jar</packaging>
 
   <name>campsite-booking</name>
-  <description>Spring Boot REST API Sample Application</description>
+  <description>Campsite Booking REST API</description>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -19,19 +19,27 @@
     <relativePath/> <!-- lookup parent from bookingRepository -->
   </parent>
 
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>Campsite Booking REST API</name>
+      <url>https://maven.pkg.github.com/igor-baiborodine/campsite-booking</url>
+    </repository>
+  </distributionManagement>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
+    <!-- Sonar Cloud -->
     <sonar.organization>igor-baiborodine-github</sonar.organization>
     <sonar.projectKey>igor-baiborodine_campsite-booking</sonar.projectKey>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.inclusions>src/main/java/**,src/main/resources/**</sonar.inclusions>
     <sonar.issue.ignore.block>generated</sonar.issue.ignore.block>
     <sonar.issue.ignore.block.generated.beginBlockRegexp>@Generated</sonar.issue.ignore.block.generated.beginBlockRegexp>
     <sonar.issue.ignore.block.generated.endBlockRegexp></sonar.issue.ignore.block.generated.endBlockRegexp>
-    <!-- automatically run annotation processors within the incremental compilation -->
-    <m2e.apt.activation>jdt_apt</m2e.apt.activation>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
   <dependencies>
