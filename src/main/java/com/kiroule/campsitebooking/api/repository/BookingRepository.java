@@ -26,7 +26,6 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
    * @param uuid booking uuid
    * @return booking for the given UUID
    */
-  @Lock(LockModeType.PESSIMISTIC_READ)
   Optional<Booking> findByUuid(UUID uuid);
 
   /**

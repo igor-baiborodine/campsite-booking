@@ -29,7 +29,7 @@ date(s). Demonstrate with appropriate test cases that the system can gracefully 
 
 ### Running Project
 * Default active profile: **h2**
-* URL to access Campsite Booking service: **http://localhost:8090/campsite/api/bookings/**
+* URL to access Campsite Booking service: **http://localhost:8080/campsite/api/bookings/**
 #### With Maven
 ```bash
 $ git clone https://github.com/igor-baiborodine/campsite-booking.git
@@ -46,7 +46,7 @@ java -jar target/campsite-booking-<version>.jar
 
 ### Accessing Data in H2 Database
 #### H2 Console
-URL to access H2 console: **http://localhost:8090/campsite/h2-console**
+URL to access H2 console: **http://localhost:8080/campsite/h2-console**
 
 Fill the login form as follows and click on Connect:
 * Saved Settings: **Generic H2 (Embedded)**
@@ -61,7 +61,7 @@ Fill the login form as follows and click on Connect:
 
 ### Exploring API
 #### Swagger UI
-URL to access Swagger UI: **http://localhost:8090/campsite/swagger-ui.html**
+URL to access Swagger UI: **http://localhost:8080/campsite/swagger-ui.html**
 
 ### Testing API
 #### With Maven
@@ -121,15 +121,16 @@ $ {
 ```
 Then execute the following command to send three concurrent HTTP POST requests:
 ```Bash
-$ curl -H "Content-Type: application/json" -d @booking-john-smith-1.json http://localhost:8090/campsite/api/bookings & \
-  curl -H "Content-Type: application/json" -d @booking-john-smith-2.json http://localhost:8090/campsite/api/bookings & \
-  curl -H "Content-Type: application/json" -d @booking-john-smith-3.json http://localhost:8090/campsite/api/bookings &
+$ curl -H "Content-Type: application/json" -d @booking-john-smith-1.json http://localhost:8080/campsite/api/bookings & \
+  curl -H "Content-Type: application/json" -d @booking-john-smith-2.json http://localhost:8080/campsite/api/bookings & \
+  curl -H "Content-Type: application/json" -d @booking-john-smith-3.json http://localhost:8080/campsite/api/bookings &
 ```
 The response should be as follows after formatting, i.e., only one booking was created:
 ```json
 {  
    "id":2,
    "version":0,
+   "uuid":"8db6b1f4-27ba-11eb-adc1-0242ac120002",
    "email":"john.smith.1@email.com",
    "fullName":"John Smith 1",
    "startDate":"2020-12-11",
@@ -137,7 +138,7 @@ The response should be as follows after formatting, i.e., only one booking was c
    "active":true,
    "_links":{  
       "self":{  
-         "href":"http://localhost:8090/campsite/api/bookings/2"
+         "href":"http://localhost:8080/campsite/api/bookings/2"
       }
    }
 }
@@ -156,7 +157,7 @@ The response should be as follows after formatting, i.e., only one booking was c
 #### Basic Load Testing 
 Basic load testing for retrieving vacant dates can be performed with the ApacheBench by executing the following command:
 ```Bash
-$ ab -n 10000 -c 100 -k http://localhost:8090/campsite/api/bookings/vacant-dates
+$ ab -n 10000 -c 100 -k http://localhost:8080/campsite/api/bookings/vacant-dates
 ```
 * **-n 10000** is the number of requests to make
 * **-c 100** is the number of concurrent requests to make at a time
@@ -180,7 +181,7 @@ Finished 10000 requests
 
 Server Software:        
 Server Hostname:        localhost
-Server Port:            8090
+Server Port:            8080
 
 Document Path:          /campsite/api/bookings/vacant-dates
 Document Length:        404 bytes
