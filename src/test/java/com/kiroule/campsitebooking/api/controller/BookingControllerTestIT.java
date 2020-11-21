@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,11 +67,10 @@ public class BookingControllerTestIT {
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(3);
     // when
-    List<String> vacantDates = Lists.newArrayList();
-    vacantDates = given()
+    List<String> vacantDates = given()
         .param("start_date", startDate.toString()).param("end_date", endDate.toString())
         .when().get(controllerPath + "/vacant-dates")
-        .then().extract().body().as(vacantDates.getClass());
+        .then().extract().body().as(List.class);
     // then
     List<String> expected = startDate
         .datesUntil(endDate.plusDays(1))
@@ -98,7 +96,7 @@ public class BookingControllerTestIT {
     UUID uuid = UUID.randomUUID();
 
     BookingDto addedBooking = given()
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(helper.buildBooking(uuid, startDate, endDate))
         .when().post(controllerPath)
         .as(BookingDto.class);
@@ -117,13 +115,13 @@ public class BookingControllerTestIT {
     LocalDate endDate = LocalDate.now().plusDays(2);
 
     given()
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(helper.buildBooking(startDate, endDate))
         .when().post(controllerPath)
         .then().statusCode(HttpStatus.CREATED.value());
     // when
     ApiError apiError = given()
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(helper.buildBooking(startDate, endDate))
         .when().post(controllerPath)
         .as(ApiError.class);
@@ -140,7 +138,7 @@ public class BookingControllerTestIT {
     LocalDate endDate = LocalDate.now().plusDays(5);
     // when
     ApiError apiError = given()
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(helper.buildBooking(startDate, endDate))
         .when().post(controllerPath)
         .as(ApiError.class);
@@ -157,7 +155,7 @@ public class BookingControllerTestIT {
     UUID uuid = UUID.randomUUID();
 
     BookingDto addedBooking = given()
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(helper.buildBooking(uuid, startDate, endDate))
         .when().post(controllerPath)
         .as(BookingDto.class);
@@ -165,7 +163,7 @@ public class BookingControllerTestIT {
     // when
     BookingDto updatedBooking = given()
         .pathParam("uuid", uuid)
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(addedBooking)
         .when().put(controllerPath + "/{uuid}")
         .as(BookingDto.class);
@@ -183,21 +181,21 @@ public class BookingControllerTestIT {
     UUID uuid = UUID.randomUUID();
 
     BookingDto addedBooking = given()
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(helper.buildBooking(uuid, startDate, endDate))
         .when().post(controllerPath)
         .as(BookingDto.class);
     addedBooking.setEndDate(endDate.plusDays(1));
     // other booking
     given()
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(helper.buildBooking(UUID.randomUUID(), endDate, endDate.plusDays(1)))
         .when().post(controllerPath)
         .then().statusCode(HttpStatus.CREATED.value());
     // when
     ApiError apiError = given()
         .pathParam("uuid", addedBooking.getUuid())
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(addedBooking)
         .when().put(controllerPath + "/{uuid}")
         .as(ApiError.class);
@@ -215,7 +213,7 @@ public class BookingControllerTestIT {
     UUID uuid = UUID.randomUUID();
 
     BookingDto addedBooking = given()
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(helper.buildBooking(uuid, startDate, endDate))
         .when().post(controllerPath)
         .as(BookingDto.class);
@@ -223,7 +221,7 @@ public class BookingControllerTestIT {
 
     given()
         .pathParam("uuid", uuid)
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(addedBooking)
         .when().put(controllerPath + "/{uuid}")
         .as(BookingDto.class);
@@ -232,7 +230,7 @@ public class BookingControllerTestIT {
     // when
     ApiError apiError = given()
         .pathParam("uuid", uuid)
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(addedBooking)
         .when().put(controllerPath + "/{uuid}")
         .as(ApiError.class);
@@ -250,7 +248,7 @@ public class BookingControllerTestIT {
     UUID uuid = UUID.randomUUID();
 
     given()
-        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(helper.buildBooking(uuid, startDate, endDate))
         .when().post(controllerPath)
         .as(BookingDto.class);
