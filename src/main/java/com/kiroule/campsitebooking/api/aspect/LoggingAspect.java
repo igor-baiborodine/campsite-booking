@@ -1,4 +1,4 @@
-package com.kiroule.campsitebooking.api.util;
+package com.kiroule.campsitebooking.api.aspect;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
