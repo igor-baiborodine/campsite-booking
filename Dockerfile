@@ -14,7 +14,7 @@ RUN mvn --batch-mode package -DskipTests; \
 ################################################################################
 # Build stage 1: actual campsite-booking api image
 ################################################################################
-FROM openjdk:11-jre
+FROM openjdk:11-jre-slim
 
 LABEL \
     maintainer="Igor Baiborodine <igor@kiroule.com>" \
