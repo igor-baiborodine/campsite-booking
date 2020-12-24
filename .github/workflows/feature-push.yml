@@ -8,7 +8,7 @@ on:
 jobs:
 
   test:
-    name: Test - Unit & Integration
+    name: Unit & Integration Tests
     runs-on: ubuntu-18.04
 
     steps:

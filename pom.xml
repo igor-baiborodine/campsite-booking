@@ -19,6 +19,13 @@
     <relativePath/> <!-- lookup parent from bookingRepository -->
   </parent>
 
+  <scm>
+    <connection>scm:git:${project.scm.url}</connection>
+    <developerConnection>scm:git:${project.scm.url}</developerConnection>
+    <url>git@github.com:igor-baiborodine/campsite-booking.git</url>
+    <tag>HEAD</tag>
+  </scm>
+
   <distributionManagement>
     <repository>
       <id>github</id>

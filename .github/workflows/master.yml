@@ -8,7 +8,7 @@ on:
 jobs:
 
   test:
-    name: Test - Unit & Integration
+    name: Unit & Integration Tests
     runs-on: ubuntu-18.04
 
     steps:
@@ -23,7 +23,7 @@ jobs:
         run: mvn -B clean verify -Pintegration-test
 
   sonar:
-    name: Test - SonarCloud Scan
+    name: SonarCloud Scan
     runs-on: ubuntu-18.04
     needs: [ test ]
 
@@ -39,7 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   artifact:
-    name: Publish - GitHub Packages
+    name: Publish GitHub Packages
     runs-on: ubuntu-18.04
     needs: [ sonar ]
 
