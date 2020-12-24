@@ -1,0 +1,29 @@
+name: Perform Release
+on:
+  workflow_dispatch:
+#    inputs:
+#      snapshot_version:
+#        description: Snapshot Version
+#        required: true
+
+jobs:
+  maven-release:
+    name: Maven Release
+    runs-on: ubuntu-18.04
+    # Skip commit made by maven-release
+    if: "!contains(github.event.head_commit.message, 'maven-release-plugin')"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: JDK 11 Set-up
+        uses: actions/setup-java@v2
+        with:
+          java-version: 1.11
+      - name: Maven release
+          uses: qcastel/github-actions-maven-release@v1.12.2
+          with:
+            release-branch-name: issue/release-workflow
+            git-release-bot-name: release-bot
+            git-release-bot-email: 'release-bot@kiroule.com'
+            access-token: ${{ secrets.GITHUB_TOKEN }}
+            maven-args: '-Dmaven.javadoc.skip=true -DskipTests -DskipITs'
