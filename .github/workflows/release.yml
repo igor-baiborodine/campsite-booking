@@ -20,10 +20,10 @@ jobs:
         with:
           java-version: 1.11
       - name: Maven release
-          uses: qcastel/github-actions-maven-release@v1.12.2
-          with:
-            release-branch-name: issue/release-workflow
-            git-release-bot-name: release-bot
-            git-release-bot-email: 'release-bot@kiroule.com'
-            access-token: ${{ secrets.GITHUB_TOKEN }}
-            maven-args: '-Dmaven.javadoc.skip=true -DskipTests -DskipITs'
+        uses: qcastel/github-actions-maven-release@v1.12.2
+        with:
+          release-branch-name: issue/release-workflow
+          git-release-bot-name: release-bot
+          git-release-bot-email: 'release-bot@kiroule.com'
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          maven-args: '-Dmaven.javadoc.skip=true -DskipTests -DskipITs'
