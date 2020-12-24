@@ -1,10 +1,10 @@
 name: Perform Release
 on:
   workflow_dispatch:
-#    inputs:
-#      snapshot_version:
-#        description: Snapshot Version
-#        required: true
+    inputs:
+      releaseVersion:
+        description: Release Version
+        required: true
 
 jobs:
   maven-release:
