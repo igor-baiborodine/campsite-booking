@@ -6,7 +6,6 @@ on:
       - 'master'
 
 jobs:
-
   sonar:
     name: SonarCloud Scan
     runs-on: ubuntu-18.04
