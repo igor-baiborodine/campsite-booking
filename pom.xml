@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.kiroule</groupId>
   <artifactId>campsite-booking</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.0.0-RELEASE</version>
   <packaging>jar</packaging>
 
   <name>campsite-booking</name>
@@ -16,14 +14,14 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>2.3.5.RELEASE</version>
-    <relativePath/> <!-- lookup parent from bookingRepository -->
+    <relativePath /> <!-- lookup parent from bookingRepository -->
   </parent>
 
   <scm>
     <connection>scm:git:${project.scm.url}</connection>
     <developerConnection>scm:git:${project.scm.url}</developerConnection>
     <url>https://github.com/igor-baiborodine/campsite-booking.git</url>
-    <tag>HEAD</tag>
+    <tag>campsite-booking-2.0.0-RELEASE</tag>
   </scm>
 
   <distributionManagement>
@@ -45,7 +43,7 @@
     <sonar.inclusions>src/main/java/**,src/main/resources/**</sonar.inclusions>
     <sonar.issue.ignore.block>generated</sonar.issue.ignore.block>
     <sonar.issue.ignore.block.generated.beginBlockRegexp>@Generated</sonar.issue.ignore.block.generated.beginBlockRegexp>
-    <sonar.issue.ignore.block.generated.endBlockRegexp></sonar.issue.ignore.block.generated.endBlockRegexp>
+    <sonar.issue.ignore.block.generated.endBlockRegexp />
     <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
