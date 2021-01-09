@@ -12,12 +12,11 @@ services:
       - db-data:/var/lib/postgresql/data
 
   api:
-    image: campsite-test:latest
+    image: ibaiborodine/campsite-booking:latest
     depends_on:
       - db
     environment:
-      -
-      - SPRING_ACITVE_PROVILES=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/campsite?useUnicode=true
     ports:
       - "80:8080"
 
