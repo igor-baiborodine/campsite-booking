@@ -1,0 +1,24 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=campsite
+      - POSTGRES_PASSWORD=campsite
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  api:
+    image: ibaiborodine/campsite-booking:latest
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/campsite?useUnicode=true
+    ports:
+      - "80:8080"
+
+volumes:
+  db-data:
