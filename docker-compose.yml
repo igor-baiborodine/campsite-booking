@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=campsite
+      - POSTGRES_PASSWORD=campsite
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  api:
+    image: campsite-test:latest
+    depends_on:
+      - db
+    environment:
+      -
+      - SPRING_ACITVE_PROVILES=docker
+    ports:
+      - "80:8080"
+
+volumes:
+  db-data:

@@ -89,7 +89,7 @@ To simulate concurrent bookings creation for the same booking dates, create thre
 ```bash
 $ {
   echo '{'
-  echo '  "uuid": "8db6b1f4-27ba-11eb-adc1-0242ac120002",'  
+  echo '  "uuid": "8db6b1f4-27ba-11eb-adc1-0242ac120001",'  
   echo '  "email": "john.smith.1@email.com",'
   echo '  "fullName": "John Smith 1",'
   echo '  "startDate": "2020-12-11",'
@@ -111,7 +111,7 @@ $ {
 ```Bash
 $ {
   echo '{'
-  echo '  "uuid": "c7fe1e6a-27ba-11eb-adc1-0242ac120002",'
+  echo '  "uuid": "c7fe1e6a-27ba-11eb-adc1-0242ac120003",'
   echo '  "email": "john.smith.3@email.com",'
   echo '  "fullName": "John Smith 3",'
   echo '  "startDate": "2020-12-11",'
