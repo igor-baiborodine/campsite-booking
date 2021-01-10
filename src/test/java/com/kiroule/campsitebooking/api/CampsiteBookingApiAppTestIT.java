@@ -1,8 +1,6 @@
 package com.kiroule.campsitebooking.api;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import com.kiroule.campsitebooking.api.service.BookingServiceImpl;
 import org.junit.Test;
@@ -23,7 +21,7 @@ public class CampsiteBookingApiAppTestIT {
 
   @Test
   public void contextLoads() {
-    assertThat(ctx, is(notNullValue()));
-    assertThat(ctx.getBean(BookingServiceImpl.class), is(notNullValue()));
+    assertThat(ctx).isNotNull();
+    assertThat(ctx.getBean(BookingServiceImpl.class)).isNotNull();
   }
 }

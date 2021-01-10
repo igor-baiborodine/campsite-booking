@@ -65,6 +65,19 @@ public class BookingRepositoryTestIT {
   }
 
   @Test
+  public void findByUuid_savedBooking_savedBookingHasCreatedAt() {
+    // given
+    UUID uuid = UUID.randomUUID();
+    Booking savedBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(
+        helper.buildBooking(uuid, LocalDate.now().plusDays(1), LocalDate.now().plusDays(2))));
+    // when
+    Optional<Booking> foundBooking = bookingRepository.findByUuid(uuid);
+    // then
+    assertThat(foundBooking).hasValue(savedBooking);
+    assertThat(foundBooking.get().getCreatedAt()).isNotNull();
+  }
+
+  @Test
   public void findForDateRange_bookingDatesBeforeRangeStartDate_noBookingFound() {
     // given: -S-E|-|----|-|--
     bookingRepository.save(BookingMapper.INSTANCE.toBooking(
