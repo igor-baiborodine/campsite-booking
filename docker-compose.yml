@@ -7,12 +7,13 @@ services:
       - POSTGRES_USER=campsite
       - POSTGRES_PASSWORD=campsite
     ports:
-      - "5433:5432"
+      - "5442:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
 
   api:
-    image: ibaiborodine/campsite-booking:latest
+    build: .
+#    image: ibaiborodine/campsite-booking:latest
     depends_on:
       - db
     environment:
