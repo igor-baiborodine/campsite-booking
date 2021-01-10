@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Generated
-public class Booking {
+public class Booking extends DateAudit {
 
   /**
    * Persistence ID
