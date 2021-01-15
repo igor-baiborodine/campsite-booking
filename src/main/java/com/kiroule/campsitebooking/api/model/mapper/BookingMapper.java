@@ -1,7 +1,7 @@
 package com.kiroule.campsitebooking.api.model.mapper;
 
 import com.kiroule.campsitebooking.api.model.Booking;
-import com.kiroule.campsitebooking.api.model.dto.BookingDto;
+import com.kiroule.campsitebooking.api.contract.v1.model.BookingDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

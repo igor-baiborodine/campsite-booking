@@ -1,6 +1,6 @@
 package com.kiroule.campsitebooking.api.model.validator;
 
-import com.kiroule.campsitebooking.api.model.dto.BookingDto;
+import com.kiroule.campsitebooking.api.contract.v1.model.BookingDto;
 import java.time.Period;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

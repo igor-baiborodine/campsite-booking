@@ -1,6 +1,6 @@
 package com.kiroule.campsitebooking.api;
 
-import com.kiroule.campsitebooking.api.model.dto.BookingDto;
+import com.kiroule.campsitebooking.api.contract.v1.model.BookingDto;
 import java.time.LocalDate;
 import java.util.UUID;
 import org.springframework.stereotype.Component;

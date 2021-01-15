@@ -3,7 +3,7 @@ package com.kiroule.campsitebooking.api.model.validator;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.kiroule.campsitebooking.api.TestHelper;
-import com.kiroule.campsitebooking.api.model.dto.BookingDto;
+import com.kiroule.campsitebooking.api.contract.v1.model.BookingDto;
 import java.lang.annotation.Annotation;
 import java.time.LocalDate;
 import java.util.Set;
