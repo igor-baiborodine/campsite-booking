@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 import com.kiroule.campsitebooking.api.TestHelper;
-import com.kiroule.campsitebooking.api.model.ApiError;
-import com.kiroule.campsitebooking.api.model.dto.BookingDto;
+import com.kiroule.campsitebooking.api.contract.v1.model.ApiError;
+import com.kiroule.campsitebooking.api.contract.v1.model.BookingDto;
 import com.kiroule.campsitebooking.api.repository.BookingRepository;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
@@ -19,7 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
@@ -41,15 +40,11 @@ public class BookingControllerTestIT {
   @LocalServerPort
   int port;
 
-  @Value("${server.servlet.context-path}")
-  private String basePath;
-
-  private String controllerPath = "/api/bookings";
+  private String controllerPath = "/v1/booking";
 
   @Before
   public void setUp() {
     RestAssured.port = port;
-    RestAssured.basePath = basePath;
     RestAssured.defaultParser = Parser.JSON;
     bookingRepository.deleteAll();
   }
@@ -258,7 +253,7 @@ public class BookingControllerTestIT {
     ValidatableResponse response = given().pathParam("uuid", uuid)
         .when().delete(controllerPath + "/{uuid}").then();
     // then
-    response.statusCode(HttpStatus.NO_CONTENT.value());
+    response.statusCode(HttpStatus.OK.value());
   }
 
 }

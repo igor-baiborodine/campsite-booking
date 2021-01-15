@@ -1,4 +1,4 @@
-package com.kiroule.campsitebooking.api.model;
+package com.kiroule.campsitebooking.api.contract.v1.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -3,7 +3,7 @@ package com.kiroule.campsitebooking.api.controller;
 import com.kiroule.campsitebooking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsitebooking.api.exception.BookingNotFoundException;
 import com.kiroule.campsitebooking.api.exception.IllegalBookingStateException;
-import com.kiroule.campsitebooking.api.model.ApiError;
+import com.kiroule.campsitebooking.api.contract.v1.model.ApiError;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
