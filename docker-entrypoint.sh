@@ -3,8 +3,8 @@ set -e
 
 if [[ "$3" == java* && "$(id -u)" = '0' ]]; then
   echo "Switching user form root to $APP_USER..."
-  chown -R campsite:campsite "$APP_HOME"
-  exec gosu campsite "$@"
+  chown -R "$APP_USER:$APP_GROUP" "$APP_HOME"
+  exec gosu "$APP_USER" "$@"
 fi
 
 exec "$@"
