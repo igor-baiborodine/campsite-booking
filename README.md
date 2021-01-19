@@ -27,44 +27,52 @@ date(s). Demonstrate with appropriate test cases that the system can gracefully 
 * The system should be able to handle large volume of requests for getting the campsite availability.
 * There are no restrictions on how reservations are stored as long as system constraints are not violated.
 
-### Running Project
-* Default active profile: **h2**
-* URL to access Campsite Booking service: **http://localhost:8080/campsite/api/bookings/**
-#### With Maven
+### Up & Running
+#### Maven
 ```bash
 $ git clone https://github.com/igor-baiborodine/campsite-booking.git
 $ cd campsite-booking
-$ mvn spring-boot:run
+$ mvn spring-boot:run -Dspring-boot.run.profiles=h2
 ```
-#### With Executable JAR
+#### Executable JAR
 ```bash
 git clone https://github.com/igor-baiborodine/campsite-booking.git
 cd campsite-booking
 mvn package -DskipTests
-java -jar target/campsite-booking-<version>.jar
+java -jar -Dspring.profiles.active=h2 target/campsite-booking-<version>.jar
+```
+#### Docker
+```bash
+git clone https://github.com/igor-baiborodine/campsite-booking.git
+cd campsite-booking
+docker build --rm -t campsite-booking .
+docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -d campsite-booking
+docker logs -f campsite-booking 
+```
+You can test it at `http://container-ip:8080/swagger-ui.html` in a browser. To get the container IP address, execute the following command:
+```console
+$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' campsite-booking
+```
+Via the host machine on port 80:
+```console
+$ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -p 80:8080 -d campsite-booking
+```
+Then test it at `http://localhost:80/swagger-ui.html` or `http://host-ip:80/swagger-ui.html` in a browser.
+
+... or with an image from Docker Hub:
+```console
+$ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -d ibaiborodine/campsite-booking
+```
+... or with [`docker-compose`](https://github.com/docker/compose):
+```console
+$ docker-compose up -d
 ```
 
-### Accessing Data in H2 Database
-#### H2 Console
-URL to access H2 console: **http://localhost:8080/campsite/h2-console**
+### CI
+TODO
 
-Fill the login form as follows and click on Connect:
-* Saved Settings: **Generic H2 (Embedded)**
-* Setting Name: **Generic H2 (Embedded)**
-* Driver class: **org.h2.Driver**
-* JDBC URL: **jdbc:h2:mem:campsite;MODE=MySQL**
-* User Name: **sa**
-* Password:
-
-![H2 Console Login](/images/h2-console-login.bmp)
-![H2 Console Main View](/images/h2-console-main-view.bmp)
-
-### Exploring API
-#### Swagger UI
-URL to access Swagger UI: **http://localhost:8080/campsite/swagger-ui.html**
-
-### Testing API
-#### With Maven
+### Tests
+#### Maven
 * Run only unit tests:
 ```bash
 $ mvn clean test
@@ -82,9 +90,24 @@ $ mvn clean verify
 $ mvn clean verfify sonar:sonar -Dsonar.login=<SONAR_TOKEN> -Pcoverage
 ```
 
-#### Concurrent Bookings Creation Test
-Note: should be executed with **mysql** active profile
+#### Swagger UI
+TODO
 
+#### H2 Console
+URL to access H2 console: **http://localhost:8080/campsite/h2-console**
+
+Fill the login form as follows and click on Connect:
+* Saved Settings: **Generic H2 (Embedded)**
+* Setting Name: **Generic H2 (Embedded)**
+* Driver class: **org.h2.Driver**
+* JDBC URL: **jdbc:h2:mem:campsite;MODE=MySQL**
+* User Name: **sa**
+* Password:
+
+![H2 Console Login](/images/h2-console-login.bmp)
+![H2 Console Main View](/images/h2-console-main-view.bmp)
+
+#### Concurrent Bookings Creation
 To simulate concurrent bookings creation for the same booking dates, create three JSON files with booking data as follows:
 ```bash
 $ {
