@@ -104,8 +104,8 @@ Fill the login form as follows and click on Connect:
 * User Name: **sa**
 * Password:
 
-![H2 Console Login](/images/h2-console-login.bmp)
-![H2 Console Main View](/images/h2-console-main-view.bmp)
+![H2 Console Login](/readme/h2-console-login.bmp)
+![H2 Console Main View](/readme/h2-console-main-view.bmp)
 
 #### Concurrent Bookings Creation
 To simulate concurrent bookings creation for the same booking dates, create three JSON files with booking data as follows:
