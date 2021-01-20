@@ -120,8 +120,7 @@ The API can be tested via the Swagger UI:
 
 ![Swagger UI Main View](/readme/swagger-main-view.png)
 
-For example, to add a new booking:
-1. Expand the `POST` operation, click on the `Try it out` and add the payload below to the `Request Body` text area, and click on the `Execute`:
+For example, to add a new booking, expand the `POST` operation. Then click on the `Try it out`, add the payload below to the `Request Body` text area, and click on the `Execute`:
 ```json
 {
   "uuid": "8db6b1f4-27ba-11eb-adc1-0242ac120001",  
