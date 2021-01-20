@@ -76,20 +76,15 @@ Continuous integration is implemented with GitHub Actions, and it includes the f
 ![GitHub Actions](/readme/github-actions.png)
 
 #### Build on Pull Request
-This workflow is executed automatically on any pull request and consists of the SonarCloud Scan job:
+This workflow is executed automatically on any pull request and consists of the `SonarCloud Scan` job:
 ![Build on Pull Request Workflow](/readme/github-actions-build-on-pull-request.png) 
 
 #### Build Master Branch
-This workflow is executed automatically on any commit to the `master` branch and consists of the following jobs:
-* `Unit & Integrations Tests`
-* `SonarCloud Scan`
-* `Shapshot Publishing`
+This workflow is executed automatically on any commit to the `master` branch and consists of the `Unit & Integrations Tests`, `SonarCloud Scan`, and `Snapshot Publishing` jobs.
 ![Build Master Branch Workflow](/readme/github-actions-build-master-branch.png)
 
 #### Perform Release
-This workflow is executed manually and consists of the following jobs:
-* `Maven Release`
-* `Docker Image`
+This workflow is executed manually and consists of the `Maven Release` and `Docker Image` jobs.
 ![Perform Release Workflow](/readme/github-actions-perform-release.png)
 
 The `Release Version` parameter value should be provided before executing this workflow:
