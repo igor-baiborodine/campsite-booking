@@ -134,7 +134,7 @@ If the operation is successful, you will get the following response:
 ![Swagger UI Add Booking 1](/readme/swagger-add-booking-2.png)
 
 #### H2 Console
-When running with the `h2` profile, the H2 console is available at `http://localhost:8080/campsite/h2-console`.
+When running with the `h2` profile, the H2 console is available at `http://localhost:8080/h2-console`.
 
 Fill the login form as follows and click on Connect:
 * Saved Settings: **Generic H2 (Embedded)**
