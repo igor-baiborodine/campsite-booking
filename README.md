@@ -68,8 +68,12 @@ $ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -d ibaiborod
 $ docker-compose up -d
 ```
 
-### CI
-TODO
+### Continuous Integration
+Continuous integration is implemented with GitHub Actions, and it includes the following workflows: `Build on Pull Request`, `Build Master Branch`, and `Perform Release`. 
+![GitHub Actions](/readme/github-actions.png)
+which is executed automatically on any pull request.
+ 
+
 
 ### Tests
 #### Maven
