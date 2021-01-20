@@ -34,6 +34,8 @@ $ git clone https://github.com/igor-baiborodine/campsite-booking.git
 $ cd campsite-booking
 $ mvn spring-boot:run -Dspring-boot.run.profiles=h2
 ```
+The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
+
 #### Executable JAR
 ```bash
 git clone https://github.com/igor-baiborodine/campsite-booking.git
@@ -41,6 +43,8 @@ cd campsite-booking
 mvn package -DskipTests
 java -jar -Dspring.profiles.active=h2 target/campsite-booking-<version>.jar
 ```
+The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
+
 #### Docker
 ```bash
 git clone https://github.com/igor-baiborodine/campsite-booking.git
@@ -49,7 +53,7 @@ docker build --rm -t campsite-booking .
 docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -d campsite-booking
 docker logs -f campsite-booking 
 ```
-You can test it at `http://container-ip:8080/swagger-ui.html` in a browser. To get the container IP address, execute the following command:
+The Swagger UI is available at `http://container-ip:8080/swagger-ui.html`. To get the container IP address, execute the following command:
 ```console
 $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' campsite-booking
 ```
@@ -57,11 +61,11 @@ Via the host machine on port 80:
 ```console
 $ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -p 80:8080 -d campsite-booking
 ```
-Then test it at `http://localhost:80/swagger-ui.html` or `http://host-ip:80/swagger-ui.html` in a browser.
+The Swagger UI is available at `http://localhost:80/swagger-ui.html` or `http://host-ip:80/swagger-ui.html`.
 
 ... or with an image from Docker Hub:
 ```console
-$ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -d ibaiborodine/campsite-booking
+$ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -p 80:8080 -d ibaiborodine/campsite-booking
 ```
 ... or with [`docker-compose`](https://github.com/docker/compose):
 ```console
@@ -110,10 +114,27 @@ $ mvn clean verfify sonar:sonar -Dsonar.login=<SONAR_TOKEN> -Pcoverage
 ```
 
 #### Swagger UI
-TODO
+The API can be tested via the Swagger UI:
+![Swagger UI Main View](/readme/swagger-main-view.png)
+
+For example, to add a new booking:
+1. Expand the `POST` operation, click on the `Try it out` and add the payload below to the `Request Body` text area, and click on the `Execute`:
+```json
+{
+  "uuid": "8db6b1f4-27ba-11eb-adc1-0242ac120001",  
+  "email": "john.smith.1@email.com",
+  "fullName": "John Smith 1",
+  "startDate": "2021-01-21",
+  "endDate": "2021-01-23"
+}
+```
+![Swagger UI Add Booking 1](/readme/swagger-add-booking-1.png)
+
+If the operation is successful, you will get the following response:
+![Swagger UI Add Booking 1](/readme/swagger-add-booking-2.png)
 
 #### H2 Console
-URL to access H2 console: **http://localhost:8080/campsite/h2-console**
+When running with the `h2` profile, the H2 console is available at `http://localhost:8080/campsite/h2-console`.
 
 Fill the login form as follows and click on Connect:
 * Saved Settings: **Generic H2 (Embedded)**
