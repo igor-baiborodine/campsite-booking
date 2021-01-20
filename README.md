@@ -73,25 +73,27 @@ $ docker-compose up -d
 ```
 
 ### Continuous Integration
-Continuous integration is implemented with GitHub Actions, and it includes the following workflows: 
-* `Build on Pull Request`
-* `Build Master Branch`
-* `Perform Release` 
+Continuous integration is implemented using GitHub Actions, and it includes the `Build on Pull Request`, `Build Master Branch`, and `Perform Release` workflows:
+
 ![GitHub Actions](/readme/github-actions.png)
 
 #### Build on Pull Request
 This workflow is executed automatically on any pull request and consists of the `SonarCloud Scan` job:
+
 ![Build on Pull Request Workflow](/readme/github-actions-build-on-pull-request.png) 
 
 #### Build Master Branch
-This workflow is executed automatically on any commit to the `master` branch and consists of the `Unit & Integrations Tests`, `SonarCloud Scan`, and `Snapshot Publishing` jobs.
+This workflow is executed automatically on any commit to the `master` branch and consists of the `Unit & Integrations Tests`, `SonarCloud Scan`, and `Snapshot Publishing` jobs:
+
 ![Build Master Branch Workflow](/readme/github-actions-build-master-branch.png)
 
 #### Perform Release
-This workflow is executed manually and consists of the `Maven Release` and `Docker Image` jobs.
+This workflow is executed manually and consists of the `Maven Release` and `Docker Image` jobs:
+
 ![Perform Release Workflow](/readme/github-actions-perform-release.png)
 
 The `Release Version` parameter value should be provided before executing this workflow:
+
 ![Perform Release Workflow](/readme/github-actions-perform-release-parameter.png)
  
 ### Tests
@@ -115,6 +117,7 @@ $ mvn clean verfify sonar:sonar -Dsonar.login=<SONAR_TOKEN> -Pcoverage
 
 #### Swagger UI
 The API can be tested via the Swagger UI:
+
 ![Swagger UI Main View](/readme/swagger-main-view.png)
 
 For example, to add a new booking:
@@ -131,6 +134,7 @@ For example, to add a new booking:
 ![Swagger UI Add Booking 1](/readme/swagger-add-booking-1.png)
 
 If the operation is successful, you will get the following response:
+
 ![Swagger UI Add Booking 1](/readme/swagger-add-booking-2.png)
 
 #### H2 Console
