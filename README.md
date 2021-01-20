@@ -63,11 +63,11 @@ $ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -p 80:8080 -
 ```
 The Swagger UI is available at `http://localhost:80/swagger-ui.html` or `http://host-ip:80/swagger-ui.html`.
 
-... or with an image from Docker Hub:
+... or with an [image from Docker Hub](https://hub.docker.com/r/ibaiborodine/campsite-booking):
 ```console
 $ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -p 80:8080 -d ibaiborodine/campsite-booking
 ```
-... or with [`docker-compose`](https://github.com/docker/compose):
+... or with [docker-compose](docker-compose.yml):
 ```console
 $ docker-compose up -d
 ```
