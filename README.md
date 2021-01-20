@@ -69,12 +69,32 @@ $ docker-compose up -d
 ```
 
 ### Continuous Integration
-Continuous integration is implemented with GitHub Actions, and it includes the following workflows: `Build on Pull Request`, `Build Master Branch`, and `Perform Release`. 
+Continuous integration is implemented with GitHub Actions, and it includes the following workflows: 
+* `Build on Pull Request`
+* `Build Master Branch`
+* `Perform Release` 
 ![GitHub Actions](/readme/github-actions.png)
-which is executed automatically on any pull request.
+
+#### Build on Pull Request
+This workflow is executed automatically on any pull request and consists of the SonarCloud Scan job:
+![Build on Pull Request Workflow](/readme/github-actions-build-on-pull-request.png) 
+
+#### Build Master Branch
+This workflow is executed automatically on any commit to the `master` branch and consists of the following jobs:
+* `Unit & Integrations Tests`
+* `SonarCloud Scan`
+* `Shapshot Publishing`
+![Build Master Branch Workflow](/readme/github-actions-build-master-branch.png)
+
+#### Perform Release
+This workflow is executed manually and consists of the following jobs:
+* `Maven Release`
+* `Docker Image`
+![Perform Release Workflow](/readme/github-actions-perform-release.png)
+
+The `Release Version` parameter value should be provided before executing this workflow:
+![Perform Release Workflow](/readme/github-actions-perform-release-parameter.png)
  
-
-
 ### Tests
 #### Maven
 * Run only unit tests:
