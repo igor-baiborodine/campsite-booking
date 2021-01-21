@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoggingAspect {
 
-  @Pointcut("execution(public * com.kiroule.campsitebooking.api.service..*(..))")
+  @Pointcut("execution(public * com.kiroule.campsite.booking.api.service..*(..))")
   private void serviceLoggingTargets() {
     // marker method, should be empty
   }
@@ -38,7 +38,7 @@ public class LoggingAspect {
   }
 
   @AfterThrowing(
-      value = "execution(public * com.kiroule.campsitebooking..*(..))", throwing = "ex")
+      value = "execution(public * com.kiroule.campsite.booking..*(..))", throwing = "ex")
   public void logThrowException(JoinPoint jp, Exception ex) {
     log.error("{}: error[{}]", jp.getSignature().toShortString(), ex.getMessage(), ex);
   }
