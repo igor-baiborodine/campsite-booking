@@ -6,15 +6,15 @@
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=alert_status)](https://sonarcloud.io/dashboard?id=igor-baiborodine_campsite-booking) 
 [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=igor-baiborodine_campsite-booking)
 
-## A RESTful web service that manages campsite bookings. 
+### A RESTful web service that manages campsite bookings. 
 
-### Technical Task
-#### Booking Constraints
+## Technical Task
+### Booking Constraints
 * The campsite can be reserved for max 3 days.
 * The campsite can be reserved minimum 1 day(s) ahead of arrival and up to 1 month in advance.
 * Reservations can be cancelled anytime.
 * For sake of simplicity assume the check-in & check-out time is 12:00 AM.
-#### System Requirements
+### System Requirements
 * The users will need to find out when the campsite is available. So the system should expose an API to provide information of the
 availability of the campsite for a given date range with the default being 1 month.
 * Provide an end point for reserving the campsite. The user will provide his/her email & full name at the time of reserving the campsite
@@ -27,44 +27,77 @@ date(s). Demonstrate with appropriate test cases that the system can gracefully 
 * The system should be able to handle large volume of requests for getting the campsite availability.
 * There are no restrictions on how reservations are stored as long as system constraints are not violated.
 
-### Running Project
-* Default active profile: **h2**
-* URL to access Campsite Booking service: **http://localhost:8080/campsite/api/bookings/**
-#### With Maven
+## Up & Running
+### Maven
 ```bash
 $ git clone https://github.com/igor-baiborodine/campsite-booking.git
 $ cd campsite-booking
-$ mvn spring-boot:run
+$ mvn spring-boot:run -Dspring-boot.run.profiles=h2
 ```
-#### With Executable JAR
+The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
+
+### Executable JAR
 ```bash
 git clone https://github.com/igor-baiborodine/campsite-booking.git
 cd campsite-booking
 mvn package -DskipTests
-java -jar target/campsite-booking-<version>.jar
+java -jar -Dspring.profiles.active=h2 target/campsite-booking-<version>.jar
+```
+The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
+
+### Docker
+```bash
+git clone https://github.com/igor-baiborodine/campsite-booking.git
+cd campsite-booking
+docker build --rm -t campsite-booking .
+docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -d campsite-booking
+docker logs -f campsite-booking 
+```
+The Swagger UI is available at `http://container-ip:8080/swagger-ui.html`. To get the container IP address, execute the following command:
+```console
+$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' campsite-booking
+```
+Via the host machine on port 80:
+```console
+$ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -p 80:8080 -d campsite-booking
+```
+The Swagger UI is available at `http://localhost:80/swagger-ui.html` or `http://host-ip:80/swagger-ui.html`.
+
+... or with an [image from Docker Hub](https://hub.docker.com/r/ibaiborodine/campsite-booking):
+```console
+$ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -p 80:8080 -d ibaiborodine/campsite-booking
+```
+... or with [docker-compose](docker-compose.yml):
+```console
+$ docker-compose up -d
 ```
 
-### Accessing Data in H2 Database
-#### H2 Console
-URL to access H2 console: **http://localhost:8080/campsite/h2-console**
+## Continuous Integration
+Continuous integration is implemented using GitHub Actions, and it includes the `Build on Pull Request`, `Build Master Branch`, and `Perform Release` workflows:
 
-Fill the login form as follows and click on Connect:
-* Saved Settings: **Generic H2 (Embedded)**
-* Setting Name: **Generic H2 (Embedded)**
-* Driver class: **org.h2.Driver**
-* JDBC URL: **jdbc:h2:mem:campsite;MODE=MySQL**
-* User Name: **sa**
-* Password:
+![GitHub Actions](/readme/github-actions.png)
 
-![H2 Console Login](/images/h2-console-login.bmp)
-![H2 Console Main View](/images/h2-console-main-view.bmp)
+### Build on Pull Request
+This workflow is executed automatically on any pull request and consists of the `SonarCloud Scan` job:
 
-### Exploring API
-#### Swagger UI
-URL to access Swagger UI: **http://localhost:8080/campsite/swagger-ui.html**
+![Build on Pull Request Workflow](/readme/github-actions-build-on-pull-request.png) 
 
-### Testing API
-#### With Maven
+### Build Master Branch
+This workflow is executed automatically on any commit to the `master` branch and consists of the `Unit & Integrations Tests`, `SonarCloud Scan`, and `Snapshot Publishing` jobs:
+
+![Build Master Branch Workflow](/readme/github-actions-build-master-branch.png)
+
+### Perform Release
+This workflow is executed manually and consists of the `Maven Release` and `Docker Image` jobs:
+
+![Perform Release Workflow](/readme/github-actions-perform-release.png)
+
+The `Release Version` parameter value should be provided before executing this workflow:
+
+![Perform Release Workflow](/readme/github-actions-perform-release-parameter.png)
+ 
+## Tests
+### Maven
 * Run only unit tests:
 ```bash
 $ mvn clean test
@@ -82,9 +115,42 @@ $ mvn clean verify
 $ mvn clean verfify sonar:sonar -Dsonar.login=<SONAR_TOKEN> -Pcoverage
 ```
 
-#### Concurrent Bookings Creation Test
-Note: should be executed with **mysql** active profile
+### Swagger UI
+The API can be tested via the Swagger UI:
 
+![Swagger UI Main View](/readme/swagger-main-view.png)
+
+For example, to add a new booking, expand the `POST` operation. Then click on the `Try it out`, add the payload below to the `Request Body` text area, and click on the `Execute`:
+```json
+{
+  "uuid": "8db6b1f4-27ba-11eb-adc1-0242ac120001",  
+  "email": "john.smith.1@email.com",
+  "fullName": "John Smith 1",
+  "startDate": "2021-01-21",
+  "endDate": "2021-01-23"
+}
+```
+![Swagger UI Add Booking 1](/readme/swagger-add-booking-1.png)
+
+If the operation is successful, you will get the following response:
+
+![Swagger UI Add Booking 1](/readme/swagger-add-booking-2.png)
+
+### H2 Console
+When running with the `h2` profile, the H2 console is available at `http://localhost:8080/h2-console`.
+
+Fill the login form as follows and click on Connect:
+* Saved Settings: **Generic H2 (Embedded)**
+* Setting Name: **Generic H2 (Embedded)**
+* Driver class: **org.h2.Driver**
+* JDBC URL: **jdbc:h2:mem:campsite;MODE=MySQL**
+* User Name: **sa**
+* Password:
+
+![H2 Console Login](/readme/h2-console-login.bmp)
+![H2 Console Main View](/readme/h2-console-main-view.bmp)
+
+### Concurrent Bookings Creation
 To simulate concurrent bookings creation for the same booking dates, create three JSON files with booking data as follows:
 ```bash
 $ {
@@ -154,7 +220,7 @@ The response should be as follows after formatting, i.e., only one booking was c
 }
 ```
 
-#### Basic Load Testing 
+### Basic Load Testing 
 Basic load testing for retrieving vacant dates can be performed with the ApacheBench by executing the following command:
 ```Bash
 $ ab -n 10000 -c 100 -k http://localhost:8080/campsite/api/bookings/vacant-dates
