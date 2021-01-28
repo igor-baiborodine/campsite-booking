@@ -147,7 +147,7 @@ Fill the login form as follows and click on Connect:
 * User Name: **sa**
 * Password:
 
-![H2 Console Login](/readme/h2-console-login.png)
+![H2 Console Login](/readme/h2-console-login-2.png)
 ![H2 Console Main View](/readme/h2-console-main-view.png)
 
 ### Concurrent Bookings Creation
