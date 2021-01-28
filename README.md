@@ -147,11 +147,11 @@ Fill the login form as follows and click on Connect:
 * User Name: **sa**
 * Password:
 
-![H2 Console Login](/readme/h2-console-login.bmp)
-![H2 Console Main View](/readme/h2-console-main-view.bmp)
+![H2 Console Login](/readme/h2-console-login.png)
+![H2 Console Main View](/readme/h2-console-main-view.png)
 
 ### Concurrent Bookings Creation
-Note: should be executed with `mysql` active profile
+Note: should be executed with the `mysql` active profile
 
 Start an instance of Campsite Booking API and execute the concurrent-bookings-test.sh script to simulate concurrent booking creation for the same booking dates:
 ```bash
