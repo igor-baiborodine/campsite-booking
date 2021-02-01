@@ -17,10 +17,12 @@ services:
 
   api:
     build: .
-#    image: ibaiborodine/campsite-booking:latest
+    # image: ibaiborodine/campsite-booking:latest
     depends_on:
       - db
     environment:
+      # sleep for 20 seconds while the database is being initialized
+      - WAIT_FOR_DB=20
       - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/campsite?useUnicode=true
     ports:
       - "80:8080"
