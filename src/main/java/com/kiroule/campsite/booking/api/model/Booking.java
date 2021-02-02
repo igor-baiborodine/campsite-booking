@@ -1,12 +1,21 @@
 package com.kiroule.campsite.booking.api.model;
 
-import lombok.*;
-
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Version;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Generated;
+import lombok.Getter;
+import org.hibernate.annotations.Type;
 
 /**
  * Entity domain object representing a booking.
@@ -36,6 +45,7 @@ public class Booking extends DateAudit {
    */
   @Getter
   @EqualsAndHashCode.Include
+  @Type(type="uuid-char")
   @Column(name = "uuid", nullable = false, unique = true)
   private UUID uuid;
 
