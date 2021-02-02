@@ -78,12 +78,12 @@ Continuous integration is implemented using GitHub Actions, and it includes the 
 ![GitHub Actions](/readme/github-actions.png)
 
 ### Build on Pull Request
-This workflow is executed automatically on any pull request and consists of the `SonarCloud Scan` job:
+This workflow is executed automatically on any pull request and consists of the `Unit & Integrations Tests` and `SonarCloud Scan` job:
 
 ![Build on Pull Request Workflow](/readme/github-actions-build-on-pull-request.png) 
 
 ### Build Master Branch
-This workflow is executed automatically on any commit to the `master` branch and consists of the `Unit & Integrations Tests`, `SonarCloud Scan`, and `Snapshot Publishing` jobs:
+This workflow is executed automatically on any commit to the `master` branch and consists of the `SonarCloud Scan` and `Snapshot Publishing` jobs:
 
 ![Build Master Branch Workflow](/readme/github-actions-build-master-branch.png)
 
@@ -151,7 +151,7 @@ Fill the login form as follows and click on Connect:
 ![H2 Console Main View](/readme/h2-console-main-view.png)
 
 ### Concurrent Bookings Creation
-Note: should be executed with the `mysql` active profile
+**Note**: should be executed with the `mysql` active profile
 
 Start an instance of Campsite Booking API and execute the concurrent-bookings-test.sh script to simulate concurrent booking creation for the same booking dates:
 ```bash
