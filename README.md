@@ -38,20 +38,20 @@ The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
 
 ### Executable JAR
 ```bash
-git clone https://github.com/igor-baiborodine/campsite-booking.git
-cd campsite-booking
-mvn package -DskipTests
-java -jar -Dspring.profiles.active=h2 target/campsite-booking-<version>.jar
+$ git clone https://github.com/igor-baiborodine/campsite-booking.git
+$ cd campsite-booking
+$ mvn package -DskipTests
+$ java -jar -Dspring.profiles.active=h2 target/campsite-booking-<version>.jar
 ```
 The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
 
 ### Docker
 ```bash
-git clone https://github.com/igor-baiborodine/campsite-booking.git
-cd campsite-booking
-docker build --rm -t campsite-booking .
-docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -d campsite-booking
-docker logs -f campsite-booking 
+$ git clone https://github.com/igor-baiborodine/campsite-booking.git
+$ cd campsite-booking
+$ docker build --rm -t campsite-booking .
+$ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -d campsite-booking
+$ docker logs -f campsite-booking 
 ```
 The Swagger UI is available at `http://container-ip:8080/swagger-ui.html`. To get the container IP address, execute the following command:
 ```console
