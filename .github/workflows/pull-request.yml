@@ -25,11 +25,8 @@ jobs:
         with:
           java-version: 11
 
-      - name: Run Maven Package
-        run: mvn -B clean package -DskipTests
-
       - name: Run Maven Verify
-        run: mvn -B clean verify -Pintegration-test
+        run: mvn -B clean verify
 
   sonar:
     name: SonarCloud Scan
