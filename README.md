@@ -8,6 +8,8 @@
 
 ### A RESTful web service that manages campsite bookings. 
 
+Read this [blog post](https://www.kiroule.com/article/campsite-booking-api-revisited/) to learn more details.
+
 ## Technical Task
 ### Booking Constraints
 * The campsite can be reserved for max 3 days.
