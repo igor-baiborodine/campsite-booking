@@ -35,7 +35,7 @@ public class BookingAllowedStartDateValidatorTest {
   @Test
   public void isValid_bookingStartDateIsTomorrow_noValidationErrors() {
     // given
-    BookingDto bookingDto = helper.buildBooking(
+    BookingDto bookingDto = helper.buildBookingDto(
         LocalDate.now().plusDays(1), LocalDate.now().plusDays(4));
     // when
     Set<ConstraintViolation<BookingDto>> violations = validator.validate(bookingDto);
@@ -46,7 +46,7 @@ public class BookingAllowedStartDateValidatorTest {
   @Test
   public void isValid_bookingStartDateOneMonthAhead_noValidationErrors() {
     // given
-    BookingDto bookingDto = helper.buildBooking(
+    BookingDto bookingDto = helper.buildBookingDto(
         LocalDate.now().plusMonths(1), LocalDate.now().plusMonths(1).plusDays(3));
     // when
     Set<ConstraintViolation<BookingDto>> violations = validator.validate(bookingDto);
@@ -57,7 +57,7 @@ public class BookingAllowedStartDateValidatorTest {
   @Test
   public void isValid_bookingStartDateOneMonthAndOneDayAhead_bookingAllowedStartDateErrorThrown() {
     // given
-    BookingDto bookingDto = helper.buildBooking(
+    BookingDto bookingDto = helper.buildBookingDto(
         LocalDate.now().plusMonths(1).plusDays(1), LocalDate.now().plusMonths(1).plusDays(3));
     // when
     Set<ConstraintViolation<BookingDto>> violations = validator.validate(bookingDto);

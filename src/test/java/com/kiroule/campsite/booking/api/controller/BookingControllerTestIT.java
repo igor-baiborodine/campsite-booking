@@ -94,7 +94,7 @@ public class BookingControllerTestIT {
 
     BookingDto addedBooking = given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBooking(uuid, startDate, endDate))
+        .body(helper.buildBookingDto(endDate, startDate, uuid))
         .when().post(controllerPath)
         .as(BookingDto.class);
     // when
@@ -113,13 +113,13 @@ public class BookingControllerTestIT {
 
     given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBooking(startDate, endDate))
+        .body(helper.buildBookingDto(startDate, endDate))
         .when().post(controllerPath)
         .then().statusCode(HttpStatus.CREATED.value());
     // when
     ApiError apiError = given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBooking(startDate, endDate))
+        .body(helper.buildBookingDto(startDate, endDate))
         .when().post(controllerPath)
         .as(ApiError.class);
     // then
@@ -136,7 +136,7 @@ public class BookingControllerTestIT {
     // when
     ApiError apiError = given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBooking(startDate, endDate))
+        .body(helper.buildBookingDto(startDate, endDate))
         .when().post(controllerPath)
         .as(ApiError.class);
     // then
@@ -153,7 +153,7 @@ public class BookingControllerTestIT {
 
     BookingDto addedBooking = given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBooking(uuid, startDate, endDate))
+        .body(helper.buildBookingDto(endDate, startDate, uuid))
         .when().post(controllerPath)
         .as(BookingDto.class);
     addedBooking.setEndDate(endDate.plusDays(1));
@@ -179,14 +179,14 @@ public class BookingControllerTestIT {
 
     BookingDto addedBooking = given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBooking(uuid, startDate, endDate))
+        .body(helper.buildBookingDto(endDate, startDate, uuid))
         .when().post(controllerPath)
         .as(BookingDto.class);
     addedBooking.setEndDate(endDate.plusDays(1));
     // other booking
     given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBooking(UUID.randomUUID(), endDate, endDate.plusDays(1)))
+        .body(helper.buildBookingDto(endDate.plusDays(1), endDate, UUID.randomUUID()))
         .when().post(controllerPath)
         .then().statusCode(HttpStatus.CREATED.value());
     // when
@@ -211,7 +211,7 @@ public class BookingControllerTestIT {
 
     BookingDto addedBooking = given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBooking(uuid, startDate, endDate))
+        .body(helper.buildBookingDto(endDate, startDate, uuid))
         .when().post(controllerPath)
         .as(BookingDto.class);
     addedBooking.setEndDate(endDate.plusDays(1));
@@ -246,7 +246,7 @@ public class BookingControllerTestIT {
 
     given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBooking(uuid, startDate, endDate))
+        .body(helper.buildBookingDto(endDate, startDate, uuid))
         .when().post(controllerPath)
         .as(BookingDto.class);
     // when

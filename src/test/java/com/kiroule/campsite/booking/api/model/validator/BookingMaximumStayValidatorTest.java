@@ -35,7 +35,7 @@ public class BookingMaximumStayValidatorTest {
   @Test
   public void isValid_bookingWithThreeDayStay_noValidationErrors() {
     // given
-    BookingDto bookingDto = helper.buildBooking(
+    BookingDto bookingDto = helper.buildBookingDto(
         LocalDate.now().plusDays(1), LocalDate.now().plusDays(4));
     // when
     Set<ConstraintViolation<BookingDto>> violations = validator.validate(bookingDto);
@@ -46,7 +46,7 @@ public class BookingMaximumStayValidatorTest {
   @Test
   public void isValid_bookingWithFourDayStay_bookingMaximumStayValidationErrorThrown() {
     // given
-    BookingDto bookingDto = helper.buildBooking(
+    BookingDto bookingDto = helper.buildBookingDto(
         LocalDate.now().plusDays(1), LocalDate.now().plusDays(5));
     // when
     Set<ConstraintViolation<BookingDto>> violations = validator.validate(bookingDto);

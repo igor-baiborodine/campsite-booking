@@ -2,57 +2,70 @@ package com.kiroule.campsite.booking.api.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.kiroule.campsite.booking.api.model.Booking;
+import com.kiroule.campsite.booking.api.CustomReplaceUnderscoresDisplayNameGenerator;
 import com.kiroule.campsite.booking.api.TestHelper;
+import com.kiroule.campsite.booking.api.contract.v1.model.BookingDto;
+import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.model.mapper.BookingMapper;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import java.time.LocalDate;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Integration tests for {@link BookingServiceImpl}.
  *
  * @author Igor Baiborodine
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("h2")
-@Transactional
-public class BookingServiceImplTestIT {
+@DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
+class BookingServiceImplTestIT {
 
   @Autowired
-  private TestHelper helper;
+  BookingService bookingService;
 
   @Autowired
-  private BookingService bookingService;
+  BookingRepository bookingRepository;
 
-  @Autowired
-  private BookingRepository bookingRepository;
+  UUID uuid;
+  Booking existingBooking;
+  boolean bookingCanceled;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void beforeEach() {
     bookingRepository.deleteAll();
+    uuid = UUID.randomUUID();
+    existingBooking = null;
+    bookingCanceled = false;
   }
 
   @Test
-  public void cancelBooking_existingActiveBooking_bookingCancelled() {
-    // given
-    Booking booking = BookingMapper.INSTANCE.toBooking(
-        helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2)));
-    Booking savedBooking = bookingService.createBooking(booking);
-    assertThat(savedBooking.getId()).isNotNull();
-    assertThat(savedBooking.isActive()).isTrue();
-    // when
-    boolean cancelled = bookingService.cancelBooking(savedBooking.getUuid());
-    // then
-    assertThat(cancelled).isTrue();
+  void cancel_booking__given_existing_active_booking__then_booking_canceled() {
+    givenExistingActiveBooking(1, 2);
+
+    whenCancelBooking();
+
+    thenAssertBookingCanceled();
   }
 
+  private void givenExistingActiveBooking(int startPlusDays, int endPlusDays) {
+    BookingDto bookingDto = TestHelper.buildBookingDto(
+        LocalDate.now().plusDays(endPlusDays), LocalDate.now().plusDays(startPlusDays), uuid);
+    existingBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(bookingDto));
+    assertThat(existingBooking.isActive()).isTrue();
+  }
+
+  private void whenCancelBooking() {
+    bookingCanceled = bookingService.cancelBooking(existingBooking.getUuid());
+  }
+
+  private void thenAssertBookingCanceled() {
+    assertThat(bookingCanceled).isTrue();
+  }
 }
