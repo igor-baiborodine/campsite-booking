@@ -18,11 +18,11 @@ public class TestHelper {
     return BookingMapper.INSTANCE.toBooking(buildBookingDto(startDate, endDate));
   }
 
-  public static BookingDto buildBookingDto(LocalDate endDate, LocalDate startDate, UUID uuid) {
+  public static BookingDto buildBookingDto(LocalDate startDate, LocalDate endDate, UUID uuid) {
     return buildBookingDto(startDate, endDate, uuid, FULL_NAME, EMAIL);
   }
 
-  public static Booking buildBooking(LocalDate endDate, LocalDate startDate, UUID uuid) {
+  public static Booking buildBooking(LocalDate startDate, LocalDate endDate, UUID uuid) {
     return BookingMapper.INSTANCE.toBooking(
         buildBookingDto(startDate, endDate, uuid, FULL_NAME, EMAIL));
   }
@@ -35,6 +35,7 @@ public class TestHelper {
         .uuid(uuid)
         .fullName(fullName)
         .email(email)
+        .active(true)
         .build();
   }
 }
