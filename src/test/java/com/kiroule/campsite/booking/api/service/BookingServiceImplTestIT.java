@@ -1,12 +1,11 @@
 package com.kiroule.campsite.booking.api.service;
 
+import static com.kiroule.campsite.booking.api.TestHelper.buildBooking;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 import com.kiroule.campsite.booking.api.CustomReplaceUnderscoresDisplayNameGenerator;
-import com.kiroule.campsite.booking.api.TestHelper;
-import com.kiroule.campsite.booking.api.contract.v1.model.BookingDto;
 import com.kiroule.campsite.booking.api.model.Booking;
-import com.kiroule.campsite.booking.api.model.mapper.BookingMapper;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -55,10 +54,11 @@ class BookingServiceImplTestIT {
   }
 
   private void givenExistingActiveBooking(int startPlusDays, int endPlusDays) {
-    BookingDto bookingDto = TestHelper.buildBookingDto(
-        LocalDate.now().plusDays(endPlusDays), LocalDate.now().plusDays(startPlusDays), uuid);
-    existingBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(bookingDto));
-    assertThat(existingBooking.isActive()).isTrue();
+    Booking booking = buildBooking(
+        LocalDate.now().plusDays(startPlusDays), LocalDate.now().plusDays(endPlusDays), uuid);
+    existingBooking = bookingRepository.save(booking);
+    assumeThat(existingBooking.isNew()).isFalse();
+    assumeThat(existingBooking.isActive()).isTrue();
   }
 
   private void whenCancelBooking() {
