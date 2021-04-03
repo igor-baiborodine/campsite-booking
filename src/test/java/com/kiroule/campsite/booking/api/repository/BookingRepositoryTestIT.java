@@ -1,14 +1,13 @@
 package com.kiroule.campsite.booking.api.repository;
 
+import static com.kiroule.campsite.booking.api.TestHelper.buildBooking;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.kiroule.campsite.booking.api.CustomReplaceUnderscoresDisplayNameGenerator;
 import com.kiroule.campsite.booking.api.DisplayNamePrefix;
-import com.kiroule.campsite.booking.api.TestHelper;
-import com.kiroule.campsite.booking.api.contract.v1.model.BookingDto;
 import com.kiroule.campsite.booking.api.model.Booking;
-import com.kiroule.campsite.booking.api.model.mapper.BookingMapper;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +37,7 @@ class BookingRepositoryTestIT {
   @Autowired
   BookingRepository bookingRepository;
 
+  LocalDate now;
   UUID uuid;
   Booking existingBooking;
   Optional<Booking> bookingOptionalForUuid;
@@ -46,6 +46,7 @@ class BookingRepositoryTestIT {
   @BeforeEach
   void beforeEach() {
     bookingRepository.deleteAll();
+    now = LocalDate.now();
     uuid = UUID.randomUUID();
     existingBooking = null;
     bookingOptionalForUuid = null;
@@ -66,7 +67,7 @@ class BookingRepositoryTestIT {
   void find_for_date_range__given_booking_dates_before_range_startDate__then_no_booking_found() {
     givenExistingBooking(1, 2);
 
-    whenFindForDateRange(3, 4);
+    whenFindBookingsForDateRange(3, 4);
 
     thenAssertNoBookingFoundForDateRange();
   }
@@ -76,7 +77,7 @@ class BookingRepositoryTestIT {
   void find_for_date_range__given_booking_start_date_before_range_start_date_and_booking_end_date_equals_to_range_start_date__then_no_booking_found() {
     givenExistingBooking(1, 2);
 
-    whenFindForDateRange(2, 3);
+    whenFindBookingsForDateRange(2, 3);
 
     thenAssertNoBookingFoundForDateRange();
   }
@@ -86,7 +87,7 @@ class BookingRepositoryTestIT {
   void find_for_date_range__given_booking_start_date_before_range_start_date_and_booking_end_date_within_range_dates__then_booking_found() {
     givenExistingBooking(1, 3);
 
-    whenFindForDateRange(2, 4);
+    whenFindBookingsForDateRange(2, 4);
 
     thenAssertBookingFoundForDateRange();
   }
@@ -96,7 +97,7 @@ class BookingRepositoryTestIT {
   void find_for_date_range__given_booking_start_date_equals_to_range_start_date_and_booking_end_date_within_range_dates__then_booking_found() {
     givenExistingBooking(1, 2);
 
-    whenFindForDateRange(1, 3);
+    whenFindBookingsForDateRange(1, 3);
 
     thenAssertBookingFoundForDateRange();
   }
@@ -106,7 +107,7 @@ class BookingRepositoryTestIT {
   void find_for_date_range__given_booking_dates_within_range_dates__then_booking_found() {
     givenExistingBooking(2, 3);
 
-    whenFindForDateRange(1, 4);
+    whenFindBookingsForDateRange(1, 4);
 
     thenAssertBookingFoundForDateRange();
   }
@@ -116,7 +117,7 @@ class BookingRepositoryTestIT {
   void find_for_date_range__given_booking_start_date_within_range_dates_and_booking_end_date_equals_to_range_end_date__then_booking_found() {
     givenExistingBooking(2, 3);
 
-    whenFindForDateRange(1, 3);
+    whenFindBookingsForDateRange(1, 3);
 
     thenAssertBookingFoundForDateRange();
   }
@@ -126,7 +127,7 @@ class BookingRepositoryTestIT {
   void find_for_date_range__given_booking_start_date_before_range_end_date_and_booking_end_date_after_range_end_date__then_booking_found() {
     givenExistingBooking(2, 4);
 
-    whenFindForDateRange(1, 3);
+    whenFindBookingsForDateRange(1, 3);
 
     thenAssertBookingFoundForDateRange();
   }
@@ -136,7 +137,7 @@ class BookingRepositoryTestIT {
   void find_for_date_range__given_booking_start_date_equals_to_range_end_date_and_booking_end_date_after_range_end_date__then_booking_found() {
     givenExistingBooking(3, 4);
 
-    whenFindForDateRange(1, 3);
+    whenFindBookingsForDateRange(1, 3);
 
     thenAssertBookingFoundForDateRange();
   }
@@ -146,7 +147,7 @@ class BookingRepositoryTestIT {
   void find_for_date_range__given_booking_dates_after_range_end_date__then_no_booking_found() {
     givenExistingBooking(3, 4);
 
-    whenFindForDateRange(1, 2);
+    whenFindBookingsForDateRange(1, 2);
 
     thenAssertNoBookingFoundForDateRange();
   }
@@ -156,15 +157,17 @@ class BookingRepositoryTestIT {
   void find_for_date_range__given_booking_dates_overlap_range_dates__then_booking_found() {
     givenExistingBooking(1, 4);
 
-    whenFindForDateRange(2, 3);
+    whenFindBookingsForDateRange(2, 3);
 
     thenAssertBookingFoundForDateRange();
   }
 
   private void givenExistingBooking(int startPlusDays, int endPlusDays) {
-    BookingDto bookingDto = TestHelper.buildBookingDto(
-        LocalDate.now().plusDays(endPlusDays), LocalDate.now().plusDays(startPlusDays), uuid);
-    existingBooking = bookingRepository.save(BookingMapper.INSTANCE.toBooking(bookingDto));
+    Booking booking = buildBooking(
+        now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid);
+    existingBooking = bookingRepository.save(booking);
+    assumeThat(existingBooking.isNew()).isFalse();
+    assumeThat(existingBooking.isActive()).isTrue();
   }
 
   private void whenFindByUuid() {
@@ -174,13 +177,12 @@ class BookingRepositoryTestIT {
   private void thenAssertBookingFoundForUuid() {
     assertAll("foundBooking",
         () -> assertThat(bookingOptionalForUuid).hasValue(existingBooking),
-        () -> assertThat(bookingOptionalForUuid.get().getCreatedAt().toLocalDate())
-            .isEqualTo(LocalDate.now()));
+        () -> assertThat(bookingOptionalForUuid.get().getCreatedAt().toLocalDate()).isEqualTo(now));
   }
 
-  private void whenFindForDateRange(int startPlusDays, int endPlusDays) {
+  private void whenFindBookingsForDateRange(int startPlusDays, int endPlusDays) {
     bookingsForDateRange = bookingRepository.findForDateRange(
-        LocalDate.now().plusDays(startPlusDays), LocalDate.now().plusDays(endPlusDays));
+        now.plusDays(startPlusDays), now.plusDays(endPlusDays));
   }
 
   private void thenAssertNoBookingFoundForDateRange() {
