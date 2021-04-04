@@ -11,14 +11,17 @@ import static org.mockito.Mockito.verify;
 
 import com.google.common.collect.Lists;
 import com.kiroule.campsite.booking.api.CustomReplaceUnderscoresDisplayNameGenerator;
+import com.kiroule.campsite.booking.api.DisplayNamePrefix;
 import com.kiroule.campsite.booking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsite.booking.api.exception.BookingNotFoundException;
 import com.kiroule.campsite.booking.api.exception.IllegalBookingStateException;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
@@ -35,7 +38,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
-public class BookingServiceImplTest {
+class BookingServiceImplTest {
 
   @Mock
   BookingRepository bookingRepository;
@@ -43,12 +46,14 @@ public class BookingServiceImplTest {
   @InjectMocks
   BookingServiceImpl bookingService;
 
+  LocalDate now;
   UUID uuid;
   Booking existingBooking;
   Booking newBooking;
 
   @BeforeEach
   void beforeEach() {
+    now = LocalDate.now();
     uuid = UUID.randomUUID();
     existingBooking = null;
     newBooking = null;
@@ -65,29 +70,28 @@ public class BookingServiceImplTest {
     }
 
     @Test
+    void given_non_existing_booking_uuid__then_booking_not_found_exception_thrown() {
+      givenFoundNoExistingBookingForFindByUuid();
+
+      whenFindBookingByUuidThenAssertExceptionThrown(BookingNotFoundException.class);
+    }
+
+    @Test
     void given_existing_booking_uuid__then_booking_found() {
       givenExistingBooking(1, 2);
-
+      givenFoundExistingBookingForFindByUuid();
+      
       whenFindBookingByUuid();
 
       thenAssertBookingFound();
     }
 
-    @Test
-    void given_non_existing_booking_uuid__then_booking_not_found_exception_thrown() {
-      givenNonExistingBooking();
-
-      whenFindBookingByUuidThenAssertExceptionThrown();
-    }
-
-    private void givenExistingBooking(int startPlusDays, int endPlusDays) {
-      BookingServiceImplTest.this.givenExistingBooking(startPlusDays, endPlusDays);
-      existingBooking.setActive(true);
-      doReturn(Optional.of(existingBooking)).when(bookingRepository).findByUuid(uuid);
-    }
-
-    private void givenNonExistingBooking() {
+    private void givenFoundNoExistingBookingForFindByUuid() {
       doReturn(Optional.empty()).when(bookingRepository).findByUuid(uuid);
+    }
+
+    private void givenFoundExistingBookingForFindByUuid() {
+      doReturn(Optional.of(existingBooking)).when(bookingRepository).findByUuid(uuid);
     }
 
     private void whenFindBookingByUuid() {
@@ -98,8 +102,9 @@ public class BookingServiceImplTest {
       assertThat(bookingForUuid).isEqualTo(existingBooking);
     }
 
-    private void whenFindBookingByUuidThenAssertExceptionThrown() {
-      assertThrows(BookingNotFoundException.class, () -> bookingService.findBookingByUuid(uuid));
+    private void whenFindBookingByUuidThenAssertExceptionThrown(
+        Class<? extends Exception> exception) {
+      assertThrows(exception, () -> bookingService.findBookingByUuid(uuid));
     }
   }
 
@@ -107,46 +112,44 @@ public class BookingServiceImplTest {
   class Create_Booking {
 
     @Test
-    void given_booking_dates_available__booking_created() {
-      givenBookingDatesAvailable(1, 4);
+    void given_booking_dates_not_available__then_booking_dates_not_available_exception_thrown() {
+      givenExistingBooking(1, 4);
+      givenNewBooking(1, 4);
+      givenFoundExistingBookingForDateRange(1, 4);
 
-      whenCreateBooking();
-
-      thenAssertBookingCreated();
+      whenCreateBookingFromNewBookingThenAssertExceptionThrown(
+          BookingDatesNotAvailableException.class);
     }
 
     @Test
-    void given_booking_dates_not_available__then_booking_dates_not_available_exception_thrown() {
-      givenBookingDatesNotAvailable(1, 4);
+    void given_booking_dates_available__booking_created() {
+      givenNewBooking(1, 4);
+      givenFoundNoExistingBookingsForDateRange(1, 4);
 
-      whenCreateBookingThenAssertExceptionThrown(newBooking, BookingDatesNotAvailableException.class);
+      whenCreateBookingFromNewBooking();
+
+      thenAssertBookingCreated();
     }
 
     @Test
     void given_booking_is_not_new__then_illegal_booking_state_exception_thrown() {
       givenExistingBooking(1, 2);
 
-      whenCreateBookingThenAssertExceptionThrown(existingBooking, IllegalBookingStateException.class);
+      whenCreateBookingFromExistingBookingThenAssertExceptionThrown(
+          IllegalBookingStateException.class);
     }
 
-    private void givenBookingDatesAvailable(int startPlusDays, int endPlusDays) {
-      BookingServiceImplTest.this.givenNewBooking(startPlusDays, endPlusDays);
-      doReturn(Lists.newArrayList()).when(bookingRepository)
-          .findForDateRange(newBooking.getStartDate(), newBooking.getEndDate());
-    }
-
-    private void givenBookingDatesNotAvailable(int startPlusDays, int endPlusDays) {
-      newBooking = buildBooking(
-          LocalDate.now().plusDays(startPlusDays), LocalDate.now().plusDays(endPlusDays));
-      assumeTrue(newBooking.isNew());
-      assumeFalse(newBooking.isActive());
-
-      BookingServiceImplTest.this.givenExistingBooking(startPlusDays, endPlusDays);
+    private void givenFoundExistingBookingForDateRange(int startPlusDays, int endPlusDays) {
       doReturn(Lists.newArrayList(existingBooking)).when(bookingRepository)
-          .findForDateRange(newBooking.getStartDate(), newBooking.getEndDate());
+          .findForDateRange(now.plusDays(startPlusDays), now.plusDays(endPlusDays));
     }
 
-    private void whenCreateBooking() {
+    private void givenFoundNoExistingBookingsForDateRange(int startPlusDays, int endPlusDays) {
+      doReturn(Lists.newArrayList()).when(bookingRepository)
+          .findForDateRange(now.plusDays(startPlusDays), now.plusDays(endPlusDays));
+    }
+
+    private void whenCreateBookingFromNewBooking() {
       bookingService.createBooking(newBooking);
     }
 
@@ -155,171 +158,230 @@ public class BookingServiceImplTest {
       verify(bookingRepository, times(1)).save(newBooking);
     }
 
-    private void whenCreateBookingThenAssertExceptionThrown(
-        Booking booking, Class<? extends Exception> exception) {
-      assertThrows(exception, () -> bookingService.createBooking(booking));
+    private void whenCreateBookingFromNewBookingThenAssertExceptionThrown(
+        Class<? extends Exception> exception) {
+      assertThrows(exception, () -> bookingService.createBooking(newBooking));
+    }
+
+    private void whenCreateBookingFromExistingBookingThenAssertExceptionThrown(
+        Class<? extends Exception> exception) {
+      assertThrows(exception, () -> bookingService.createBooking(existingBooking));
+    }
+  }
+
+  @Nested
+  class Find_Vacant_Dates {
+
+    LocalDate startDate;
+    LocalDate endDate;
+    List<LocalDate> vacantDates;
+
+    @BeforeEach
+    void beforeEach() {
+      startDate = null;
+      endDate = null;
+      vacantDates = null;
+    }
+
+    @Test
+    void given_range_start_date_is_now__then_illegal_argument_exception_thrown() {
+      givenDateRange(0, 2);
+
+      whenFindVacantDaysThenAssertExceptionThrown(IllegalArgumentException.class);
+    }
+
+    @Test
+    void given_range_end_date_is_now__then_illegal_argument_exception_thrown() {
+      givenDateRange(2, 0);
+
+      whenFindVacantDaysThenAssertExceptionThrown(IllegalArgumentException.class);
+    }
+
+    @Test
+    void given_range_end_date_is_before_range_start_date__then_illegal_argument_exception_thrown() {
+      givenDateRange(3, 1);
+
+      whenFindVacantDaysThenAssertExceptionThrown(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayNamePrefix("-S|-|----|-|E-")
+    void given_booking_dates_overlap_range_dates__then_no_vacant_dates_found() {
+      givenDateRange(2, 3);
+      givenExistingBooking(1, 4);
+      givenExistingBookingFoundForDateRange();
+
+      whenFindVacantDays();
+
+      thenAssertVacantDaysFound(Lists.newArrayList());
+    }
+
+    @Test
+    @DisplayNamePrefix("--|S|----|E|--")
+    void given_booking_dates_same_as_range_dates__then_end_date_found() {
+      givenDateRange(1, 4);
+      givenExistingBooking(1, 4);
+      givenExistingBookingFoundForDateRange();
+
+      whenFindVacantDays();
+
+      thenAssertVacantDaysFound(Lists.newArrayList(endDate));
+    }
+
+
+    @Test
+    @DisplayNamePrefix("--|-|----|-|--")
+    void given_no_existing_bookings__then_vacant_dates_within_date_range_inclusive_found() {
+      givenDateRange(1, 4);
+      givenNoExistingBookingFoundForDateRange();
+
+      whenFindVacantDays();
+
+      thenAssertVacantDaysFound(
+          startDate.datesUntil(endDate.plusDays(1)).collect(Collectors.toList()));
+    }
+
+    private void givenNoExistingBookingFoundForDateRange() {
+      doReturn(Lists.newArrayList())
+          .when(bookingRepository).findForDateRange(startDate, endDate);
+    }
+
+    private void givenExistingBookingFoundForDateRange() {
+      doReturn(Lists.newArrayList(existingBooking))
+          .when(bookingRepository).findForDateRange(startDate, endDate);
+    }
+
+    private void givenDateRange(int startPlusDays, int endPlusDays) {
+      startDate = now.plusDays(startPlusDays);
+      endDate = now.plusDays(endPlusDays);
+    }
+
+    private void whenFindVacantDays() {
+      vacantDates = bookingService.findVacantDays(startDate, endDate);
+    }
+
+    private void whenFindVacantDaysThenAssertExceptionThrown(Class<? extends Exception> exception) {
+      assertThrows(exception, () -> bookingService.findVacantDays(startDate, endDate));
+    }
+
+    private void thenAssertVacantDaysFound(List<LocalDate> expected) {
+      assertThat(vacantDates).hasSize(expected.size()).hasSameElementsAs(expected);
+    }
+  }
+
+  @Nested
+  class Update_Booking {
+
+    Booking otherExistingBooking;
+    Booking existingBookingWithNewBookingDates;
+
+    @BeforeEach
+    void beforeEach() {
+      otherExistingBooking = null;
+      existingBookingWithNewBookingDates = null;
+    }
+
+    @Test
+    void given_existing_booking_canceled__then_illegal_booking_state_exception_thrown() {
+      givenExistingBooking(1, 2);
+      givenExistingBookingCanceled();
+      givenExistingBookingFoundForUuid();
+
+      whenUpdateBookingThenAssertExceptionThrown(IllegalBookingStateException.class);
+    }
+
+    @Test
+    void given_booking_dates_not_available__then_booking_dates_not_available_exception_thrown() {
+      givenExistingBooking(1, 2);
+      givenExistingBookingFoundForUuid();
+      givenOtherExistingBooking(2, 3);
+      givenTwoBookingsFoundForDateRange(1, 3);
+
+      whenUpdateBookingWithNewBookingDatesThenAssertExceptionThrown(
+          1, 3, BookingDatesNotAvailableException.class);
+    }
+
+    @Test
+    void given_booking_dates_available__then_booking_updated() {
+      givenExistingBooking(1, 2);
+      givenExistingBookingFoundForUuid();
+      givenExistingBookingFoundForDateRange(1, 3);
+      givenExistingBookingWithNewBookingDates(1, 3);
+
+      whenUpdateBooking();
+
+      thenAssertBookingUpdated();
+    }
+
+    private void givenExistingBookingCanceled() {
+      existingBooking.setActive(false);
+    }
+
+    private void givenExistingBookingFoundForUuid() {
+      doReturn(Optional.of(existingBooking)).when(bookingRepository).findByUuid(uuid);
+    }
+
+    private void givenOtherExistingBooking(int startPlusDays, int endPlusDays) {
+      otherExistingBooking = buildBooking(
+          now.plusDays(startPlusDays), now.plusDays(endPlusDays));
+      otherExistingBooking.setId(1L);
+      otherExistingBooking.setActive(true);
+
+      assumeFalse(otherExistingBooking.isNew());
+      assumeTrue(otherExistingBooking.isActive());
+    }
+
+    private void givenTwoBookingsFoundForDateRange(int startPlusDays, int endPlusDays) {
+      doReturn(Lists.newArrayList(existingBooking, otherExistingBooking))
+          .when(bookingRepository).findForDateRange(
+              now.plusDays(startPlusDays), now.plusDays(endPlusDays));
+    }
+
+    private void givenExistingBookingFoundForDateRange(int startPlusDays, int endPlusDays) {
+      doReturn(Lists.newArrayList(existingBooking)).when(bookingRepository)
+          .findForDateRange(now.plusDays(startPlusDays), now.plusDays(endPlusDays));
+    }
+
+    private void givenExistingBookingWithNewBookingDates(int startPlusDays, int endPlusDays) {
+      existingBookingWithNewBookingDates = buildBooking(
+          now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid);
+    }
+
+    private void whenUpdateBookingThenAssertExceptionThrown(Class<? extends Exception> exception) {
+      assertThrows(exception, () -> bookingService.updateBooking(existingBooking));
+    }
+
+    private void whenUpdateBookingWithNewBookingDatesThenAssertExceptionThrown(
+        int startPlusDays, int endPlusDays, Class<? extends Exception> exception) {
+      Booking existingBookingWithUpdatedBookingDates = buildBooking(
+          now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid);
+      assertThrows(
+          exception, () -> bookingService.updateBooking(existingBookingWithUpdatedBookingDates));
+    }
+
+    private void whenUpdateBooking() {
+      bookingService.updateBooking(existingBookingWithNewBookingDates);
+    }
+
+    private void thenAssertBookingUpdated() {
+      assertThat(existingBookingWithNewBookingDates.isActive()).isTrue();
+      verify(bookingRepository, times(1)).save(existingBookingWithNewBookingDates);
     }
   }
 
   private void givenNewBooking(int startPlusDays, int endPlusDays) {
-    newBooking = buildBooking(
-        LocalDate.now().plusDays(startPlusDays), LocalDate.now().plusDays(endPlusDays));
+    newBooking = buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays));
+    newBooking.setActive(false);
     assumeTrue(newBooking.isNew());
     assumeFalse(newBooking.isActive());
   }
 
   private void givenExistingBooking(int startPlusDays, int endPlusDays) {
-    existingBooking = buildBooking(
-        LocalDate.now().plusDays(endPlusDays), LocalDate.now().plusDays(startPlusDays), uuid);
+    existingBooking = buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid);
     existingBooking.setId(1L);
-    existingBooking.setActive(true);
-
+    existingBooking.setVersion(0L);
+    
     assumeFalse(existingBooking.isNew());
     assumeTrue(existingBooking.isActive());
   }
-
-//
-//  @Test
-//  public void findVacantDate_rangeStartDateIsNow_illegalArgumentExceptionThrown() {
-//    exception.expect(IllegalArgumentException.class);
-//    // given
-//    LocalDate startDate = LocalDate.now();
-//    LocalDate endDate = LocalDate.now().plusDays(2);
-//    // when
-//    bookingService.findVacantDays(startDate, endDate);
-//    // then
-//    // IllegalArgumentException is thrown
-//  }
-//
-//  @Test
-//  public void findVacantDate_rangeEndDateIsNow_illegalArgumentExceptionThrown() {
-//    exception.expect(IllegalArgumentException.class);
-//    // given
-//    LocalDate startDate = LocalDate.now().plusDays(2);
-//    LocalDate endDate = LocalDate.now();
-//    // when
-//    bookingService.findVacantDays(startDate, endDate);
-//    // then
-//    // IllegalArgumentException is thrown
-//  }
-//
-//  @Test
-//  public void findVacantDate_rangeEndDateIsBeforeRangeStartDate_illegalArgumentExceptionThrown() {
-//    exception.expect(IllegalArgumentException.class);
-//    // given
-//    LocalDate startDate = LocalDate.now().plusDays(2);
-//    LocalDate endDate = LocalDate.now().plusDays(1);
-//    // when
-//    bookingService.findVacantDays(startDate, endDate);
-//    // then
-//    // IllegalArgumentException is thrown
-//  }
-//
-//  @Test
-//  public void findVacantDates_bookingDatesOverlapRangeDates_noVacantDates() {
-//    // given: -S|-|----|-|E-
-//    LocalDate startDate = LocalDate.now().plusDays(2);
-//    LocalDate endDate = LocalDate.now().plusDays(3);
-//    Booking booking = BookingMapper.INSTANCE.toBooking(
-//        helper.buildBooking(LocalDate.now().plusDays(1), LocalDate.now().plusDays(4)));
-//    doReturn(Lists.newArrayList(booking))
-//        .when(bookingRepository).findForDateRange(startDate, endDate);
-//    // then
-//    List<LocalDate> vacantDates = bookingService.findVacantDays(startDate, endDate);
-//    // when
-//    assertThat(vacantDates).isEmpty();
-//  }
-//
-//  @Test
-//  public void findVacantDates_bookingDatesSameAsRangeDates_vacantRangeEndDate() {
-//    // given: --|S|----|E|--
-//    LocalDate startDate = LocalDate.now().plusDays(1);
-//    LocalDate endDate = LocalDate.now().plusDays(4);
-//    Booking booking = BookingMapper.INSTANCE.toBooking(helper.buildBooking(startDate, endDate));
-//    doReturn(Lists.newArrayList(booking))
-//        .when(bookingRepository).findForDateRange(startDate, endDate);
-//    // then
-//    List<LocalDate> vacantDates = bookingService.findVacantDays(startDate, endDate);
-//    // when
-//    assertThat(vacantDates).size().isEqualTo(1);
-//    assertThat(vacantDates).contains(endDate);
-//  }
-//
-//  @Test
-//  public void findVacantDates_noBookingsFound_vacantDatesWithinDateRangeInclusive() {
-//    // given: --|-|----|-|--
-//    LocalDate startDate = LocalDate.now().plusDays(1);
-//    LocalDate endDate = LocalDate.now().plusDays(4);
-//    doReturn(Lists.newArrayList())
-//        .when(bookingRepository).findForDateRange(startDate, endDate);
-//    // when
-//    List<LocalDate> vacantDates = bookingService.findVacantDays(startDate, endDate);
-//    // then
-//    List<LocalDate> expected = startDate
-//        .datesUntil(endDate.plusDays(1))
-//        .collect(Collectors.toList());
-//    assertThat(vacantDates).isEqualTo(expected);
-//  }
-//
-//
-//  @Test
-//  public void updateBooking_bookingIsCancelled_illegalBookingStateExceptionThrown() {
-//    exception.expect(IllegalBookingStateException.class);
-//    // given
-//    UUID uuid = UUID.randomUUID();
-//    Booking booking = BookingMapper.INSTANCE.toBooking(helper.buildBooking(
-//        LocalDate.now().plusDays(2), LocalDate.now().plusDays(1), uuid));
-//
-//    Booking persistedBooking = BookingMapper.INSTANCE.toBooking(helper.buildBooking(
-//        LocalDate.now().plusDays(2), LocalDate.now().plusDays(1), uuid));
-//    persistedBooking.setActive(false);
-//    doReturn(Optional.of(persistedBooking)).when(bookingRepository).findByUuid(uuid);
-//    // when
-//    bookingService.updateBooking(booking);
-//    // then
-//    // IllegalBookingStateException thrown
-//  }
-//
-//  @Test
-//  public void updateBooking_bookingDatesNotAvailable_bookingDatesNotAvailableExceptionThrown() {
-//    exception.expect(BookingDatesNotAvailableException.class);
-//    // given
-//    UUID uuid = UUID.randomUUID();
-//    Booking booking = BookingMapper.INSTANCE.toBooking(helper.buildBooking(
-//        LocalDate.now().plusDays(3), LocalDate.now().plusDays(1), uuid));
-//    booking.setUuid(uuid);
-//
-//    Booking persistedBooking = BookingMapper.INSTANCE.toBooking(helper.buildBooking(
-//        LocalDate.now().plusDays(2), LocalDate.now().plusDays(1), uuid));
-//    doReturn(Optional.of(persistedBooking)).when(bookingRepository).findByUuid(uuid);
-//
-//    Booking otherBooking = BookingMapper.INSTANCE.toBooking(helper.buildBooking(
-//        LocalDate.now().plusDays(3), LocalDate.now().plusDays(2), UUID.randomUUID()));
-//    doReturn(Lists.newArrayList(persistedBooking, otherBooking))
-//        .when(bookingRepository).findForDateRange(booking.getStartDate(), booking.getEndDate());
-//    // when
-//    bookingService.updateBooking(booking);
-//    // then
-//    // IllegalBookingStateException thrown
-//  }
-//
-//  @Test
-//  public void updateBooking_bookingDatesAvailable_bookingUpdated() {
-//    // given
-//    UUID uuid = UUID.randomUUID();
-//    Booking booking = BookingMapper.INSTANCE.toBooking(helper.buildBooking(
-//        LocalDate.now().plusDays(3), LocalDate.now().plusDays(1), uuid));
-//
-//    Booking persistedBooking = BookingMapper.INSTANCE.toBooking(helper.buildBooking(
-//        LocalDate.now().plusDays(2), LocalDate.now().plusDays(1), uuid));
-//    doReturn(Optional.of(persistedBooking)).when(bookingRepository).findByUuid(uuid);
-//
-//    doReturn(Lists.newArrayList(persistedBooking))
-//        .when(bookingRepository).findForDateRange(booking.getStartDate(), booking.getEndDate());
-//    // when
-//    bookingService.updateBooking(booking);
-//    // then
-//    verify(bookingRepository, times(1)).save(booking);
-//  }
-
 }
