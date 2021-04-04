@@ -71,7 +71,7 @@ class BookingServiceImplTest {
 
     @Test
     void given_non_existing_booking_uuid__then_booking_not_found_exception_thrown() {
-      givenFoundNoExistingBookingForFindByUuid();
+      givenFoundNoExistingBookingForUuid();
 
       whenFindBookingByUuidThenAssertExceptionThrown(BookingNotFoundException.class);
     }
@@ -79,18 +79,18 @@ class BookingServiceImplTest {
     @Test
     void given_existing_booking_uuid__then_booking_found() {
       givenExistingBooking(1, 2);
-      givenFoundExistingBookingForFindByUuid();
+      givenFoundExistingBookingForUuid();
       
       whenFindBookingByUuid();
 
       thenAssertBookingFound();
     }
 
-    private void givenFoundNoExistingBookingForFindByUuid() {
+    private void givenFoundNoExistingBookingForUuid() {
       doReturn(Optional.empty()).when(bookingRepository).findByUuid(uuid);
     }
 
-    private void givenFoundExistingBookingForFindByUuid() {
+    private void givenFoundExistingBookingForUuid() {
       doReturn(Optional.of(existingBooking)).when(bookingRepository).findByUuid(uuid);
     }
 
