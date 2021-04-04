@@ -1,5 +1,6 @@
 package com.kiroule.campsite.booking.api.controller;
 
+import static com.kiroule.campsite.booking.api.TestHelper.buildBookingDto;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -7,7 +8,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import com.kiroule.campsite.booking.api.contract.v1.model.ApiError;
 import com.kiroule.campsite.booking.api.contract.v1.model.BookingDto;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
-import com.kiroule.campsite.booking.api.TestHelper;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import io.restassured.response.ValidatableResponse;
@@ -15,42 +15,36 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("h2")
-public class BookingControllerTestIT {
+class BookingControllerTestIT {
 
   @Autowired
   private BookingRepository bookingRepository;
-
-  @Autowired
-  private TestHelper helper;
 
   @LocalServerPort
   int port;
 
   private String controllerPath = "/v1/booking";
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void beforeEach() {
     RestAssured.port = port;
     RestAssured.defaultParser = Parser.JSON;
     bookingRepository.deleteAll();
   }
 
   @Test
-  public void getActuatorHealth_statusOkAndBodyContainsStatusUp() {
+  void getActuatorHealth_statusOkAndBodyContainsStatusUp() {
     ValidatableResponse response = given()
         .when().get("/actuator/health")
         .then();
@@ -59,7 +53,7 @@ public class BookingControllerTestIT {
   }
 
   @Test
-  public void getVacantDates_noBookingsWithinDateRange_datesWithinDateRangeInclusive() {
+  void getVacantDates_noBookingsWithinDateRange_datesWithinDateRangeInclusive() {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(3);
@@ -77,7 +71,7 @@ public class BookingControllerTestIT {
   }
 
   @Test
-  public void getBooking_nonExistingBooking_statusNotFound() {
+  void getBooking_nonExistingBooking_statusNotFound() {
     UUID nonExistingBookingUuid = UUID.randomUUID();
     given()
         .pathParam("uuid", nonExistingBookingUuid)
@@ -86,7 +80,7 @@ public class BookingControllerTestIT {
   }
 
   @Test
-  public void getBooking_existingBooking_bookingFound() {
+  void getBooking_existingBooking_bookingFound() {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(2);
@@ -94,7 +88,7 @@ public class BookingControllerTestIT {
 
     BookingDto addedBooking = given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBookingDto(endDate, startDate, uuid))
+        .body(buildBookingDto(startDate, endDate, uuid))
         .when().post(controllerPath)
         .as(BookingDto.class);
     // when
@@ -106,20 +100,20 @@ public class BookingControllerTestIT {
   }
 
   @Test
-  public void addBooking_bookingDatesNotAvailable_statusBadRequest() {
+  void addBooking_bookingDatesNotAvailable_statusBadRequest() {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(2);
 
     given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBookingDto(startDate, endDate))
+        .body(buildBookingDto(startDate, endDate))
         .when().post(controllerPath)
         .then().statusCode(HttpStatus.CREATED.value());
     // when
     ApiError apiError = given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBookingDto(startDate, endDate))
+        .body(buildBookingDto(startDate, endDate))
         .when().post(controllerPath)
         .as(ApiError.class);
     // then
@@ -129,14 +123,14 @@ public class BookingControllerTestIT {
   }
 
   @Test
-  public void addBooking_bookingDatesExceedMaximumStay_statusBadRequest() {
+  void addBooking_bookingDatesExceedMaximumStay_statusBadRequest() {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(5);
     // when
     ApiError apiError = given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBookingDto(startDate, endDate))
+        .body(buildBookingDto(startDate, endDate))
         .when().post(controllerPath)
         .as(ApiError.class);
     // then
@@ -145,7 +139,7 @@ public class BookingControllerTestIT {
   }
 
   @Test
-  public void updateBooking_existingBooking_bookingUpdated() {
+  void updateBooking_existingBooking_bookingUpdated() {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(2);
@@ -153,7 +147,7 @@ public class BookingControllerTestIT {
 
     BookingDto addedBooking = given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBookingDto(endDate, startDate, uuid))
+        .body(buildBookingDto(startDate, endDate, uuid))
         .when().post(controllerPath)
         .as(BookingDto.class);
     addedBooking.setEndDate(endDate.plusDays(1));
@@ -171,7 +165,7 @@ public class BookingControllerTestIT {
   }
 
   @Test
-  public void updateBooking_existingBookingAndBookingDatesNotAvailable_statusBadRequest() {
+  void updateBooking_existingBookingAndBookingDatesNotAvailable_statusBadRequest() {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(2);
@@ -179,14 +173,14 @@ public class BookingControllerTestIT {
 
     BookingDto addedBooking = given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBookingDto(endDate, startDate, uuid))
+        .body(buildBookingDto(startDate, endDate, uuid))
         .when().post(controllerPath)
         .as(BookingDto.class);
     addedBooking.setEndDate(endDate.plusDays(1));
     // other booking
     given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBookingDto(endDate.plusDays(1), endDate, UUID.randomUUID()))
+        .body(buildBookingDto(endDate, endDate.plusDays(1), UUID.randomUUID()))
         .when().post(controllerPath)
         .then().statusCode(HttpStatus.CREATED.value());
     // when
@@ -203,7 +197,7 @@ public class BookingControllerTestIT {
   }
 
   @Test
-  public void updateBooking_bookingWasUpdatedByAnotherTransaction_statusConflict() {
+  void updateBooking_bookingWasUpdatedByAnotherTransaction_statusConflict() {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(2);
@@ -211,7 +205,7 @@ public class BookingControllerTestIT {
 
     BookingDto addedBooking = given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBookingDto(endDate, startDate, uuid))
+        .body(buildBookingDto(startDate, endDate, uuid))
         .when().post(controllerPath)
         .as(BookingDto.class);
     addedBooking.setEndDate(endDate.plusDays(1));
@@ -238,7 +232,7 @@ public class BookingControllerTestIT {
   }
 
   @Test
-  public void cancelBooking_existingBooking_bookingCancelled() {
+  void cancelBooking_existingBooking_bookingCancelled() {
     // given
     LocalDate startDate = LocalDate.now().plusDays(1);
     LocalDate endDate = LocalDate.now().plusDays(2);
@@ -246,7 +240,7 @@ public class BookingControllerTestIT {
 
     given()
         .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(helper.buildBookingDto(endDate, startDate, uuid))
+        .body(buildBookingDto(startDate, endDate, uuid))
         .when().post(controllerPath)
         .as(BookingDto.class);
     // when
