@@ -13,7 +13,6 @@ import com.kiroule.campsite.booking.api.contract.v1.model.BookingDto;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
-import io.restassured.response.ValidatableResponse;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -64,11 +63,9 @@ class BookingControllerTestIT {
   class Get_Actuator_Health {
     @Test
     void given_service_is_running__then_status_OK() {
-      ValidatableResponse response = given()
+      given()
           .when().get("/actuator/health")
-          .then();
-      response.statusCode(HttpStatus.OK.value());
-      response.body("status", equalTo("UP"));
+          .then().statusCode(HttpStatus.OK.value()).body("status", equalTo("UP"));
     }
   }
 
