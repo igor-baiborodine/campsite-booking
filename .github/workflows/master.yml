@@ -9,7 +9,6 @@ jobs:
   sonar:
     name: SonarCloud Scan
     runs-on: ubuntu-18.04
-    needs: [ test ]
 
     steps:
       - uses: actions/checkout@v1
