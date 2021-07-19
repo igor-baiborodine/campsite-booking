@@ -5,7 +5,6 @@ import com.kiroule.campsite.booking.api.exception.BookingDatesNotAvailableExcept
 import com.kiroule.campsite.booking.api.exception.BookingNotFoundException;
 import com.kiroule.campsite.booking.api.exception.IllegalBookingStateException;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.StaleObjectStateException;
@@ -34,7 +33,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(BookingNotFoundException.class)
   protected ResponseEntity<Object> handleBookingNotFound(BookingNotFoundException ex) {
 
-    ApiError apiError = ApiError.builder()
+    var apiError = ApiError.builder()
         .timestamp(LocalDateTime.now())
         .status(HttpStatus.NOT_FOUND)
         .message(ex.getMessage())
@@ -47,7 +46,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
       IllegalArgumentException.class})
   protected ResponseEntity<Object> handleBookingDatesNotAvailable(RuntimeException ex) {
 
-    ApiError apiError = ApiError.builder()
+    var apiError = ApiError.builder()
         .timestamp(LocalDateTime.now())
         .status(HttpStatus.BAD_REQUEST)
         .message(ex.getMessage())
@@ -60,7 +59,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
       MethodArgumentNotValidException ex, HttpHeaders headers,
       HttpStatus status, WebRequest request) {
 
-    List<String> subErrors = ex.getBindingResult().getFieldErrors()
+    var subErrors = ex.getBindingResult().getFieldErrors()
         .stream()
         .map(DefaultMessageSourceResolvable::getDefaultMessage)
         .collect(Collectors.toList());
@@ -69,7 +68,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         .map(DefaultMessageSourceResolvable::getDefaultMessage)
         .collect(Collectors.toList()));
 
-    ApiError apiError = ApiError.builder()
+    var apiError = ApiError.builder()
         .timestamp(LocalDateTime.now())
         .status(HttpStatus.BAD_REQUEST)
         .message("Validation error")
@@ -83,11 +82,11 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
   @Override
   protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
       HttpHeaders headers, HttpStatus status, WebRequest request) {
-    ServletWebRequest servletWebRequest = (ServletWebRequest) request;
+    var servletWebRequest = (ServletWebRequest) request;
     log.info("{} to {}", servletWebRequest.getHttpMethod(),
         servletWebRequest.getRequest().getServletPath());
 
-    ApiError apiError = ApiError.builder()
+    var apiError = ApiError.builder()
         .timestamp(LocalDateTime.now())
         .status(HttpStatus.BAD_REQUEST)
         .message("Malformed JSON request")
@@ -99,7 +98,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(StaleObjectStateException.class)
   protected ResponseEntity<Object> handleStaleObjectStateException(StaleObjectStateException ex) {
 
-    ApiError apiError = ApiError.builder()
+    var apiError = ApiError.builder()
         .timestamp(LocalDateTime.now())
         .status(HttpStatus.CONFLICT)
         .message("Optimistic locking error - booking was updated by another transaction")
@@ -113,4 +112,3 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
 }
-

@@ -5,7 +5,7 @@ package com.kiroule.campsite.booking.api.exception;
  */
 public class BookingNotFoundException extends RuntimeException {
 
-  private static final long serialVersionUID = 5373397898884375259L;
+  private static final long serialVersionUID = 1L;
 
   public BookingNotFoundException(String message) {
     super(message);
