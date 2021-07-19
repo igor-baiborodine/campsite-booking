@@ -5,7 +5,7 @@ package com.kiroule.campsite.booking.api.exception;
  */
 public class BookingDatesNotAvailableException extends RuntimeException {
 
-  private static final long serialVersionUID = -8003308087986227477L;
+  private static final long serialVersionUID = 1L;
 
   public BookingDatesNotAvailableException(String message) {
     super(message);
