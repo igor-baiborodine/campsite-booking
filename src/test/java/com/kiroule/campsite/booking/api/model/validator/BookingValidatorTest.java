@@ -44,29 +44,29 @@ class BookingValidatorTest {
 
     @Test
     void given_booking_start_date_is_tomorrow__then_no_validation_errors_thrown() {
-      givenBookingDto(now.plusDays(1), now.plusDays(4));
+      given_bookingDto(now.plusDays(1), now.plusDays(4));
 
-      whenValidateBooking();
+      when_validateBooking();
 
-      thenAssertNoValidationErrorsThrown();
+      then_assertNoValidationErrorsThrown();
     }
 
     @Test
     void given_booking_start_date_1_month_a_head__then_no_validation_errors_thrown() {
-      givenBookingDto(now.plusMonths(1), now.plusMonths(1).plusDays(3));
+      given_bookingDto(now.plusMonths(1), now.plusMonths(1).plusDays(3));
 
-      whenValidateBooking();
+      when_validateBooking();
 
-      thenAssertNoValidationErrorsThrown();
+      then_assertNoValidationErrorsThrown();
     }
 
     @Test
     void given_booking_start_date_1_month_and_1_day_ahead__then_BookingAllowedStartSate_error_thrown() {
-      givenBookingDto(now.plusMonths(1).plusDays(1), now.plusMonths(1).plusDays(3));
+      given_bookingDto(now.plusMonths(1).plusDays(1), now.plusMonths(1).plusDays(3));
 
-      whenValidateBooking();
+      when_validateBooking();
 
-      thenAssertValidationErrorsThrown(BookingAllowedStartDate.class);
+      then_assertValidationErrorsThrown(BookingAllowedStartDate.class);
     }
   }
 
@@ -75,29 +75,29 @@ class BookingValidatorTest {
 
     @Test
     void given_start_date_is_before_end_date__then_no_validation_errors_thrown() {
-      givenBookingDto(now.plusDays(1), now.plusDays(2));
+      given_bookingDto(now.plusDays(1), now.plusDays(2));
 
-      whenValidateBooking();
+      when_validateBooking();
 
-      thenAssertNoValidationErrorsThrown();
+      then_assertNoValidationErrorsThrown();
     }
 
     @Test
     void given_start_date_after_end_date__then_BookingStartDateBeforeEndDate_error_thrown() {
-      givenBookingDto(now.plusDays(2), now.plusDays(1));
+      given_bookingDto(now.plusDays(2), now.plusDays(1));
 
-      whenValidateBooking();
+      when_validateBooking();
 
-      thenAssertValidationErrorsThrown(BookingStartDateBeforeEndDate.class);
+      then_assertValidationErrorsThrown(BookingStartDateBeforeEndDate.class);
     }
 
     @Test
     void given_start_date_equals_to_end_date__then_BookingStartDateBeforeEndDate_error_thrown() {
-      givenBookingDto(now.plusDays(1), now.plusDays(1));
+      given_bookingDto(now.plusDays(1), now.plusDays(1));
 
-      whenValidateBooking();
+      when_validateBooking();
 
-      thenAssertValidationErrorsThrown(BookingStartDateBeforeEndDate.class);
+      then_assertValidationErrorsThrown(BookingStartDateBeforeEndDate.class);
     }
   }
 
@@ -106,36 +106,36 @@ class BookingValidatorTest {
 
     @Test
     void given_booking_with_three_day_stay__then_no_validation_errors() {
-      givenBookingDto(now.plusDays(1), now.plusDays(4));
+      given_bookingDto(now.plusDays(1), now.plusDays(4));
 
-      whenValidateBooking();
+      when_validateBooking();
 
-      thenAssertNoValidationErrorsThrown();
+      then_assertNoValidationErrorsThrown();
     }
 
     @Test
     void given_booking_with_four_day_stay__then_BookingMaximumStay_error_thrown() {
-      givenBookingDto(now.plusDays(1), now.plusDays(5));
+      given_bookingDto(now.plusDays(1), now.plusDays(5));
 
-      whenValidateBooking();
+      when_validateBooking();
 
-      thenAssertValidationErrorsThrown(BookingMaximumStay.class);
+      then_assertValidationErrorsThrown(BookingMaximumStay.class);
     }
   }
 
-  private void givenBookingDto(LocalDate startDate, LocalDate endDate) {
+  private void given_bookingDto(LocalDate startDate, LocalDate endDate) {
     bookingDto = buildBookingDto(startDate, endDate);
   }
 
-  private void whenValidateBooking() {
+  private void when_validateBooking() {
     violations = validator.validate(bookingDto);
   }
 
-  private void thenAssertNoValidationErrorsThrown() {
+  private void then_assertNoValidationErrorsThrown() {
     assertThat(violations.size()).isZero();
   }
 
-  private void thenAssertValidationErrorsThrown(Class<?> constraint) {
+  private void then_assertValidationErrorsThrown(Class<?> constraint) {
     assertThat(violations.size()).isEqualTo(1);
 
     ConstraintViolation<BookingDto> violation = violations.iterator().next();
