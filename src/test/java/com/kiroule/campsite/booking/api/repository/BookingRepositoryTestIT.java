@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ActiveProfiles("h2")
 @Transactional
 @DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 class BookingRepositoryTestIT {
 
   @Autowired
@@ -55,114 +55,114 @@ class BookingRepositoryTestIT {
 
   @Test
   void find_by_uuid__given_existing_booking__then_booking_found() {
-    givenExistingBooking(1, 2);
+    given_existingBooking(1, 2);
 
-    whenFindByUuid();
+    when_findByUuid();
 
-    thenAssertBookingFoundForUuid();
+    then_assertBookingFoundForUuid();
   }
 
   @Test
   @DisplayNamePrefix("-S-E|-|----|-|--")
   void find_for_date_range__given_booking_dates_before_range_startDate__then_no_booking_found() {
-    givenExistingBooking(1, 2);
+    given_existingBooking(1, 2);
 
-    whenFindBookingsForDateRange(3, 4);
+    when_findBookingsForDateRange(3, 4);
 
-    thenAssertNoBookingFoundForDateRange();
+    then_assertNoBookingFoundForDateRange();
   }
 
   @Test
   @DisplayNamePrefix("-S|E|----|-|--")
   void find_for_date_range__given_booking_start_date_before_range_start_date_and_booking_end_date_equals_to_range_start_date__then_no_booking_found() {
-    givenExistingBooking(1, 2);
+    given_existingBooking(1, 2);
 
-    whenFindBookingsForDateRange(2, 3);
+    when_findBookingsForDateRange(2, 3);
 
-    thenAssertNoBookingFoundForDateRange();
+    then_assertNoBookingFoundForDateRange();
   }
 
   @Test
   @DisplayNamePrefix("-S|-|E---|-|--")
   void find_for_date_range__given_booking_start_date_before_range_start_date_and_booking_end_date_within_range_dates__then_booking_found() {
-    givenExistingBooking(1, 3);
+    given_existingBooking(1, 3);
 
-    whenFindBookingsForDateRange(2, 4);
+    when_findBookingsForDateRange(2, 4);
 
-    thenAssertBookingFoundForDateRange();
+    then_assertBookingFoundForDateRange();
   }
 
   @Test
   @DisplayNamePrefix("--|S|E---|-|--")
   void find_for_date_range__given_booking_start_date_equals_to_range_start_date_and_booking_end_date_within_range_dates__then_booking_found() {
-    givenExistingBooking(1, 2);
+    given_existingBooking(1, 2);
 
-    whenFindBookingsForDateRange(1, 3);
+    when_findBookingsForDateRange(1, 3);
 
-    thenAssertBookingFoundForDateRange();
+    then_assertBookingFoundForDateRange();
   }
 
   @Test
   @DisplayNamePrefix("--|-|S--E|-|--")
   void find_for_date_range__given_booking_dates_within_range_dates__then_booking_found() {
-    givenExistingBooking(2, 3);
+    given_existingBooking(2, 3);
 
-    whenFindBookingsForDateRange(1, 4);
+    when_findBookingsForDateRange(1, 4);
 
-    thenAssertBookingFoundForDateRange();
+    then_assertBookingFoundForDateRange();
   }
 
   @Test
   @DisplayNamePrefix("--|-|---S|E|--")
   void find_for_date_range__given_booking_start_date_within_range_dates_and_booking_end_date_equals_to_range_end_date__then_booking_found() {
-    givenExistingBooking(2, 3);
+    given_existingBooking(2, 3);
 
-    whenFindBookingsForDateRange(1, 3);
+    when_findBookingsForDateRange(1, 3);
 
-    thenAssertBookingFoundForDateRange();
+    then_assertBookingFoundForDateRange();
   }
 
   @Test
   @DisplayNamePrefix("--|-|---S|-|E-")
   void find_for_date_range__given_booking_start_date_before_range_end_date_and_booking_end_date_after_range_end_date__then_booking_found() {
-    givenExistingBooking(2, 4);
+    given_existingBooking(2, 4);
 
-    whenFindBookingsForDateRange(1, 3);
+    when_findBookingsForDateRange(1, 3);
 
-    thenAssertBookingFoundForDateRange();
+    then_assertBookingFoundForDateRange();
   }
 
   @Test
   @DisplayNamePrefix("--|-|----|S|E-")
   void find_for_date_range__given_booking_start_date_equals_to_range_end_date_and_booking_end_date_after_range_end_date__then_booking_found() {
-    givenExistingBooking(3, 4);
+    given_existingBooking(3, 4);
 
-    whenFindBookingsForDateRange(1, 3);
+    when_findBookingsForDateRange(1, 3);
 
-    thenAssertBookingFoundForDateRange();
+    then_assertBookingFoundForDateRange();
   }
 
   @Test
   @DisplayNamePrefix("--|-|----|-|S-E-")
   void find_for_date_range__given_booking_dates_after_range_end_date__then_no_booking_found() {
-    givenExistingBooking(3, 4);
+    given_existingBooking(3, 4);
 
-    whenFindBookingsForDateRange(1, 2);
+    when_findBookingsForDateRange(1, 2);
 
-    thenAssertNoBookingFoundForDateRange();
+    then_assertNoBookingFoundForDateRange();
   }
 
   @Test
   @DisplayNamePrefix("-S|-|----|-|E-")
   void find_for_date_range__given_booking_dates_overlap_range_dates__then_booking_found() {
-    givenExistingBooking(1, 4);
+    given_existingBooking(1, 4);
 
-    whenFindBookingsForDateRange(2, 3);
+    when_findBookingsForDateRange(2, 3);
 
-    thenAssertBookingFoundForDateRange();
+    then_assertBookingFoundForDateRange();
   }
 
-  private void givenExistingBooking(int startPlusDays, int endPlusDays) {
+  private void given_existingBooking(int startPlusDays, int endPlusDays) {
     Booking booking = buildBooking(
         now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid);
     existingBooking = bookingRepository.save(booking);
@@ -170,26 +170,26 @@ class BookingRepositoryTestIT {
     assumeThat(existingBooking.isActive()).isTrue();
   }
 
-  private void whenFindByUuid() {
+  private void when_findByUuid() {
     bookingOptionalForUuid = bookingRepository.findByUuid(uuid);
   }
 
-  private void thenAssertBookingFoundForUuid() {
+  private void then_assertBookingFoundForUuid() {
     assertAll("foundBooking",
         () -> assertThat(bookingOptionalForUuid).hasValue(existingBooking),
         () -> assertThat(bookingOptionalForUuid.get().getCreatedAt().toLocalDate()).isEqualTo(now));
   }
 
-  private void whenFindBookingsForDateRange(int startPlusDays, int endPlusDays) {
+  private void when_findBookingsForDateRange(int startPlusDays, int endPlusDays) {
     bookingsForDateRange = bookingRepository.findForDateRange(
         now.plusDays(startPlusDays), now.plusDays(endPlusDays));
   }
 
-  private void thenAssertNoBookingFoundForDateRange() {
+  private void then_assertNoBookingFoundForDateRange() {
     assertThat(bookingsForDateRange).isEmpty();
   }
 
-  private void thenAssertBookingFoundForDateRange() {
+  private void then_assertBookingFoundForDateRange() {
     assertAll(
         () -> assertThat(bookingsForDateRange).size().isEqualTo(1),
         () -> assertThat(existingBooking).isIn(bookingsForDateRange)

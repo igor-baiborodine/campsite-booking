@@ -46,14 +46,14 @@ class BookingServiceImplTestIT {
 
   @Test
   void cancel_booking__given_existing_active_booking__then_booking_canceled() {
-    givenExistingActiveBooking(1, 2);
+    given_existingActiveBooking(1, 2);
 
-    whenCancelBooking();
+    when_cancelBooking();
 
-    thenAssertBookingCanceled();
+    then_assertBookingCanceled();
   }
 
-  private void givenExistingActiveBooking(int startPlusDays, int endPlusDays) {
+  private void given_existingActiveBooking(int startPlusDays, int endPlusDays) {
     Booking booking = buildBooking(
         LocalDate.now().plusDays(startPlusDays), LocalDate.now().plusDays(endPlusDays), uuid);
     existingBooking = bookingRepository.save(booking);
@@ -61,11 +61,11 @@ class BookingServiceImplTestIT {
     assumeThat(existingBooking.isActive()).isTrue();
   }
 
-  private void whenCancelBooking() {
+  private void when_cancelBooking() {
     bookingCanceled = bookingService.cancelBooking(existingBooking.getUuid());
   }
 
-  private void thenAssertBookingCanceled() {
+  private void then_assertBookingCanceled() {
     assertThat(bookingCanceled).isTrue();
   }
 }
