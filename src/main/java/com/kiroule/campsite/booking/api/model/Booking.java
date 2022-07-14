@@ -1,9 +1,10 @@
 package com.kiroule.campsite.booking.api.model;
 
+import static java.util.Objects.isNull;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -70,7 +71,7 @@ public class Booking extends DateAudit {
    * @return true if the booking is new, i.e., there is no persistence ID, otherwise false
    */
   public boolean isNew() {
-    return this.id == null;
+    return isNull(id);
   }
 
   /**
@@ -80,7 +81,7 @@ public class Booking extends DateAudit {
    * @return a list of booking dates
    */
   public List<LocalDate> getBookingDates() {
-    return this.startDate.datesUntil(this.endDate).collect(Collectors.toList());
+    return startDate.datesUntil(endDate).toList();
   }
 
 }

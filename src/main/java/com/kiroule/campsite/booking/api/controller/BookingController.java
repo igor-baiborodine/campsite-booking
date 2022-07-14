@@ -1,5 +1,7 @@
 package com.kiroule.campsite.booking.api.controller;
 
+import static java.util.Objects.isNull;
+
 import com.kiroule.campsite.booking.api.contract.v1.BookingApiContractV1;
 import com.kiroule.campsite.booking.api.contract.v1.model.BookingDto;
 import com.kiroule.campsite.booking.api.model.Booking;
@@ -32,10 +34,10 @@ public class BookingController implements BookingApiContractV1 {
   }
 
   public ResponseEntity<List<LocalDate>> getVacantDates(LocalDate startDate, LocalDate endDate) {
-    if (startDate == null) {
+    if (isNull(startDate)) {
       startDate = LocalDate.now().plusDays(1);
     }
-    if (endDate == null) {
+    if (isNull(endDate)) {
       endDate = startDate.plusMonths(1);
     }
     var vacantDates = bookingService.findVacantDays(startDate, endDate);
