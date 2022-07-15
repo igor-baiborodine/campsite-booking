@@ -11,7 +11,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -24,14 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Igor Baiborodine
  */
 @RestController
+@AllArgsConstructor
 public class BookingController implements BookingApiContractV1 {
 
   private BookingService bookingService;
-
-  @Autowired
-  public BookingController(BookingService bookingService) {
-    this.bookingService = bookingService;
-  }
 
   public ResponseEntity<List<LocalDate>> getVacantDates(LocalDate startDate, LocalDate endDate) {
     if (isNull(startDate)) {
