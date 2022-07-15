@@ -66,7 +66,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     subErrors.addAll(ex.getBindingResult().getGlobalErrors()
         .stream()
         .map(DefaultMessageSourceResolvable::getDefaultMessage)
-        .collect(Collectors.toList()));
+        .toList());
 
     var apiError = ApiError.builder()
         .timestamp(LocalDateTime.now())
