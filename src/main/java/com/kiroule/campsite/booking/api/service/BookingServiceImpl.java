@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -24,14 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Igor Baiborodine
  */
 @Service
+@AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
   private BookingRepository bookingRepository;
-
-  @Autowired
-  public BookingServiceImpl(BookingRepository bookingRepository) {
-    this.bookingRepository = bookingRepository;
-  }
 
   @Override
   @Transactional(readOnly = true)
@@ -114,5 +110,4 @@ public class BookingServiceImpl implements BookingService {
     booking = bookingRepository.save(booking);
     return !booking.isActive();
   }
-
 }
