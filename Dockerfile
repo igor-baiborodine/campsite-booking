@@ -1,7 +1,7 @@
 ################################################################################
 # Build stage 0: builder
 ################################################################################
-FROM maven:3-jdk-11 AS builder
+FROM maven:3-openjdk-17 AS builder
 
 WORKDIR /usr/src/app
 
@@ -14,7 +14,7 @@ RUN mvn --batch-mode package -DskipTests -DskipITs; \
 ################################################################################
 # Build stage 1: actual campsite-booking api image
 ################################################################################
-FROM openjdk:11-jre-slim
+FROM azul/zulu-openjdk-debian:17-jre
 
 LABEL \
     maintainer="Igor Baiborodine <igor@kiroule.com>" \
