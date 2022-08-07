@@ -7,8 +7,29 @@
 
 Read this [blog post](https://www.kiroule.com/article/campsite-booking-api-revisited/) to learn more details.
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Technical Task](#technical-task)
+  - [Booking Constraints](#booking-constraints)
+  - [System Requirements](#system-requirements)
+- [Up & Running](#up--running)
+  - [Maven](#maven)
+  - [Executable JAR](#executable-jar)
+  - [Docker](#docker)
+- [Tests](#tests)
+  - [Maven](#maven-1)
+  - [Swagger UI](#swagger-ui)
+  - [H2 Console](#h2-console)
+  - [Concurrent Bookings Creation Test](#concurrent-bookings-creation-test)
+  - [Basic Load Testing](#basic-load-testing)
+- [Continuous Integration](#continuous-integration)
+  - [Build on Pull Request](#build-on-pull-request)
+  - [Build Master Branch](#build-master-branch)
+  - [Perform Release](#perform-release)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Technical Task
 
