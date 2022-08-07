@@ -1,16 +1,18 @@
 package com.kiroule.campsite.booking.api.service;
 
 import static com.kiroule.campsite.booking.api.TestHelper.buildBooking;
+import static java.time.LocalDate.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
 import com.kiroule.campsite.booking.api.CustomReplaceUnderscoresDisplayNameGenerator;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
-import java.time.LocalDate;
+import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,40 +34,47 @@ class BookingServiceImplTestIT {
   @Autowired
   BookingRepository bookingRepository;
 
+  @Autowired
+  CampsiteRepository campsiteRepository;
+
   UUID uuid;
   Booking existingBooking;
-  boolean bookingCanceled;
 
   @BeforeEach
   void beforeEach() {
     bookingRepository.deleteAll();
+
     uuid = UUID.randomUUID();
     existingBooking = null;
-    bookingCanceled = false;
   }
 
-  @Test
-  void cancel_booking__given_existing_active_booking__then_booking_canceled() {
-    given_existingActiveBooking(1, 2);
+  @Nested
+  class Cancel_Booking {
 
-    when_cancelBooking();
+    boolean bookingCanceled;
 
-    then_assertBookingCanceled();
-  }
+    @Test
+    void happy_path() {
+      given_existingActiveBooking(1, 2);
 
-  private void given_existingActiveBooking(int startPlusDays, int endPlusDays) {
-    Booking booking = buildBooking(
-        LocalDate.now().plusDays(startPlusDays), LocalDate.now().plusDays(endPlusDays), uuid);
-    existingBooking = bookingRepository.save(booking);
-    assumeThat(existingBooking.isNew()).isFalse();
-    assumeThat(existingBooking.isActive()).isTrue();
-  }
+      when_cancelBooking();
 
-  private void when_cancelBooking() {
-    bookingCanceled = bookingService.cancelBooking(existingBooking.getUuid());
-  }
+      then_assertBookingCanceled();
+    }
 
-  private void then_assertBookingCanceled() {
-    assertThat(bookingCanceled).isTrue();
+    private void given_existingActiveBooking(int startPlusDays, int endPlusDays) {
+      Booking booking = buildBooking(now().plusDays(startPlusDays), now().plusDays(endPlusDays), uuid);
+      existingBooking = bookingRepository.save(booking);
+      assumeThat(existingBooking.isNew()).isFalse();
+      assumeThat(existingBooking.isActive()).isTrue();
+    }
+
+    private void when_cancelBooking() {
+      bookingCanceled = bookingService.cancelBooking(existingBooking.getUuid());
+    }
+
+    private void then_assertBookingCanceled() {
+      assertThat(bookingCanceled).isTrue();
+    }
   }
 }

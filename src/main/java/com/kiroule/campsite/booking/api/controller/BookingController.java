@@ -2,8 +2,8 @@ package com.kiroule.campsite.booking.api.controller;
 
 import static java.util.Objects.isNull;
 
-import com.kiroule.campsite.booking.api.contract.v1.BookingApiContractV1;
-import com.kiroule.campsite.booking.api.contract.v1.model.BookingDto;
+import com.kiroule.campsite.booking.api.contract.v2.BookingApiContractV2;
+import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.model.mapper.BookingMapper;
 import com.kiroule.campsite.booking.api.service.BookingService;
@@ -25,28 +25,30 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @AllArgsConstructor
-public class BookingController implements BookingApiContractV1 {
+public class BookingController implements BookingApiContractV2 {
 
   private BookingService bookingService;
 
-  public ResponseEntity<List<LocalDate>> getVacantDates(LocalDate startDate, LocalDate endDate) {
+  private BookingMapper bookingMapper;
+
+  public ResponseEntity<List<LocalDate>> getVacantDates(LocalDate startDate, LocalDate endDate, Long campsiteId) {
     if (isNull(startDate)) {
       startDate = LocalDate.now().plusDays(1);
     }
     if (isNull(endDate)) {
       endDate = startDate.plusMonths(1);
     }
-    var vacantDates = bookingService.findVacantDays(startDate, endDate);
+    var vacantDates = bookingService.findVacantDays(startDate, endDate, campsiteId);
     return new ResponseEntity<>(vacantDates, HttpStatus.OK);
   }
 
   public ResponseEntity<EntityModel<BookingDto>> getBooking(UUID uuid) {
-    var booking = bookingService.findBookingByUuid(uuid);
+    var booking = bookingService.findByUuid(uuid);
     return new ResponseEntity<>(getResource(booking), HttpStatus.OK);
   }
 
   public ResponseEntity<EntityModel<BookingDto>> addBooking(BookingDto bookingDto) {
-    var addedBooking = bookingService.createBooking(BookingMapper.INSTANCE.toBooking(bookingDto));
+    var addedBooking = bookingService.createBooking(bookingMapper.toBooking(bookingDto));
     var resource = getResource(addedBooking);
     var headers = new HttpHeaders();
     headers.setLocation(URI.create(resource.getRequiredLink(IanaLinkRelations.SELF).getHref()));
@@ -56,7 +58,7 @@ public class BookingController implements BookingApiContractV1 {
 
   public ResponseEntity<EntityModel<BookingDto>> updateBooking(UUID uuid, BookingDto bookingDto) {
     var updatedBooking = bookingService.updateBooking(
-        BookingMapper.INSTANCE.toBooking(bookingDto));
+        bookingMapper.toBooking(bookingDto));
     return new ResponseEntity<>(getResource(updatedBooking), HttpStatus.OK);
   }
 
@@ -69,7 +71,7 @@ public class BookingController implements BookingApiContractV1 {
   }
 
   private EntityModel<BookingDto> getResource(Booking booking) {
-    var resource = EntityModel.of(BookingMapper.INSTANCE.toBookingDto(booking));
+    var resource = EntityModel.of(bookingMapper.toBookingDto(booking));
     var selfLink = WebMvcLinkBuilder
         .linkTo(this.getClass()).slash(booking.getUuid()).withSelfRel();
     resource.add(selfLink);

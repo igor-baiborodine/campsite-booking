@@ -27,6 +27,6 @@ payload3=$(< test/booking-payload.json sed -e "s/UUID/$(uuidgen)/g" \
   | sed -e "s/END_DATE/${end_date}/g")
 echo "Payload 3: $payload3"
 
-curl -H "Content-Type: application/json" -d "$payload1" "$base_url"/v1/booking & \
-  curl -H "Content-Type: application/json" -d "$payload2" "$base_url"/v1/booking & \
-  curl -H "Content-Type: application/json" -d "$payload3" "$base_url"/v1/booking &
+curl -H "Content-Type: application/json" -d "$payload1" "$base_url"/v2/booking & \
+  curl -H "Content-Type: application/json" -d "$payload2" "$base_url"/v2/booking & \
+  curl -H "Content-Type: application/json" -d "$payload3" "$base_url"/v2/booking &

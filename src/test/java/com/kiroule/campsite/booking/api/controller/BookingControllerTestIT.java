@@ -8,8 +8,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.kiroule.campsite.booking.api.CustomReplaceUnderscoresDisplayNameGenerator;
-import com.kiroule.campsite.booking.api.contract.v1.model.ApiError;
-import com.kiroule.campsite.booking.api.contract.v1.model.BookingDto;
+import com.kiroule.campsite.booking.api.contract.v2.model.ApiError;
+import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
@@ -39,7 +39,7 @@ class BookingControllerTestIT {
   @LocalServerPort
   int port;
 
-  String controllerPath = "/v1/booking";
+  String controllerPath = "/v2/booking";
   UUID uuid;
   LocalDate now;
 
@@ -81,15 +81,16 @@ class BookingControllerTestIT {
 
     @Test
     void when_no_bookings_found_for_date_range__then_all_dates_within_date_range_inclusive() {
-      given_dateRangeAndWhenGetVacantDates(1, 3);
+      given_dateRangeAndWhenGetVacantDates(1, 3, 1);
 
       then_assertVacantDatesFound(1, 3);
     }
 
-    private void given_dateRangeAndWhenGetVacantDates(int startPlusDays, int endPlusDays) {
+    private void given_dateRangeAndWhenGetVacantDates(int startPlusDays, int endPlusDays, long campsiteId) {
       vacantDates = given()
           .param("start_date", now.plusDays(startPlusDays).toString())
           .param("end_date", now.plusDays(endPlusDays).toString())
+          .param("campsite_id", String.valueOf(campsiteId))
           .when().get(controllerPath + "/vacant-dates")
           .then().extract().body().as(List.class);
     }
@@ -265,17 +266,17 @@ class BookingControllerTestIT {
     }
 
     private void then_assertBookingUpdated() {
-      assertAll("updatedBooking",
-          () -> assertThat(updatedBookingDto)
-              .isEqualToIgnoringGivenFields(existingBookingDto, "version"),
-          () -> assertThat(updatedBookingDto.getVersion())
-              .isEqualTo(existingBookingDto.getVersion() + 1L)
-      );
+      assertAll(
+          "updatedBooking",
+          () -> assertThat(updatedBookingDto).usingRecursiveComparison().ignoringFields("version")
+                  .isEqualTo(existingBookingDto),
+          () -> assertThat(updatedBookingDto.getVersion()).isEqualTo(existingBookingDto.getVersion() + 1L));
     }
   }
 
   @Nested
   class Cancel_Booking {
+
     @Test
     void given_active_existing_booking__then_booking_canceled() {
       given_existingBooking(1, 2);
@@ -296,6 +297,7 @@ class BookingControllerTestIT {
         .body(buildBookingDto(now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid))
         .when().post(controllerPath)
         .as(BookingDto.class);
+
     assumeThat(existingBookingDto.getId()).isNotNull();
     assumeThat(existingBookingDto.getVersion()).isEqualTo(0L);
     assumeThat(existingBookingDto.isActive()).isTrue();

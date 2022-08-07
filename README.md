@@ -7,12 +7,17 @@
 
 Read this [blog post](https://www.kiroule.com/article/campsite-booking-api-revisited/) to learn more details.
 
+<!-- START doctoc -->
+<!-- END doctoc -->
+
 ## Technical Task
+
 ### Booking Constraints
 * The campsite can be reserved for max 3 days.
 * The campsite can be reserved minimum 1 day(s) ahead of arrival and up to 1 month in advance.
 * Reservations can be cancelled anytime.
 * For sake of simplicity assume the check-in & check-out time is 12:00 AM.
+
 ### System Requirements
 * The users will need to find out when the campsite is available. So the system should expose an API to provide information of the
 availability of the campsite for a given date range with the default being 1 month.
@@ -70,32 +75,9 @@ $ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -p 80:8080 -
 ```console
 $ docker-compose up -d
 ```
-
-## Continuous Integration
-Continuous integration is implemented using GitHub Actions, and it includes the `Build on Pull Request`, `Build Master Branch`, and `Perform Release` workflows:
-
-![GitHub Actions](/readme/github-actions.png)
-
-### Build on Pull Request
-This workflow is executed automatically on any pull request and consists of the `Unit & Integrations Tests` and `SonarCloud Scan` job:
-
-![Build on Pull Request Workflow](/readme/github-actions-build-on-pull-request.png) 
-
-### Build Master Branch
-This workflow is executed automatically on any commit to the `master` branch and consists of the `SonarCloud Scan` and `Snapshot Publishing` jobs:
-
-![Build Master Branch Workflow](/readme/github-actions-build-master-branch.png)
-
-### Perform Release
-This workflow is executed manually and consists of the `Maven Release` and `Docker Image` jobs:
-
-![Perform Release Workflow](/readme/github-actions-perform-release.png)
-
-The `Release Version` parameter value should be provided before executing this workflow:
-
-![Perform Release Workflow](/readme/github-actions-perform-release-parameter.png)
  
 ## Tests
+
 ### Maven
 * Run only unit tests:
 ```bash
@@ -119,14 +101,17 @@ The API can be tested via the Swagger UI:
 
 ![Swagger UI Main View](/readme/swagger-main-view.png)
 
-For example, to add a new booking, expand the `POST` operation. Then click on the `Try it out`, add the payload below to the `Request Body` text area, and click on the `Execute`:
+For example, to add a new booking, expand the `POST` operation. Then click on the `Try it out`, add the payload below to
+the `Request Body` text area, and click on the `Execute`:
+
 ```json
 {
   "uuid": "8db6b1f4-27ba-11eb-adc1-0242ac120001",  
   "email": "john.smith.1@email.com",
   "fullName": "John Smith 1",
-  "startDate": "2021-01-21",
-  "endDate": "2021-01-23"
+  "startDate": "2022-08-21",
+  "endDate": "2022-08-23", 
+  "campsiteId": "1"
 }
 ```
 ![Swagger UI Add Booking 1](/readme/swagger-add-booking-1.png)
@@ -147,12 +132,17 @@ Fill the login form as follows and click on Connect:
 * Password:
 
 ![H2 Console Login](/readme/h2-console-login-2.png)
+
 ![H2 Console Main View](/readme/h2-console-main-view.png)
 
-### Concurrent Bookings Creation
+![H2 Console Main View](/readme/h2-console-main-view-campsite.png)
+
+### Concurrent Bookings Creation Test
 **Note**: should be executed with the `mysql` active profile
 
-Start an instance of Campsite Booking API and execute the concurrent-bookings-test.sh script to simulate concurrent booking creation for the same booking dates:
+Start an instance of Campsite Booking API and execute the concurrent-bookings-test.sh script to simulate concurrent
+booking creation for the same booking dates:
+
 ```bash
 $ docker-compose up -d
 $ test/concurrent-bookings-test.sh 2021-02-01 2021-02-04 http:/localhost:80
@@ -170,7 +160,7 @@ The response should be as follows after formatting, i.e., only one booking was c
    "active":true,
    "_links":{
       "self":{
-         "href":"http://localhost/v1/booking/ea2e2f8f-749d-4497-b0ec-0da4bf437800"
+         "href":"http://localhost//v2/booking/ea2e2f8f-749d-4497-b0ec-0da4bf437800"
       }
    }
 }
@@ -190,7 +180,7 @@ The response should be as follows after formatting, i.e., only one booking was c
 Basic load testing for retrieving vacant dates can be performed with the ApacheBench by executing the following command:
 ```Bash
 $ docker-compose up -d
-$ ab -n 10000 -c 100 -k http://localhost:80/v1/booking/vacant-dates
+$ ab -n 10000 -c 100 -k http://localhost:80//v2/booking/vacant-dates
 ```
 * **-n 10000** is the number of requests to make
 * **-c 100** is the number of concurrent requests to make at a time
@@ -216,7 +206,7 @@ Server Software:
 Server Hostname:        localhost
 Server Port:            80
 
-Document Path:          /v1/booking/vacant-dates
+Document Path:          //v2/booking/vacant-dates
 Document Length:        365 bytes
 
 Concurrency Level:      100
@@ -250,3 +240,32 @@ Percentage of the requests served within a certain time (ms)
  100%    339 (longest request)
 ```
 
+## Continuous Integration
+
+Continuous integration is implemented using GitHub Actions, and it includes the `Build on Pull Request`
+, `Build Master Branch`, and `Perform Release` workflows:
+
+![GitHub Actions](/readme/github-actions.png)
+
+### Build on Pull Request
+
+This workflow is executed automatically on any pull request and consists of the `Unit & Integrations Tests`
+and `SonarCloud Scan` job:
+
+![Build on Pull Request Workflow](/readme/github-actions-build-on-pull-request.png)
+
+### Build Master Branch
+
+This workflow is executed automatically on any commit to the `master` branch and consists of the `SonarCloud Scan`
+and `Snapshot Publishing` jobs:
+
+![Build Master Branch Workflow](/readme/github-actions-build-master-branch.png)
+
+### Perform Release
+This workflow is executed manually and consists of the `Maven Release` and `Docker Image` jobs:
+
+![Perform Release Workflow](/readme/github-actions-perform-release.png)
+
+The `Release Version` parameter value should be provided before executing this workflow:
+
+![Perform Release Workflow](/readme/github-actions-perform-release-parameter.png)
