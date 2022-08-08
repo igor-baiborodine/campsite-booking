@@ -47,7 +47,7 @@ jobs:
     needs: [ maven_release ]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: v${{ github.event.inputs.releaseVersion }}
 

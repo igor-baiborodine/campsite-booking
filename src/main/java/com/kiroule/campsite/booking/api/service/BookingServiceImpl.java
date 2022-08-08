@@ -31,7 +31,7 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<LocalDate> findVacantDays(LocalDate startDate, LocalDate endDate) {
+  public List<LocalDate> findVacantDays(LocalDate startDate, LocalDate endDate, Long campsiteId) {
 
     var now = LocalDate.now();
     checkArgument(startDate.isAfter(now), "Start date must be in the future");
@@ -42,20 +42,17 @@ public class BookingServiceImpl implements BookingService {
     var vacantDays = startDate
         .datesUntil(endDate.plusDays(1))
         .collect(Collectors.toList());
-    var bookings = bookingRepository.findForDateRange(startDate, endDate);
+    var bookings = bookingRepository.findForDateRange(startDate, endDate, campsiteId);
     bookings.forEach(b -> vacantDays.removeAll(b.getBookingDates()));
     return vacantDays;
   }
 
   @Override
   @Transactional(readOnly = true)
-  public Booking findBookingByUuid(UUID uuid) {
+  public Booking findByUuid(UUID uuid) {
 
-    var booking = bookingRepository.findByUuid(uuid);
-    if (booking.isEmpty()) {
-      throw new BookingNotFoundException(String.format("Booking was not found for uuid=%s", uuid));
-    }
-    return booking.get();
+    return bookingRepository.findByUuid(uuid).orElseThrow(
+        () -> new BookingNotFoundException(String.format("Booking was not found for uuid=%s", uuid)));
   }
 
   @Override
@@ -67,7 +64,8 @@ public class BookingServiceImpl implements BookingService {
     if (!booking.isNew()) {
       throw new IllegalBookingStateException("New booking must not have persistence id");
     }
-    var vacantDays = findVacantDays(booking.getStartDate(), booking.getEndDate());
+    var vacantDays =
+        findVacantDays(booking.getStartDate(), booking.getEndDate(), booking.getCampsiteId());
 
     if (!vacantDays.containsAll(booking.getBookingDates())) {
       var message = String.format("No vacant dates available from %s to %s",
@@ -82,13 +80,14 @@ public class BookingServiceImpl implements BookingService {
   @Transactional
   public Booking updateBooking(Booking booking) {
 
-    var persistedBooking = findBookingByUuid(booking.getUuid());
+    var persistedBooking = findByUuid(booking.getUuid());
 
     if (!persistedBooking.isActive()) {
       var message = String.format("Booking with uuid=%s is cancelled", booking.getUuid());
       throw new IllegalBookingStateException(message);
     }
-    var vacantDays = findVacantDays(booking.getStartDate(), booking.getEndDate());
+    var vacantDays =
+        findVacantDays(booking.getStartDate(), booking.getEndDate(), booking.getCampsiteId());
     vacantDays.addAll(persistedBooking.getBookingDates());
 
     if (!vacantDays.containsAll(booking.getBookingDates())) {
@@ -105,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
   @Transactional
   public boolean cancelBooking(UUID uuid) {
 
-    var booking = findBookingByUuid(uuid);
+    var booking = findByUuid(uuid);
     booking.setActive(false);
     booking = bookingRepository.save(booking);
     return !booking.isActive();

@@ -1,5 +1,6 @@
 package com.kiroule.campsite.booking.api.service;
 
+import static com.kiroule.campsite.booking.api.TestHelper.CAMPSITE_ID;
 import static com.kiroule.campsite.booking.api.TestHelper.buildBooking;
 import static java.util.Arrays.asList;
 import static java.util.Collections.EMPTY_LIST;
@@ -64,11 +65,11 @@ class BookingServiceImplTest {
   @Nested
   class Find_Booking_By_Uuid {
 
-    Booking bookingForUuid;
+    Booking foundBooking;
 
     @BeforeEach
     void beforeEach() {
-      bookingForUuid = null;
+      foundBooking = null;
     }
 
     @Test
@@ -97,17 +98,17 @@ class BookingServiceImplTest {
     }
 
     private void when_findBookingByUuid() {
-      bookingForUuid = bookingService.findBookingByUuid(uuid);
+      foundBooking = bookingService.findByUuid(uuid);
     }
 
     private void then_assertBookingFound() {
-      assertThat(bookingForUuid).isEqualTo(existingBooking);
+      assertThat(foundBooking).isEqualTo(existingBooking);
       verify(bookingRepository).findByUuid(uuid);
     }
 
     private void when_findBookingByUuidThenAssertExceptionThrown(
         Class<? extends Exception> exception) {
-      assertThrows(exception, () -> bookingService.findBookingByUuid(uuid));
+      assertThrows(exception, () -> bookingService.findByUuid(any()));
     }
   }
 
@@ -145,11 +146,11 @@ class BookingServiceImplTest {
     private void given_foundExistingBookingForDateRange() {
       doReturn(singletonList(existingBooking))
           .when(bookingRepository)
-          .findForDateRange(any(), any());
+          .findForDateRange(any(), any(), any());
     }
 
     private void given_foundNoExistingBookingsForDateRange() {
-      doReturn(EMPTY_LIST).when(bookingRepository).findForDateRange(any(), any());
+      doReturn(EMPTY_LIST).when(bookingRepository).findForDateRange(any(), any(), any());
     }
 
     private void when_createBookingFromNewBooking() {
@@ -158,6 +159,9 @@ class BookingServiceImplTest {
 
     private void then_assertBookingCreated() {
       assertThat(newBooking.isActive()).isTrue();
+      verify(bookingRepository)
+          .findForDateRange(
+              newBooking.getStartDate(), newBooking.getEndDate(), newBooking.getCampsiteId());
       verify(bookingRepository).save(newBooking);
     }
 
@@ -244,13 +248,13 @@ class BookingServiceImplTest {
     }
 
     private void given_noExistingBookingFoundForDateRange() {
-      doReturn(EMPTY_LIST).when(bookingRepository).findForDateRange(any(), any());
+      doReturn(EMPTY_LIST).when(bookingRepository).findForDateRange(any(), any(), any());
     }
 
     private void given_existingBookingFoundForDateRange() {
       doReturn(singletonList(existingBooking))
           .when(bookingRepository)
-          .findForDateRange(any(), any());
+          .findForDateRange(any(), any(), any());
     }
 
     private void given_dateRange(int startPlusDays, int endPlusDays) {
@@ -259,12 +263,12 @@ class BookingServiceImplTest {
     }
 
     private void when_findVacantDays() {
-      vacantDates = bookingService.findVacantDays(startDate, endDate);
+      vacantDates = bookingService.findVacantDays(startDate, endDate, CAMPSITE_ID);
     }
 
     private void when_findVacantDaysThenAssertExceptionThrown(
         Class<? extends Exception> exception) {
-      assertThrows(exception, () -> bookingService.findVacantDays(startDate, endDate));
+      assertThrows(exception, () -> bookingService.findVacantDays(startDate, endDate, CAMPSITE_ID));
     }
 
     private void then_assertVacantDaysFound(List<LocalDate> expected) {
@@ -298,7 +302,7 @@ class BookingServiceImplTest {
       given_existingBooking(1, 2);
       given_existingBookingFoundForUuid();
       given_otherExistingBooking(2, 3);
-      given_twoBookingsFoundForDateRange(1, 3);
+      given_twoBookingsFoundForDateRange();
 
       when_updateBookingWithNewBookingDatesThenAssertExceptionThrown(
           1, 3, BookingDatesNotAvailableException.class);
@@ -308,7 +312,7 @@ class BookingServiceImplTest {
     void given_booking_dates_available__then_booking_updated() {
       given_existingBooking(1, 2);
       given_existingBookingFoundForUuid();
-      given_existingBookingFoundForDateRange(1, 3);
+      given_existingBookingFoundForDateRange();
       given_existingBookingWithNewBookingDates(1, 3);
 
       when_updateBooking();
@@ -333,16 +337,16 @@ class BookingServiceImplTest {
       assumeTrue(otherExistingBooking.isActive());
     }
 
-    private void given_twoBookingsFoundForDateRange(int startPlusDays, int endPlusDays) {
+    private void given_twoBookingsFoundForDateRange() {
       doReturn(asList(existingBooking, otherExistingBooking))
           .when(bookingRepository)
-          .findForDateRange(any(), any());
+          .findForDateRange(any(), any(), any());
     }
 
-    private void given_existingBookingFoundForDateRange(int startPlusDays, int endPlusDays) {
+    private void given_existingBookingFoundForDateRange() {
       doReturn(singletonList(existingBooking))
           .when(bookingRepository)
-          .findForDateRange(any(), any());
+          .findForDateRange(any(), any(), any());
     }
 
     private void given_existingBookingWithNewBookingDates(int startPlusDays, int endPlusDays) {

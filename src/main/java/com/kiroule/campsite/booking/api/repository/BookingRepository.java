@@ -42,6 +42,7 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
       + "or (?1 < b.endDate and b.endDate <= ?2) "
       + "or (?1 <= b.startDate and b.startDate <=?2)) "
       + "and b.active = true "
+      + "and b.campsite.id = ?3 "
       + "order by b.startDate asc")
-  List<Booking> findForDateRange(LocalDate startDate, LocalDate endDate);
+  List<Booking> findForDateRange(LocalDate startDate, LocalDate endDate, Long campsiteId);
 }

@@ -1,6 +1,6 @@
 package com.kiroule.campsite.booking.api.exception.advice;
 
-import com.kiroule.campsite.booking.api.contract.v1.model.ApiError;
+import com.kiroule.campsite.booking.api.contract.v2.model.ApiError;
 import com.kiroule.campsite.booking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsite.booking.api.exception.BookingNotFoundException;
 import com.kiroule.campsite.booking.api.exception.IllegalBookingStateException;

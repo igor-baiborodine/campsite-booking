@@ -3,5 +3,6 @@
   "email": "EMAIL",
   "fullName": "FULL_NAME",
   "startDate": "START_DATE",
-  "endDate": "END_DATE"
+  "endDate": "END_DATE",
+  "campsiteId": "1"
 }

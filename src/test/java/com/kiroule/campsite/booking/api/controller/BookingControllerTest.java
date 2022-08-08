@@ -28,11 +28,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
 public class BookingControllerTest {
 
-  @Mock BookingService bookingService;
+  @Mock
+  BookingService bookingService;
 
-  @InjectMocks BookingController bookingController;
+  @InjectMocks
+  BookingController bookingController;
 
   LocalDate now;
+
+  Long campsiteId = 1L;
 
   @BeforeEach
   void beforeEach() {
@@ -73,17 +77,17 @@ public class BookingControllerTest {
     }
 
     private void given_bookingServiceFindVacantDates(List<LocalDate> vacantDates) {
-      doReturn(vacantDates).when(bookingService).findVacantDays(any(), any());
+      doReturn(vacantDates).when(bookingService).findVacantDays(any(), any(), any());
     }
 
     private void when_getVacantDates() {
-      vacantDates = bookingController.getVacantDates(startDate, endDate).getBody();
+      vacantDates = bookingController.getVacantDates(startDate, endDate, campsiteId).getBody();
     }
 
     private void then_assertVacantDates(
         LocalDate startDate, LocalDate endDate, List<LocalDate> vacantDates) {
       assertThat(this.vacantDates).isEqualTo(vacantDates);
-      verify(bookingService).findVacantDays(startDate, endDate);
+      verify(bookingService).findVacantDays(startDate, endDate, campsiteId);
     }
   }
 }

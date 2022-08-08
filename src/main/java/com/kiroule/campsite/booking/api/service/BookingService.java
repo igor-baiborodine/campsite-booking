@@ -7,9 +7,9 @@ import java.util.UUID;
 
 public interface BookingService {
 
-  List<LocalDate> findVacantDays(LocalDate startDate, LocalDate endDate);
+  List<LocalDate> findVacantDays(LocalDate startDate, LocalDate endDate, Long campsiteId);
 
-  Booking findBookingByUuid(UUID uuid);
+  Booking findByUuid(UUID uuid);
 
   Booking createBooking(Booking booking);
 
