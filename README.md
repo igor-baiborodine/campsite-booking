@@ -166,18 +166,19 @@ booking creation for the same booking dates:
 
 ```bash
 $ docker-compose up -d
-$ test/concurrent-bookings-test.sh 2021-02-01 2021-02-04 http:/localhost:80
+$ concurrent-test/concurrent-bookings-test.sh 2022-08-21 2022-08-22 http:/localhost:80
 ```
 The response should be as follows after formatting, i.e., only one booking was created:
 ```json
 {
    "id":2,
    "version":0,
+   "campsiteId":1,
    "uuid":"ea2e2f8f-749d-4497-b0ec-0da4bf437800",
    "email":"john.smith.3@email.com",
    "fullName":"John Smith 3",
-   "startDate":"2021-02-01",
-   "endDate":"2021-02-04",
+   "startDate":"2022-08-21",
+   "endDate":"2022-08-22",
    "active":true,
    "_links":{
       "self":{
@@ -187,13 +188,13 @@ The response should be as follows after formatting, i.e., only one booking was c
 }
 {
    "status":"BAD_REQUEST",
-   "timestamp":"2021-01-28T02:52:19.10936",
-   "message":"No vacant dates available from 2021-02-01 to 2021-02-04"
+   "timestamp":"2022-08-08T02:52:19.10936",
+   "message":"No vacant dates available from 2022-08-21 to 2022-08-22"
 }
 {
    "status":"BAD_REQUEST",
    "timestamp":"2021-01-28T02:52:19.210229",
-   "message":"No vacant dates available from 2021-02-01 to 2021-02-04"
+   "message":"No vacant dates available from 2022-08-21 to 2022-08-22"
 }
 ```
 

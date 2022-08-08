@@ -11,7 +11,7 @@ services:
       - "3316:3306"
       - "33070:33060"
     volumes:
-      - db-data:/var/lib/mysql
+#      - db-data:/var/lib/mysql
       - ./mysql/conf.d:/etc/mysql/conf.d
       - ./mysql/initdb.d:/docker-entrypoint-initdb.d
 
@@ -27,5 +27,5 @@ services:
     ports:
       - "80:8080"
 
-volumes:
-  db-data:
+#volumes:
+#  db-data:
