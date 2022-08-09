@@ -29,7 +29,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("h2")
+@ActiveProfiles("in-memory-db")
 @DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
 class BookingControllerTestIT {
 

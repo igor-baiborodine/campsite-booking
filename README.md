@@ -21,8 +21,7 @@ Read this [blog post](https://www.kiroule.com/article/campsite-booking-api-revis
 - [Tests](#tests)
   - [Maven](#maven-1)
   - [Swagger UI](#swagger-ui)
-  - [H2 Console](#h2-console)
-  - [Concurrent Bookings Creation Test](#concurrent-bookings-creation-test)
+  - [Concurrent Bookings Creation](#concurrent-bookings-creation)
   - [Basic Load Testing](#basic-load-testing)
 - [Continuous Integration](#continuous-integration)
   - [Build on Pull Request](#build-on-pull-request)
@@ -57,7 +56,7 @@ date(s). Demonstrate with appropriate test cases that the system can gracefully 
 ```bash
 $ git clone https://github.com/igor-baiborodine/campsite-booking.git
 $ cd campsite-booking
-$ mvn spring-boot:run -Dspring-boot.run.profiles=h2
+$ mvn spring-boot:run -Dspring-boot.run.profiles=in-memory-db
 ```
 The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
 
@@ -66,7 +65,7 @@ The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
 $ git clone https://github.com/igor-baiborodine/campsite-booking.git
 $ cd campsite-booking
 $ mvn package -DskipTests
-$ java -jar -Dspring.profiles.active=h2 target/campsite-booking-<version>.jar
+$ java -jar -Dspring.profiles.active=in-memory-db target/campsite-booking-<version>.jar
 ```
 The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
 
@@ -75,7 +74,7 @@ The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
 $ git clone https://github.com/igor-baiborodine/campsite-booking.git
 $ cd campsite-booking
 $ docker build --rm -t campsite-booking .
-$ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -d campsite-booking
+$ docker run -e "SPRING_PROFILES_ACTIVE=in-memory-db" --name campsite-booking -d campsite-booking
 $ docker logs -f campsite-booking 
 ```
 The Swagger UI is available at `http://container-ip:8080/swagger-ui.html`. To get the container IP address, execute the following command:
@@ -84,13 +83,13 @@ $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' c
 ```
 Via the host machine on port 80:
 ```console
-$ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -p 80:8080 -d campsite-booking
+$ docker run -e "SPRING_PROFILES_ACTIVE=in-memory-db" --name campsite-booking -p 80:8080 -d campsite-booking
 ```
 The Swagger UI is available at `http://localhost:80/swagger-ui.html` or `http://host-ip:80/swagger-ui.html`.
 
 ... or with an [image from Docker Hub](https://hub.docker.com/r/ibaiborodine/campsite-booking):
 ```console
-$ docker run -e "SPRING_PROFILES_ACTIVE=h2" --name campsite-booking -p 80:8080 -d ibaiborodine/campsite-booking
+$ docker run -e "SPRING_PROFILES_ACTIVE=in-memory-db" --name campsite-booking -p 80:8080 -d ibaiborodine/campsite-booking
 ```
 ... or with [docker-compose](docker-compose.yml):
 ```console
@@ -141,24 +140,7 @@ If the operation is successful, you will get the following response:
 
 ![Swagger UI Add Booking 1](/readme/swagger-add-booking-2.png)
 
-### H2 Console
-When running with the `h2` profile, the H2 console is available at `http://localhost:8080/h2-console`.
-
-Fill the login form as follows and click on Connect:
-* Saved Settings: **Generic H2 (Embedded)**
-* Setting Name: **Generic H2 (Embedded)**
-* Driver class: **org.h2.Driver**
-* JDBC URL: **jdbc:h2:mem:campsite;MODE=MySQL**
-* User Name: **sa**
-* Password:
-
-![H2 Console Login](/readme/h2-console-login-2.png)
-
-![H2 Console Main View](/readme/h2-console-main-view.png)
-
-![H2 Console Main View](/readme/h2-console-main-view-campsite.png)
-
-### Concurrent Bookings Creation Test
+### Concurrent Bookings Creation
 **Note**: should be executed with the `mysql` active profile
 
 Start an instance of Campsite Booking API and execute the concurrent-bookings-test.sh script to simulate concurrent

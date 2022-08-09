@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Igor Baiborodine
  */
 @SpringBootTest
-@ActiveProfiles("h2")
+@ActiveProfiles("in-memory-db")
 @Transactional
 @DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
 @TestMethodOrder(MethodOrderer.MethodName.class)
