@@ -140,7 +140,7 @@ If the operation is successful, you will get the following response:
 
 ![Swagger UI Add Booking 1](/readme/swagger-add-booking-2.png)
 
-### Concurrent Bookings Creation Test
+### Concurrent Bookings Creation
 **Note**: should be executed with the `mysql` active profile
 
 Start an instance of Campsite Booking API and execute the concurrent-bookings-test.sh script to simulate concurrent
