@@ -24,7 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
  * @author Igor Baiborodine
  */
 @SpringBootTest
-@ActiveProfiles("h2")
+@ActiveProfiles("in-memory-db")
 @DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
 class BookingServiceImplTestIT {
 

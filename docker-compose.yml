@@ -23,6 +23,7 @@ services:
     environment:
       # sleep for 20 seconds while the database is being initialized
       - WAIT_FOR_DB=20
+      - SPRING_PROFILES_ACTIVE=mysql
       - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/campsite?useUnicode=true
     ports:
       - "80:8080"
