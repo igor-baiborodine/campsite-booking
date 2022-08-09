@@ -21,7 +21,7 @@ Read this [blog post](https://www.kiroule.com/article/campsite-booking-api-revis
 - [Tests](#tests)
   - [Maven](#maven-1)
   - [Swagger UI](#swagger-ui)
-  - [Concurrent Bookings Creation Test](#concurrent-bookings-creation-test)
+  - [Concurrent Bookings Creation](#concurrent-bookings-creation)
   - [Basic Load Testing](#basic-load-testing)
 - [Continuous Integration](#continuous-integration)
   - [Build on Pull Request](#build-on-pull-request)
