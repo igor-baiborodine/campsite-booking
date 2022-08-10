@@ -52,7 +52,7 @@ date(s). Demonstrate with appropriate test cases that the system can gracefully 
 * There are no restrictions on how reservations are stored as long as system constraints are not violated.
 
 ## Up & Running
-### Maven
+### Run with Maven
 ```bash
 $ git clone https://github.com/igor-baiborodine/campsite-booking.git
 $ cd campsite-booking
