@@ -5,4 +5,4 @@
   \____\__,_|_| |_| |_| .__/|___/_|\__\___| |____/ \___/ \___/|_|\_\_|_| |_|\__, |   \_/ |_____|
                       |_|                                                   |___/
 :: Campsite Booking REST API v2 ::  ${application.formatted-version}
-:: Spring Boot                  ::  ${spring-boot.version}
+:: Spring Boot                  ::    ${spring-boot.version}

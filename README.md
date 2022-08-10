@@ -15,11 +15,11 @@ Read this [blog post](https://www.kiroule.com/article/campsite-booking-api-revis
   - [Booking Constraints](#booking-constraints)
   - [System Requirements](#system-requirements)
 - [Up & Running](#up--running)
-  - [Maven](#maven)
+  - [Run with Maven](#run-with-maven)
   - [Executable JAR](#executable-jar)
   - [Docker](#docker)
 - [Tests](#tests)
-  - [Maven](#maven-1)
+  - [Maven](#maven)
   - [Swagger UI](#swagger-ui)
   - [Concurrent Bookings Creation](#concurrent-bookings-creation)
   - [Basic Load Testing](#basic-load-testing)
@@ -52,7 +52,7 @@ date(s). Demonstrate with appropriate test cases that the system can gracefully 
 * There are no restrictions on how reservations are stored as long as system constraints are not violated.
 
 ## Up & Running
-### Maven
+### Run with Maven
 ```bash
 $ git clone https://github.com/igor-baiborodine/campsite-booking.git
 $ cd campsite-booking
@@ -91,9 +91,13 @@ The Swagger UI is available at `http://localhost:80/swagger-ui.html` or `http://
 ```console
 $ docker run -e "SPRING_PROFILES_ACTIVE=in-memory-db" --name campsite-booking -p 80:8080 -d ibaiborodine/campsite-booking
 ```
-... or with [docker-compose](docker-compose.yml):
+... or with in-memory DB [docker-compose](docker-compose.yml):
 ```console
 $ docker-compose up -d
+```
+... or with MySQL [docker-compose](mysql/docker-compose.yml):
+```console
+$ mysql/docker-compose up -d
 ```
  
 ## Tests
@@ -147,7 +151,7 @@ Start an instance of Campsite Booking API and execute the concurrent-bookings-te
 booking creation for the same booking dates:
 
 ```bash
-$ docker-compose up -d
+$ docker-compose.yml up -d
 $ concurrent-test/concurrent-bookings-test.sh 2022-08-21 2022-08-22 http:/localhost:80
 ```
 The response should be as follows after formatting, i.e., only one booking was created:
@@ -183,7 +187,7 @@ The response should be as follows after formatting, i.e., only one booking was c
 ### Basic Load Testing 
 Basic load testing for retrieving vacant dates can be performed with the ApacheBench by executing the following command:
 ```Bash
-$ docker-compose up -d
+$ docker-compose.yml up -d
 $ ab -n 10000 -c 100 -k http://localhost:80//v2/booking/vacant-dates
 ```
 * **-n 10000** is the number of requests to make

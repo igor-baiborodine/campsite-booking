@@ -1,6 +1,7 @@
 package com.kiroule.campsite.booking.api.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.stream.Collectors.toList;
 
 import com.kiroule.campsite.booking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsite.booking.api.exception.BookingNotFoundException;
@@ -10,12 +11,12 @@ import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -39,9 +40,7 @@ public class BookingServiceImpl implements BookingService {
     checkArgument(startDate.isEqual(endDate) || startDate.isBefore(endDate),
         "End date must be equal to start date or greater than start date");
 
-    var vacantDays = startDate
-        .datesUntil(endDate.plusDays(1))
-        .collect(Collectors.toList());
+    var vacantDays = startDate.datesUntil(endDate.plusDays(1)).collect(toList());
     var bookings = bookingRepository.findForDateRange(startDate, endDate, campsiteId);
     bookings.forEach(b -> vacantDays.removeAll(b.getBookingDates()));
     return vacantDays;
@@ -56,7 +55,7 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  @Transactional()
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Retryable(include = CannotAcquireLockException.class,
       maxAttempts = 2, backoff=@Backoff(delay = 150, maxDelay = 300))
   public Booking createBooking(Booking booking) {
@@ -64,8 +63,12 @@ public class BookingServiceImpl implements BookingService {
     if (!booking.isNew()) {
       throw new IllegalBookingStateException("New booking must not have persistence id");
     }
+
     var vacantDays =
-        findVacantDays(booking.getStartDate(), booking.getEndDate(), booking.getCampsiteId());
+        booking.getStartDate().datesUntil(booking.getEndDate().plusDays(1)).collect(toList());
+    var bookings = bookingRepository.findForDateRangeWithPessimisticWriteLocking(
+        booking.getStartDate(), booking.getEndDate(), booking.getCampsiteId());
+    bookings.forEach(b -> vacantDays.removeAll(b.getBookingDates()));
 
     if (!vacantDays.containsAll(booking.getBookingDates())) {
       var message = String.format("No vacant dates available from %s to %s",
@@ -109,4 +112,5 @@ public class BookingServiceImpl implements BookingService {
     booking = bookingRepository.save(booking);
     return !booking.isActive();
   }
+
 }
