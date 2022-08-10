@@ -197,8 +197,7 @@ class BookingRepositoryTestIT {
     }
 
     private void when_findBookingsForDateRange(int startPlusDays, int endPlusDays) {
-      bookingsForDateRange =
-          bookingRepository.findForDateRange(
+      bookingsForDateRange = bookingRepository.findForDateRange(
               now.plusDays(startPlusDays), now.plusDays(endPlusDays), CAMPSITE_ID);
     }
 

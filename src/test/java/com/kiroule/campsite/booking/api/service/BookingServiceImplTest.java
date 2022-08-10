@@ -146,11 +146,11 @@ class BookingServiceImplTest {
     private void given_foundExistingBookingForDateRange() {
       doReturn(singletonList(existingBooking))
           .when(bookingRepository)
-          .findForDateRange(any(), any(), any());
+          .findForDateRangeWithPessimisticWriteLocking(any(), any(), any());
     }
 
     private void given_foundNoExistingBookingsForDateRange() {
-      doReturn(EMPTY_LIST).when(bookingRepository).findForDateRange(any(), any(), any());
+      doReturn(EMPTY_LIST).when(bookingRepository).findForDateRangeWithPessimisticWriteLocking(any(), any(), any());
     }
 
     private void when_createBookingFromNewBooking() {
@@ -159,9 +159,8 @@ class BookingServiceImplTest {
 
     private void then_assertBookingCreated() {
       assertThat(newBooking.isActive()).isTrue();
-      verify(bookingRepository)
-          .findForDateRange(
-              newBooking.getStartDate(), newBooking.getEndDate(), newBooking.getCampsiteId());
+      verify(bookingRepository).findForDateRangeWithPessimisticWriteLocking(
+          newBooking.getStartDate(), newBooking.getEndDate(), newBooking.getCampsiteId());
       verify(bookingRepository).save(newBooking);
     }
 
@@ -391,4 +390,5 @@ class BookingServiceImplTest {
     assumeFalse(existingBooking.isNew());
     assumeTrue(existingBooking.isActive());
   }
+  
 }

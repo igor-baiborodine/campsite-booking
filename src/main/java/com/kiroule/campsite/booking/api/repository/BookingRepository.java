@@ -20,6 +20,13 @@ import java.util.UUID;
  */
 public interface BookingRepository extends CrudRepository<Booking, Long> {
 
+  String FIND_FOR_DATE_RANGE = "select b from Booking b "
+      + "where ((b.startDate < ?1 and ?2 < b.endDate) "
+      + "or (?1 < b.endDate and b.endDate <= ?2) "
+      + "or (?1 <= b.startDate and b.startDate <=?2)) "
+      + "and b.active = true "
+      + "and b.campsite.id = ?3 ";
+
   /**
    * Find a booking for the given UUID.
    *
@@ -29,20 +36,27 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
   Optional<Booking> findByUuid(UUID uuid);
 
   /**
-   * Find active bookings for the given date range.
+   * Find active bookings for the given date range and campsite ID with pessimistic write locking.
    *
    * @param startDate range start date
    * @param endDate range end date
-   * @return list of active bookings for the given date range
+   * @param campsiteId campsite ID
+   * @return list of active bookings for the given date range and campsite ID
    */
-  @Lock(LockModeType.PESSIMISTIC_READ)
-  @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="100")})
-  @Query("select b from Booking b "
-      + "where ((b.startDate < ?1 and ?2 < b.endDate) "
-      + "or (?1 < b.endDate and b.endDate <= ?2) "
-      + "or (?1 <= b.startDate and b.startDate <=?2)) "
-      + "and b.active = true "
-      + "and b.campsite.id = ?3 "
-      + "order by b.startDate asc")
+  @Query(FIND_FOR_DATE_RANGE)
   List<Booking> findForDateRange(LocalDate startDate, LocalDate endDate, Long campsiteId);
+
+  /**
+   * Find active bookings for the given date range and campsite ID with pessimistic write locking.
+   *
+   * @param startDate range start date
+   * @param endDate range end date
+   * @param campsiteId campsite ID
+   * @return list of active bookings for the given date range and campsite ID
+   */
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
+  @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="100")})
+  @Query(FIND_FOR_DATE_RANGE)
+  List<Booking> findForDateRangeWithPessimisticWriteLocking(LocalDate startDate, LocalDate endDate, Long campsiteId);
+
 }
