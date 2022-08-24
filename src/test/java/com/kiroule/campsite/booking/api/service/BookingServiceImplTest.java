@@ -339,13 +339,13 @@ class BookingServiceImplTest {
     private void given_twoBookingsFoundForDateRange() {
       doReturn(asList(existingBooking, otherExistingBooking))
           .when(bookingRepository)
-          .findForDateRange(any(), any(), any());
+          .findForDateRangeWithPessimisticWriteLocking(any(), any(), any());
     }
 
     private void given_existingBookingFoundForDateRange() {
       doReturn(singletonList(existingBooking))
           .when(bookingRepository)
-          .findForDateRange(any(), any(), any());
+          .findForDateRangeWithPessimisticWriteLocking(any(), any(), any());
     }
 
     private void given_existingBookingWithNewBookingDates(int startPlusDays, int endPlusDays) {

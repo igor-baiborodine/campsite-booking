@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.kiroule.campsite.booking.api.CustomReplaceUnderscoresDisplayNameGenerator;
+import com.kiroule.campsite.booking.api.BaseTestIT;
 import com.kiroule.campsite.booking.api.DisplayNamePrefix;
 import com.kiroule.campsite.booking.api.model.Booking;
 import java.time.LocalDate;
@@ -14,14 +14,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -29,12 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author Igor Baiborodine
  */
-@SpringBootTest
-@ActiveProfiles("in-memory-db")
 @Transactional
-@DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
 @TestMethodOrder(MethodOrderer.MethodName.class)
-class BookingRepositoryTestIT {
+class BookingRepositoryTestIT  extends BaseTestIT {
 
   @Autowired
   BookingRepository bookingRepository;

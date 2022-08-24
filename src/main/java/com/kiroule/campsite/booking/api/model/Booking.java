@@ -32,7 +32,7 @@ import org.hibernate.annotations.Type;
  */
 @Entity
 @Table(name = "bookings")
-@Builder
+@Builder(toBuilder = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -94,7 +94,7 @@ public class Booking extends DateAudit {
    *
    * @return a list of booking dates
    */
-  public List<LocalDate> getBookingDates() {
+  public List<LocalDate> getBookingDatesWithEndDateExclusive() {
     return startDate.datesUntil(endDate).toList();
   }
 

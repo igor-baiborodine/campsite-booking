@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.kiroule.campsite.booking.api.CustomReplaceUnderscoresDisplayNameGenerator;
+import com.kiroule.campsite.booking.api.BaseTestIT;
 import com.kiroule.campsite.booking.api.contract.v2.model.ApiError;
 import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
@@ -18,20 +18,14 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("in-memory-db")
-@DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
-class BookingControllerTestIT {
+class BookingControllerTestIT extends BaseTestIT {
 
   @Autowired
   BookingRepository bookingRepository;
