@@ -74,7 +74,7 @@ class BookingServiceImplTest {
 
     @Test
     void given_non_existing_booking_uuid__then_booking_not_found_and_exception_thrown() {
-      given_foundNoExistingBookingForUuid();
+      given_foundNoExistingBookingForUuidInRepository();
 
       when_findBookingByUuidThenAssertExceptionThrown(BookingNotFoundException.class);
     }
@@ -82,18 +82,18 @@ class BookingServiceImplTest {
     @Test
     void given_existing_booking_uuid__then_booking_found() {
       given_existingBooking(1, 2);
-      given_foundExistingBookingForUuid();
+      given_foundExistingBookingForUuidInRepository();
 
       when_findBookingByUuid();
 
       then_assertBookingFound();
     }
 
-    private void given_foundNoExistingBookingForUuid() {
+    private void given_foundNoExistingBookingForUuidInRepository() {
       doReturn(Optional.empty()).when(bookingRepository).findByUuid(any());
     }
 
-    private void given_foundExistingBookingForUuid() {
+    private void given_foundExistingBookingForUuidInRepository() {
       doReturn(Optional.of(existingBooking)).when(bookingRepository).findByUuid(any());
     }
 
@@ -119,7 +119,7 @@ class BookingServiceImplTest {
     void given_booking_dates_not_available__then_booking_dates_not_available_and_exception_thrown() {
       given_existingBooking(1, 4);
       given_newBooking(1, 4);
-      given_foundExistingBookingForDateRange();
+      given_foundExistingBookingForDateRangeInRepository();
 
       when_createBookingFromNewBookingThenAssertExceptionThrown(
           BookingDatesNotAvailableException.class);
@@ -128,7 +128,7 @@ class BookingServiceImplTest {
     @Test
     void given_booking_dates_available__booking_created() {
       given_newBooking(1, 4);
-      given_foundNoExistingBookingsForDateRange();
+      given_foundNoExistingBookingsForDateRangeInRepository();
 
       when_createBookingFromNewBooking();
 
@@ -143,13 +143,13 @@ class BookingServiceImplTest {
           IllegalBookingStateException.class);
     }
 
-    private void given_foundExistingBookingForDateRange() {
+    private void given_foundExistingBookingForDateRangeInRepository() {
       doReturn(singletonList(existingBooking))
           .when(bookingRepository)
           .findForDateRangeWithPessimisticWriteLocking(any(), any(), any());
     }
 
-    private void given_foundNoExistingBookingsForDateRange() {
+    private void given_foundNoExistingBookingsForDateRangeInRepository() {
       doReturn(EMPTY_LIST).when(bookingRepository).findForDateRangeWithPessimisticWriteLocking(any(), any(), any());
     }
 
@@ -215,7 +215,7 @@ class BookingServiceImplTest {
     void given_booking_dates_overlap_range_dates__then_no_vacant_dates_found() {
       given_dateRange(2, 3);
       given_existingBooking(1, 4);
-      given_existingBookingFoundForDateRange();
+      given_existingBookingFoundForDateRangeInRepository();
 
       when_findVacantDays();
 
@@ -227,7 +227,7 @@ class BookingServiceImplTest {
     void given_booking_dates_same_as_range_dates__then_end_date_found() {
       given_dateRange(1, 4);
       given_existingBooking(1, 4);
-      given_existingBookingFoundForDateRange();
+      given_existingBookingFoundForDateRangeInRepository();
 
       when_findVacantDays();
 
@@ -238,7 +238,7 @@ class BookingServiceImplTest {
     @DisplayNamePrefix("--|-|----|-|--")
     void given_no_existing_bookings__then_vacant_dates_within_date_range_inclusive_found() {
       given_dateRange(1, 4);
-      given_noExistingBookingFoundForDateRange();
+      given_noExistingBookingFoundForDateRangeInRepository();
 
       when_findVacantDays();
 
@@ -246,11 +246,11 @@ class BookingServiceImplTest {
           startDate.datesUntil(endDate.plusDays(1)).collect(Collectors.toList()));
     }
 
-    private void given_noExistingBookingFoundForDateRange() {
+    private void given_noExistingBookingFoundForDateRangeInRepository() {
       doReturn(EMPTY_LIST).when(bookingRepository).findForDateRange(any(), any(), any());
     }
 
-    private void given_existingBookingFoundForDateRange() {
+    private void given_existingBookingFoundForDateRangeInRepository() {
       doReturn(singletonList(existingBooking))
           .when(bookingRepository)
           .findForDateRange(any(), any(), any());
@@ -291,7 +291,7 @@ class BookingServiceImplTest {
     void given_existing_booking_canceled__then_illegal_booking_state_exception_thrown() {
       given_existingBooking(1, 2);
       given_existingBookingCanceled();
-      given_existingBookingFoundForUuid();
+      given_existingBookingFoundForUuidInRepository();
 
       when_updateBookingThenAssertExceptionThrown(IllegalBookingStateException.class);
     }
@@ -299,9 +299,9 @@ class BookingServiceImplTest {
     @Test
     void given_booking_dates_not_available__then_booking_dates_not_available_exception_thrown() {
       given_existingBooking(1, 2);
-      given_existingBookingFoundForUuid();
+      given_existingBookingFoundForUuidInRepository();
       given_otherExistingBooking(2, 3);
-      given_twoBookingsFoundForDateRange();
+      given_twoBookingsFoundForDateRangeInRepository();
 
       when_updateBookingWithNewBookingDatesThenAssertExceptionThrown(
           1, 3, BookingDatesNotAvailableException.class);
@@ -310,8 +310,8 @@ class BookingServiceImplTest {
     @Test
     void given_booking_dates_available__then_booking_updated() {
       given_existingBooking(1, 2);
-      given_existingBookingFoundForUuid();
-      given_existingBookingFoundForDateRange();
+      given_existingBookingFoundForUuidInRepository();
+      given_existingBookingFoundForDateRangeInRepository();
       given_existingBookingWithNewBookingDates(1, 3);
 
       when_updateBooking();
@@ -323,7 +323,7 @@ class BookingServiceImplTest {
       existingBooking.setActive(false);
     }
 
-    private void given_existingBookingFoundForUuid() {
+    private void given_existingBookingFoundForUuidInRepository() {
       doReturn(Optional.of(existingBooking)).when(bookingRepository).findByUuid(any());
     }
 
@@ -336,13 +336,13 @@ class BookingServiceImplTest {
       assumeTrue(otherExistingBooking.isActive());
     }
 
-    private void given_twoBookingsFoundForDateRange() {
+    private void given_twoBookingsFoundForDateRangeInRepository() {
       doReturn(asList(existingBooking, otherExistingBooking))
           .when(bookingRepository)
           .findForDateRangeWithPessimisticWriteLocking(any(), any(), any());
     }
 
-    private void given_existingBookingFoundForDateRange() {
+    private void given_existingBookingFoundForDateRangeInRepository() {
       doReturn(singletonList(existingBooking))
           .when(bookingRepository)
           .findForDateRangeWithPessimisticWriteLocking(any(), any(), any());
