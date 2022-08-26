@@ -3,15 +3,15 @@ package com.kiroule.campsite.booking.api.repository.context;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-public class PostgreSqlCustomizedRepositoryContextImpl extends CustomizedRepositoryContext {
+public class PostgresqlCustomizedRepositoryContextImpl extends CustomizedRepositoryContext {
 
-  public PostgreSqlCustomizedRepositoryContextImpl(EntityManager entityManager) {
+  public PostgresqlCustomizedRepositoryContextImpl(EntityManager entityManager) {
     super(entityManager);
   }
 
-  public void setLockTimeout(long timeoutDurationInMs) {
+  public int setLockTimeout(long timeoutDurationInMs) {
     Query query = getEntityManager().createNativeQuery("set local lock_timeout = " + timeoutDurationInMs);
-    query.executeUpdate();
+    return query.executeUpdate();
   }
 
   public long getLockTimeout() {

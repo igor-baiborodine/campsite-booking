@@ -152,7 +152,7 @@ booking creation for the same booking dates:
 
 ```bash
 $ docker-compose.yml up -d
-$ concurrent-test/concurrent-bookings-test.sh 2022-08-21 2022-08-22 http:/localhost:80
+$ concurrent-test/concurrent-bookings-creation.sh 2022-08-21 2022-08-22 http:/localhost:80
 ```
 The response should be as follows after formatting, i.e., only one booking was created:
 ```json

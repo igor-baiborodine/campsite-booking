@@ -18,7 +18,7 @@ public abstract class CustomizedRepositoryContext {
 
   private final EntityManager entityManager;
 
-  public abstract void setLockTimeout(long timeoutDurationInMs);
+  public abstract int setLockTimeout(long timeoutDurationInMs);
 
   public abstract long getLockTimeout();
 

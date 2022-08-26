@@ -3,7 +3,6 @@ package com.kiroule.campsite.booking.api.service;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.stream.Collectors.toList;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.kiroule.campsite.booking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsite.booking.api.exception.BookingNotFoundException;
 import com.kiroule.campsite.booking.api.exception.IllegalBookingStateException;
@@ -99,8 +98,7 @@ public class BookingServiceImpl implements BookingService {
     return !booking.isActive();
   }
 
-  @VisibleForTesting
-  void validateVacantDates(Booking booking) {
+  private void validateVacantDates(Booking booking) {
 
     var vacantDays =
         booking.getStartDate().datesUntil(booking.getEndDate().plusDays(1)).collect(toList());

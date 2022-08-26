@@ -74,7 +74,7 @@ class BookingServiceImplTest {
 
     @Test
     void given_non_existing_booking_uuid__then_booking_not_found_and_exception_thrown() {
-      given_foundNoExistingBookingForUuidInRepository();
+      given_noExistingBookingFoundForUuidInRepository();
 
       when_findBookingByUuidThenAssertExceptionThrown(BookingNotFoundException.class);
     }
@@ -82,19 +82,15 @@ class BookingServiceImplTest {
     @Test
     void given_existing_booking_uuid__then_booking_found() {
       given_existingBooking(1, 2);
-      given_foundExistingBookingForUuidInRepository();
+      given_existingBookingFoundForUuidInRepository();
 
       when_findBookingByUuid();
 
       then_assertBookingFound();
     }
 
-    private void given_foundNoExistingBookingForUuidInRepository() {
+    private void given_noExistingBookingFoundForUuidInRepository() {
       doReturn(Optional.empty()).when(bookingRepository).findByUuid(any());
-    }
-
-    private void given_foundExistingBookingForUuidInRepository() {
-      doReturn(Optional.of(existingBooking)).when(bookingRepository).findByUuid(any());
     }
 
     private void when_findBookingByUuid() {
@@ -130,7 +126,7 @@ class BookingServiceImplTest {
       given_newBooking(1, 4);
       given_foundNoExistingBookingsForDateRangeInRepository();
 
-      when_createBookingFromNewBooking();
+      when_createBooking();
 
       then_assertBookingCreated();
     }
@@ -153,7 +149,7 @@ class BookingServiceImplTest {
       doReturn(EMPTY_LIST).when(bookingRepository).findForDateRangeWithPessimisticWriteLocking(any(), any(), any());
     }
 
-    private void when_createBookingFromNewBooking() {
+    private void when_createBooking() {
       bookingService.createBooking(newBooking);
     }
 
@@ -323,10 +319,6 @@ class BookingServiceImplTest {
       existingBooking.setActive(false);
     }
 
-    private void given_existingBookingFoundForUuidInRepository() {
-      doReturn(Optional.of(existingBooking)).when(bookingRepository).findByUuid(any());
-    }
-
     private void given_otherExistingBooking(int startPlusDays, int endPlusDays) {
       otherExistingBooking = buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays));
       otherExistingBooking.setId(1L);
@@ -375,6 +367,43 @@ class BookingServiceImplTest {
     }
   }
 
+  @Nested
+  class CancelBooking {
+
+    Boolean cancelled;
+
+    @BeforeEach
+    void beforeEach() {
+      cancelled = null;
+    }
+
+    @Test
+    void given_existing_booking__then_booking_cancelled() {
+      given_existingBooking(1, 2);
+      given_existingBookingFoundForUuidInRepository();
+      given_cancelledBookingSavedInRepository();
+
+      then_cancelBooking();
+
+      then_assertCancelledBooking();
+    }
+
+    private void given_cancelledBookingSavedInRepository() {
+      doReturn(existingBooking).when(bookingRepository).save(any());
+    }
+
+    private void then_cancelBooking() {
+      cancelled = bookingService.cancelBooking(existingBooking.getUuid());
+    }
+
+    private void then_assertCancelledBooking() {
+      assertThat(cancelled).isTrue();
+      verify(bookingRepository).findByUuid(existingBooking.getUuid());
+      verify(bookingRepository).save(existingBooking);
+    }
+
+  }
+
   private void given_newBooking(int startPlusDays, int endPlusDays) {
     newBooking = buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays));
     newBooking.setActive(false);
@@ -390,5 +419,9 @@ class BookingServiceImplTest {
     assumeFalse(existingBooking.isNew());
     assumeTrue(existingBooking.isActive());
   }
-  
+
+  private void given_existingBookingFoundForUuidInRepository() {
+    doReturn(Optional.of(existingBooking)).when(bookingRepository).findByUuid(any());
+  }
+
 }

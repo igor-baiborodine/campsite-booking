@@ -6,17 +6,16 @@ import javax.persistence.Query;
 
 public class DerbyCustomizedRepositoryContextImpl extends CustomizedRepositoryContext {
 
-  public DerbyCustomizedRepositoryContextImpl(EntityManager em) {
-    super(em);
+  public DerbyCustomizedRepositoryContextImpl(EntityManager entityManager) {
+    super(entityManager);
   }
 
   @Override
-  public void setLockTimeout(long timeoutDurationInMs) {
+  public int setLockTimeout(long timeoutDurationInMs) {
     long timeoutDurationInSec = TimeUnit.MILLISECONDS.toSeconds(timeoutDurationInMs);
-    Query query = getEntityManager().createNativeQuery(
-        String.format("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.waitTimeout',  '%d')",
-            timeoutDurationInSec));
-    query.executeUpdate();
+    Query query = getEntityManager().createNativeQuery(String.format(
+        "CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.waitTimeout',  '%d')", timeoutDurationInSec));
+    return query.executeUpdate();
   }
 
   @Override

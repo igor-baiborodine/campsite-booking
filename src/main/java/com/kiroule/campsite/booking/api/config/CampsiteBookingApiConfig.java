@@ -4,8 +4,8 @@ import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
 import com.kiroule.campsite.booking.api.repository.context.CustomizedRepositoryContext;
 import com.kiroule.campsite.booking.api.repository.context.DerbyCustomizedRepositoryContextImpl;
-import com.kiroule.campsite.booking.api.repository.context.MySqlCustomizedRepositoryContextImpl;
-import com.kiroule.campsite.booking.api.repository.context.PostgreSqlCustomizedRepositoryContextImpl;
+import com.kiroule.campsite.booking.api.repository.context.MysqlCustomizedRepositoryContextImpl;
+import com.kiroule.campsite.booking.api.repository.context.PostgresqlCustomizedRepositoryContextImpl;
 import com.kiroule.campsite.booking.api.service.BookingService;
 import com.kiroule.campsite.booking.api.service.BookingServiceImpl;
 import com.kiroule.campsite.booking.api.service.CampsiteService;
@@ -29,13 +29,13 @@ public class CampsiteBookingApiConfig {
   @Bean
   @Profile("mysql")
   public CustomizedRepositoryContext mySqlCustomizedRepositoryContext(EntityManager entityManager) {
-    return new MySqlCustomizedRepositoryContextImpl(entityManager);
+    return new MysqlCustomizedRepositoryContextImpl(entityManager);
   }
 
   @Bean
   @Profile("postgresql")
   public CustomizedRepositoryContext postgreSqlCustomizedRepositoryContext(EntityManager entityManager) {
-    return new PostgreSqlCustomizedRepositoryContextImpl(entityManager);
+    return new PostgresqlCustomizedRepositoryContextImpl(entityManager);
   }
 
   @Bean

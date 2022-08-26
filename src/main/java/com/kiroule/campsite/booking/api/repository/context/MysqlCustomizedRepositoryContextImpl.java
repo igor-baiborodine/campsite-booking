@@ -5,17 +5,17 @@ import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-public class MySqlCustomizedRepositoryContextImpl extends CustomizedRepositoryContext {
+public class MysqlCustomizedRepositoryContextImpl extends CustomizedRepositoryContext {
 
-  public MySqlCustomizedRepositoryContextImpl(EntityManager entityManager) {
+  public MysqlCustomizedRepositoryContextImpl(EntityManager entityManager) {
     super(entityManager);
   }
 
-  public void setLockTimeout(long timeoutDurationInMs) {
+  public int setLockTimeout(long timeoutDurationInMs) {
     long timeoutDurationInSec = TimeUnit.MILLISECONDS.toSeconds(timeoutDurationInMs);
     Query query = getEntityManager().createNativeQuery(
         "set session innodb_lock_wait_timeout = " + timeoutDurationInSec);
-    query.executeUpdate();
+    return query.executeUpdate();
   }
 
   public long getLockTimeout() {
