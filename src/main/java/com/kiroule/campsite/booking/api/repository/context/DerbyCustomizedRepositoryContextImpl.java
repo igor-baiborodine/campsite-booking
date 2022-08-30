@@ -1,5 +1,7 @@
 package com.kiroule.campsite.booking.api.repository.context;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -22,7 +24,7 @@ public class DerbyCustomizedRepositoryContextImpl extends CustomizedRepositoryCo
   public long getLockTimeout() {
     Query query = getEntityManager().createNativeQuery(
         "VALUES SYSCS_UTIL.SYSCS_GET_DATABASE_PROPERTY('derby.locks.waitTimeout')");
-    long timeoutDurationInSec = Long.parseLong((String) query.getSingleResult());
+    long timeoutDurationInSec = ofNullable((String) query.getSingleResult()).map(Long::parseLong).orElse(0L);
     return TimeUnit.SECONDS.toMillis(timeoutDurationInSec);
   }
 
