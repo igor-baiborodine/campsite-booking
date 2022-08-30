@@ -154,7 +154,7 @@ in [mysql](mysql/docker-compose.yml) profile.
 $ docker-compose.yml up -d
 ```
 
-#### Concurrent Bookings Creation
+#### Bookings Creation
 Execute the [create-bookings.sh](concurrent-test/create-bookings.sh) script to simulate concurrent
 booking creation for the same booking dates:
 
@@ -191,7 +191,7 @@ The response should be as follows after formatting, i.e., only one booking was c
 }
 ```
 
-#### Concurrent Booking Update
+#### Booking Update
 Execute the [update-booking.sh](concurrent-test/update-booking.sh) script to simulate concurrent
 updates for the same booking:
 
