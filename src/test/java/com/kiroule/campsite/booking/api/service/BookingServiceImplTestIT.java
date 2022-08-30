@@ -5,37 +5,27 @@ import static java.time.LocalDate.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
-import com.kiroule.campsite.booking.api.CustomReplaceUnderscoresDisplayNameGenerator;
+import com.kiroule.campsite.booking.api.BaseTestIT;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
-import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Integration tests for {@link BookingServiceImpl}.
  *
  * @author Igor Baiborodine
  */
-@SpringBootTest
-@ActiveProfiles("in-memory-db")
-@DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
-class BookingServiceImplTestIT {
+class BookingServiceImplTestIT extends BaseTestIT {
 
   @Autowired
   BookingService bookingService;
 
   @Autowired
   BookingRepository bookingRepository;
-
-  @Autowired
-  CampsiteRepository campsiteRepository;
 
   UUID uuid;
   Booking existingBooking;

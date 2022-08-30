@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   db:
-    image: mysql:5.7
+    image: mysql:8-debian
     environment:
       # Setting this variable to yes is not recommended
       # unless you really know what you are doing
@@ -11,7 +11,6 @@ services:
       - "3316:3306"
       - "33070:33060"
     volumes:
-#      - db-data:/var/lib/mysql
       - ../mysql/conf.d:/etc/mysql/conf.d
       - ../mysql/initdb.d:/docker-entrypoint-initdb.d
 
@@ -27,6 +26,3 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/campsite?useUnicode=true
     ports:
       - "80:8080"
-
-#volumes:
-#  db-data:

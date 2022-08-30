@@ -3,25 +3,19 @@ package com.kiroule.campsite.booking.api.service;
 import static com.kiroule.campsite.booking.api.TestHelper.CAMPSITE_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.kiroule.campsite.booking.api.CustomReplaceUnderscoresDisplayNameGenerator;
+import com.kiroule.campsite.booking.api.BaseTestIT;
 import com.kiroule.campsite.booking.api.model.Campsite;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Integration tests for {@link CampsiteServiceImpl}.
  *
  * @author Igor Baiborodine
  */
-@SpringBootTest
-@ActiveProfiles("in-memory-db")
-@DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
-class CampsiteServiceImplTestIT {
+class CampsiteServiceImplTestIT extends BaseTestIT {
 
   @Autowired
   CampsiteService campsiteService;

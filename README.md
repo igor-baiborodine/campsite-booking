@@ -21,7 +21,9 @@ Read this [blog post](https://www.kiroule.com/article/campsite-booking-api-revis
 - [Tests](#tests)
   - [Maven](#maven)
   - [Swagger UI](#swagger-ui)
-  - [Concurrent Bookings Creation](#concurrent-bookings-creation)
+  - [Concurrent Tests](#concurrent-tests)
+    - [Bookings Creation](#bookings-creation)
+    - [Booking Update](#booking-update)
   - [Basic Load Testing](#basic-load-testing)
 - [Continuous Integration](#continuous-integration)
   - [Build on Pull Request](#build-on-pull-request)
@@ -144,15 +146,20 @@ If the operation is successful, you will get the following response:
 
 ![Swagger UI Add Booking 1](/readme/swagger-add-booking-2.png)
 
-### Concurrent Bookings Creation
-**Note**: should be executed with the `mysql` active profile
+### Concurrent Tests
 
-Start an instance of Campsite Booking API and execute the concurrent-bookings-test.sh script to simulate concurrent
+Start an instance of the Campsite Booking API via Docker Compose either in [the in-memory-db](docker-compose.yml) or
+in [mysql](mysql/docker-compose.yml) profile.
+```bash
+$ docker-compose.yml up -d
+```
+
+#### Bookings Creation
+Execute the [create-bookings.sh](concurrent-test/create-bookings.sh) script to simulate concurrent
 booking creation for the same booking dates:
 
 ```bash
-$ docker-compose.yml up -d
-$ concurrent-test/concurrent-bookings-test.sh 2022-08-21 2022-08-22 http:/localhost:80
+$ concurrent-test/create-bookings.sh 2022-09-16 2022-09-17 http:/localhost:80
 ```
 The response should be as follows after formatting, i.e., only one booking was created:
 ```json
@@ -163,24 +170,56 @@ The response should be as follows after formatting, i.e., only one booking was c
    "uuid":"ea2e2f8f-749d-4497-b0ec-0da4bf437800",
    "email":"john.smith.3@email.com",
    "fullName":"John Smith 3",
-   "startDate":"2022-08-21",
-   "endDate":"2022-08-22",
+   "startDate":"2022-09-16",
+   "endDate":"2022-09-17",
    "active":true,
    "_links":{
       "self":{
-         "href":"http://localhost//v2/booking/ea2e2f8f-749d-4497-b0ec-0da4bf437800"
+         "href":"http://localhost/v2/booking/ea2e2f8f-749d-4497-b0ec-0da4bf437800"
       }
    }
 }
 {
    "status":"BAD_REQUEST",
-   "timestamp":"2022-08-08T02:52:19.10936",
-   "message":"No vacant dates available from 2022-08-21 to 2022-08-22"
+   "timestamp":"2022-08-30T02:52:19.10936",
+   "message":"No vacant dates available from 2022-09-16 to 2022-09-17"
 }
 {
    "status":"BAD_REQUEST",
-   "timestamp":"2021-01-28T02:52:19.210229",
-   "message":"No vacant dates available from 2022-08-21 to 2022-08-22"
+   "timestamp":"2022-08-30T02:52:19.210229",
+   "message":"No vacant dates available from 2022-09-16 to 2022-09-17"
+}
+```
+
+#### Booking Update
+Execute the [update-booking.sh](concurrent-test/update-booking.sh) script to simulate concurrent
+updates for the same booking:
+
+```bash
+$ concurrent-test/update-booking.sh 2022-09-16 2022-09-17 http:/localhost:80
+```
+The response should be as follows after formatting, i.e., only one booking was updated:
+```json
+{
+  "id": 16,
+  "uuid": "fb79da99-0189-417c-b3de-e91c827151c7",
+  "version": 1,
+  "campsiteId": 2,
+  "email": "john.smith.1@email.com",
+  "fullName": "John Smith 1",
+  "startDate": "2022-09-16",
+  "endDate": "2022-09-17",
+  "active": true,
+  "_links": {
+    "self": {
+      "href": "http://localhost/v2/booking/fb79da99-0189-417c-b3de-e91c827151c7"
+    }
+  }
+}
+{
+  "status": "CONFLICT",
+  "timestamp": "2022-08-30T11:57:26.956261999",
+  "message": "Optimistic locking error - booking was updated by another transaction"
 }
 ```
 
@@ -188,7 +227,7 @@ The response should be as follows after formatting, i.e., only one booking was c
 Basic load testing for retrieving vacant dates can be performed with the ApacheBench by executing the following command:
 ```Bash
 $ docker-compose.yml up -d
-$ ab -n 10000 -c 100 -k http://localhost:80//v2/booking/vacant-dates
+$ ab -n 10000 -c 100 -k http://localhost:80/v2/booking/vacant-dates
 ```
 * **-n 10000** is the number of requests to make
 * **-c 100** is the number of concurrent requests to make at a time
@@ -214,7 +253,7 @@ Server Software:
 Server Hostname:        localhost
 Server Port:            80
 
-Document Path:          //v2/booking/vacant-dates
+Document Path:          /v2/booking/vacant-dates
 Document Length:        365 bytes
 
 Concurrency Level:      100

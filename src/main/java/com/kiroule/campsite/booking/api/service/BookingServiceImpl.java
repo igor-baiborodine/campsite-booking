@@ -42,7 +42,7 @@ public class BookingServiceImpl implements BookingService {
 
     var vacantDays = startDate.datesUntil(endDate.plusDays(1)).collect(toList());
     var bookings = bookingRepository.findForDateRange(startDate, endDate, campsiteId);
-    bookings.forEach(b -> vacantDays.removeAll(b.getBookingDates()));
+    bookings.forEach(b -> vacantDays.removeAll(b.getBookingDatesWithEndDateExclusive()));
     return vacantDays;
   }
 
@@ -57,30 +57,22 @@ public class BookingServiceImpl implements BookingService {
   @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Retryable(include = CannotAcquireLockException.class,
-      maxAttempts = 2, backoff=@Backoff(delay = 150, maxDelay = 300))
+      maxAttempts = 5, backoff=@Backoff(delay = 500, maxDelay = 1000))
   public Booking createBooking(Booking booking) {
 
     if (!booking.isNew()) {
       throw new IllegalBookingStateException("New booking must not have persistence id");
     }
-
-    var vacantDays =
-        booking.getStartDate().datesUntil(booking.getEndDate().plusDays(1)).collect(toList());
-    var bookings = bookingRepository.findForDateRangeWithPessimisticWriteLocking(
-        booking.getStartDate(), booking.getEndDate(), booking.getCampsiteId());
-    bookings.forEach(b -> vacantDays.removeAll(b.getBookingDates()));
-
-    if (!vacantDays.containsAll(booking.getBookingDates())) {
-      var message = String.format("No vacant dates available from %s to %s",
-          booking.getStartDate(), booking.getEndDate());
-      throw new BookingDatesNotAvailableException(message);
-    }
+    validateVacantDates(booking);
     booking.setActive(true);
+
     return bookingRepository.save(booking);
   }
 
   @Override
-  @Transactional
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Retryable(include = CannotAcquireLockException.class,
+      maxAttempts = 5, backoff=@Backoff(delay = 500, maxDelay = 1000))
   public Booking updateBooking(Booking booking) {
 
     var persistedBooking = findByUuid(booking.getUuid());
@@ -89,15 +81,8 @@ public class BookingServiceImpl implements BookingService {
       var message = String.format("Booking with uuid=%s is cancelled", booking.getUuid());
       throw new IllegalBookingStateException(message);
     }
-    var vacantDays =
-        findVacantDays(booking.getStartDate(), booking.getEndDate(), booking.getCampsiteId());
-    vacantDays.addAll(persistedBooking.getBookingDates());
+    validateVacantDates(booking);
 
-    if (!vacantDays.containsAll(booking.getBookingDates())) {
-      var message = String.format("No vacant dates available from %s to %s",
-          booking.getStartDate(), booking.getEndDate());
-      throw new BookingDatesNotAvailableException(message);
-    }
     // cancelBooking method should be used to cancel booking
     booking.setActive(persistedBooking.isActive());
     return bookingRepository.save(booking);
@@ -111,6 +96,25 @@ public class BookingServiceImpl implements BookingService {
     booking.setActive(false);
     booking = bookingRepository.save(booking);
     return !booking.isActive();
+  }
+
+  private void validateVacantDates(Booking booking) {
+
+    var vacantDays =
+        booking.getStartDate().datesUntil(booking.getEndDate().plusDays(1)).collect(toList());
+    var bookings = bookingRepository.findForDateRangeWithPessimisticWriteLocking(
+        booking.getStartDate(), booking.getEndDate(), booking.getCampsiteId());
+    bookings.forEach(b -> {
+      if (!b.getUuid().equals(booking.getUuid())) {
+        vacantDays.removeAll(b.getBookingDatesWithEndDateExclusive());
+      }
+    });
+
+    if (!vacantDays.containsAll(booking.getBookingDatesWithEndDateExclusive())) {
+      var message = String.format("No vacant dates available from %s to %s",
+          booking.getStartDate(), booking.getEndDate());
+      throw new BookingDatesNotAvailableException(message);
+    }
   }
 
 }

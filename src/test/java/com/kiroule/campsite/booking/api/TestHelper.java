@@ -12,7 +12,7 @@ public class TestHelper {
   public static final String EMAIL = "john.smith@domain.com";
 
   public static final Long CAMPSITE_ID = 1L;
-  public static final int CAMPSITE_CAPACITY = 6;
+  public static final int CAMPSITE_CAPACITY = 2;
 
   public static BookingDto buildBookingDto(LocalDate startDate, LocalDate endDate) {
     return buildBookingDto(startDate, endDate, UUID.randomUUID());
@@ -41,6 +41,10 @@ public class TestHelper {
 
   public static Booking buildBooking(LocalDate startDate, LocalDate endDate, UUID uuid) {
     return buildBooking(buildCampsite(), startDate, endDate, uuid, FULL_NAME, EMAIL, true);
+  }
+
+  public static Booking buildBooking(LocalDate startDate, LocalDate endDate, UUID uuid, Campsite campsite) {
+    return buildBooking(campsite, startDate, endDate, uuid, FULL_NAME, EMAIL, true);
   }
 
   public static Booking buildBooking(Campsite campsite, LocalDate startDate, LocalDate endDate, UUID uuid,
