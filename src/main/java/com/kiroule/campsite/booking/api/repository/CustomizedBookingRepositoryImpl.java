@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-
 @RequiredArgsConstructor
 public class CustomizedBookingRepositoryImpl implements CustomizedBookingRepository {
 
@@ -23,15 +22,21 @@ public class CustomizedBookingRepositoryImpl implements CustomizedBookingReposit
   public List<Booking> findForDateRangeWithPessimisticWriteLocking(
       LocalDate startDate, LocalDate endDate, Long campsiteId) {
 
-    Query query = customizedRepositoryContext.getEntityManager().createQuery(FIND_FOR_DATE_RANGE);
-    query.setParameter(1, startDate);
-    query.setParameter(2, endDate);
-    query.setParameter(3, campsiteId);
-    query.setLockMode(PESSIMISTIC_WRITE);
+    log.info("Lock timeout before executing query[{}]", customizedRepositoryContext.getLockTimeout());
+
+    Query query = customizedRepositoryContext.getEntityManager()
+        .createQuery(FIND_FOR_DATE_RANGE)
+        .setParameter(1, startDate)
+        .setParameter(2, endDate)
+        .setParameter(3, campsiteId)
+        .setLockMode(PESSIMISTIC_WRITE);
 
     customizedRepositoryContext.setLockTimeout(
         queryProperties.getFindForDateRangeWithPessimisticWriteLockingLockTimeoutInMs());
 
-    return query.getResultList();
+    List<Booking> bookings = query.getResultList();
+    log.info("Lock timeout after executing query[{}]", customizedRepositoryContext.getLockTimeout());
+
+    return bookings;
   }
 }
