@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Getter
 @RequiredArgsConstructor
-public abstract class CustomizedRepositoryContext {
+public abstract class CustomRepositoryContext {
 
   private final EntityManager entityManager;
 

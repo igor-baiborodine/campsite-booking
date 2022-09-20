@@ -12,7 +12,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
-import com.kiroule.campsite.booking.api.CustomReplaceUnderscoresDisplayNameGenerator;
+import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
 import com.kiroule.campsite.booking.api.TestHelper;
 import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
 import com.kiroule.campsite.booking.api.exception.CampsiteNotFoundException;
@@ -31,7 +31,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
+@DisplayNameGeneration(CustomReplaceUnderscores.class)
 class BookingMapperTest {
 
   @Mock

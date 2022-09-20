@@ -56,8 +56,10 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  @Retryable(include = CannotAcquireLockException.class,
-      maxAttempts = 5, backoff=@Backoff(delay = 500, maxDelay = 1000))
+  @Retryable(
+      include = CannotAcquireLockException.class,
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 500, maxDelay = 1000))
   public Booking createBooking(Booking booking) {
 
     if (!booking.isNew()) {

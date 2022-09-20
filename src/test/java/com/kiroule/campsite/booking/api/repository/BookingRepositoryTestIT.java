@@ -92,7 +92,7 @@ class BookingRepositoryTestIT  extends BaseTestIT {
 
     @Test
     @DisplayNamePrefix("SE|-|----|-|--")
-    void given_booking_dates_before_range_startDate__then_no_booking_found() {
+    void given_booking_dates_before_range_start_date__then_no_booking_found() {
       given_existingBooking(1, 2);
 
       when_findBookingsForDateRange(3, 4);

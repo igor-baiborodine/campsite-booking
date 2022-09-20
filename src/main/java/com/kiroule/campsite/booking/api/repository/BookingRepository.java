@@ -13,7 +13,7 @@ import org.springframework.data.repository.CrudRepository;
  *
  * @author Igor Baiborodine
  */
-public interface BookingRepository extends CrudRepository<Booking, Long>, CustomizedBookingRepository {
+public interface BookingRepository extends CrudRepository<Booking, Long>, CustomBookingRepository {
 
   /**
    * Find a booking for the given UUID.

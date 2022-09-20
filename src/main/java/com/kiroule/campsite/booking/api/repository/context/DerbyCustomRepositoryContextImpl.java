@@ -6,9 +6,9 @@ import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-public class DerbyCustomizedRepositoryContextImpl extends CustomizedRepositoryContext {
+public class DerbyCustomRepositoryContextImpl extends CustomRepositoryContext {
 
-  public DerbyCustomizedRepositoryContextImpl(EntityManager entityManager) {
+  public DerbyCustomRepositoryContextImpl(EntityManager entityManager) {
     super(entityManager);
   }
 
