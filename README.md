@@ -5,7 +5,9 @@
 
 ### A RESTful web service that manages campsite bookings. 
 
-Read this [blog post](https://www.kiroule.com/article/campsite-booking-api-revisited/) to learn more details.
+Read these articles to get more insights:
+* [Campsite Booking API: Revisited](https://www.kiroule.com/article/campsite-booking-api-revisited/)
+* [Campsite Booking API: Revisited 2](https://www.kiroule.com/article/campsite-booking-api-revisited-2/)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
