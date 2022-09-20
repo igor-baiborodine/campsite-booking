@@ -13,7 +13,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
-import com.kiroule.campsite.booking.api.CustomReplaceUnderscoresDisplayNameGenerator;
+import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
 import com.kiroule.campsite.booking.api.DisplayNamePrefix;
 import com.kiroule.campsite.booking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsite.booking.api.exception.BookingNotFoundException;
@@ -40,7 +40,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * @author Igor Baiborodine
  */
 @ExtendWith(MockitoExtension.class)
-@DisplayNameGeneration(CustomReplaceUnderscoresDisplayNameGenerator.class)
+@DisplayNameGeneration(CustomReplaceUnderscores.class)
 class BookingServiceImplTest {
 
   @Mock

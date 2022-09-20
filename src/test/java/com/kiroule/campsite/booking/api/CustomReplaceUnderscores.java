@@ -3,8 +3,7 @@ package com.kiroule.campsite.booking.api;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayNameGenerator;
 
-public class CustomReplaceUnderscoresDisplayNameGenerator
-    extends DisplayNameGenerator.ReplaceUnderscores {
+public class CustomReplaceUnderscores extends DisplayNameGenerator.ReplaceUnderscores {
 
   @Override
   public String generateDisplayNameForMethod(Class<?> testClass, Method testMethod) {

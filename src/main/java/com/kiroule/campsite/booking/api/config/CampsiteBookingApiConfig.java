@@ -2,9 +2,9 @@ package com.kiroule.campsite.booking.api.config;
 
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
-import com.kiroule.campsite.booking.api.repository.context.CustomizedRepositoryContext;
-import com.kiroule.campsite.booking.api.repository.context.DerbyCustomizedRepositoryContextImpl;
-import com.kiroule.campsite.booking.api.repository.context.MysqlCustomizedRepositoryContextImpl;
+import com.kiroule.campsite.booking.api.repository.context.CustomRepositoryContext;
+import com.kiroule.campsite.booking.api.repository.context.DerbyCustomRepositoryContextImpl;
+import com.kiroule.campsite.booking.api.repository.context.MysqlCustomRepositoryContextImpl;
 import com.kiroule.campsite.booking.api.service.BookingService;
 import com.kiroule.campsite.booking.api.service.BookingServiceImpl;
 import com.kiroule.campsite.booking.api.service.CampsiteService;
@@ -21,14 +21,14 @@ public class CampsiteBookingApiConfig {
 
   @Bean
   @Profile("in-memory-db")
-  public CustomizedRepositoryContext inMemoryDbCustomizedRepositoryContext(EntityManager entityManager) {
-    return new DerbyCustomizedRepositoryContextImpl(entityManager);
+  public CustomRepositoryContext inMemoryDbCustomRepositoryContext(EntityManager entityManager) {
+    return new DerbyCustomRepositoryContextImpl(entityManager);
   }
 
   @Bean
   @Profile("mysql")
-  public CustomizedRepositoryContext mySqlCustomizedRepositoryContext(EntityManager entityManager) {
-    return new MysqlCustomizedRepositoryContextImpl(entityManager);
+  public CustomRepositoryContext mySqlCustomRepositoryContext(EntityManager entityManager) {
+    return new MysqlCustomRepositoryContextImpl(entityManager);
   }
 
   @Bean

@@ -4,7 +4,7 @@ import com.kiroule.campsite.booking.api.model.Booking;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface CustomizedBookingRepository {
+public interface CustomBookingRepository {
 
   String FIND_FOR_DATE_RANGE = "select b from Booking b "
       + "where ((b.startDate < ?1 and ?2 < b.endDate) "

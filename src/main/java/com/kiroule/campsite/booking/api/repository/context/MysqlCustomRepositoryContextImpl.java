@@ -5,9 +5,9 @@ import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-public class MysqlCustomizedRepositoryContextImpl extends CustomizedRepositoryContext {
+public class MysqlCustomRepositoryContextImpl extends CustomRepositoryContext {
 
-  public MysqlCustomizedRepositoryContextImpl(EntityManager entityManager) {
+  public MysqlCustomRepositoryContextImpl(EntityManager entityManager) {
     super(entityManager);
   }
 
