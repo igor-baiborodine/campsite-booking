@@ -38,7 +38,7 @@ class BookingMapperTest {
   CampsiteService campsiteService;
 
   @InjectMocks
-  BookingMapperImpl mapper;
+  BookingMapperImpl classUnderTest;
 
   LocalDate now;
   UUID uuid;
@@ -56,7 +56,7 @@ class BookingMapperTest {
   }
 
   @Nested
-  class Map_To_Booking {
+  class MapToBooking {
 
     @Test
     void happy_path() {
@@ -103,7 +103,7 @@ class BookingMapperTest {
     }
 
     private void when_mapToBooking() {
-      booking = mapper.toBooking(bookingDto);
+      booking = classUnderTest.toBooking(bookingDto);
     }
 
     private void then_assertBooking(int startPlusDays, int endPlusDays) {
@@ -134,7 +134,7 @@ class BookingMapperTest {
   }
 
   @Nested
-  class Map_To_Booking_Dto {
+  class MapToBookingDto {
 
     @Test
     void happy_path() {
@@ -163,7 +163,7 @@ class BookingMapperTest {
     }
 
     private void when_mapToBookingDto() {
-      bookingDto = mapper.toBookingDto(booking);
+      bookingDto = classUnderTest.toBookingDto(booking);
     }
 
     private void then_assertBookingDto(int startPlusDays, int endPlusDays) {

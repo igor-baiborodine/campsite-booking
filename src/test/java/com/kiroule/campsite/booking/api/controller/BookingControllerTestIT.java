@@ -2,10 +2,12 @@ package com.kiroule.campsite.booking.api.controller;
 
 import static com.kiroule.campsite.booking.api.TestHelper.buildBookingDto;
 import static io.restassured.RestAssured.given;
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import com.kiroule.campsite.booking.api.BaseTestIT;
 import com.kiroule.campsite.booking.api.contract.v2.model.ApiError;
@@ -54,7 +56,7 @@ class BookingControllerTestIT extends BaseTestIT {
   }
 
   @Nested
-  class Get_Actuator_Health {
+  class GetActuatorHealth {
     @Test
     void given_service_is_running__then_status_OK() {
       given()
@@ -64,7 +66,7 @@ class BookingControllerTestIT extends BaseTestIT {
   }
 
   @Nested
-  class Get_Vacant_Dates {
+  class GetVacantDates {
 
     List<String> vacantDates;
 
@@ -99,7 +101,7 @@ class BookingControllerTestIT extends BaseTestIT {
   }
 
   @Nested
-  class Get_Booking {
+  class GetBooking {
 
     BookingDto foundBookingDto;
 
@@ -132,12 +134,13 @@ class BookingControllerTestIT extends BaseTestIT {
     }
 
     private void then_assertBookingFound() {
-      assertThat(foundBookingDto).isEqualToIgnoringGivenFields(existingBookingDto, "id", "version");
+      assertThat(foundBookingDto).usingRecursiveAssertion().ignoringFields("id", "version").isEqualTo(existingBookingDto);
+      assertThat(foundBookingDto).usingRecursiveAssertion().ignoringFields("id", "version").isEqualTo(existingBookingDto);
     }
   }
 
   @Nested
-  class Add_Booking {
+  class AddBooking {
 
     BookingDto newBookingDto;
 
@@ -152,7 +155,7 @@ class BookingControllerTestIT extends BaseTestIT {
 
       when_addBookingResultsInApiError(1, 2);
 
-      then_assertApiErrorThrown(HttpStatus.BAD_REQUEST, String.format(
+      then_assertApiErrorThrown(BAD_REQUEST, format(
           "No vacant dates available from %s to %s", now.plusDays(1), now.plusDays(2)));
     }
 
@@ -162,7 +165,7 @@ class BookingControllerTestIT extends BaseTestIT {
 
       when_addBookingResultsInApiError(1, 5);
 
-      then_assertApiErrorThrown(HttpStatus.BAD_REQUEST, "Validation error");
+      then_assertApiErrorThrown(BAD_REQUEST, "Validation error");
     }
 
     private void when_addBookingResultsInApiError(int startPlusDays, int endPlusDays) {
@@ -175,7 +178,7 @@ class BookingControllerTestIT extends BaseTestIT {
   }
 
   @Nested
-  class Update_Booking {
+  class UpdateBooking {
 
     BookingDto updatedBookingDto;
 
@@ -202,8 +205,8 @@ class BookingControllerTestIT extends BaseTestIT {
 
       when_updateBookingResultsInApiError();
 
-      then_assertApiErrorThrown(HttpStatus.BAD_REQUEST,
-          String.format("No vacant dates available from %s to %s",
+      then_assertApiErrorThrown(BAD_REQUEST,
+          format("No vacant dates available from %s to %s",
               existingBookingDto.getStartDate(), existingBookingDto.getEndDate()));
     }
 
@@ -269,7 +272,7 @@ class BookingControllerTestIT extends BaseTestIT {
   }
 
   @Nested
-  class Cancel_Booking {
+  class CancelBooking {
 
     @Test
     void given_active_existing_booking__then_booking_canceled() {

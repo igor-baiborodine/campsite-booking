@@ -26,6 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Concurrent integration tests for {@link BookingServiceImpl}.
@@ -37,8 +38,8 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
   @Autowired
   BookingRepository bookingRepository;
 
-  @Autowired
-  BookingService bookingService;
+  @Autowired @Qualifier("bookingService")
+  BookingService classUnderTest;
 
   @Autowired
   CampsiteRepository campsiteRepository;
@@ -82,7 +83,7 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
 
     private void when_createBookingsConcurrently() {
       executor = Executors.newFixedThreadPool(newBookings.size());
-      newBookings.forEach(b -> executor.execute(() -> bookingService.createBooking(b)));
+      newBookings.forEach(b -> executor.execute(() -> classUnderTest.createBooking(b)));
       executor.shutdown();
     }
 
@@ -93,7 +94,7 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
       UUID uuid = bookings.iterator().next().getUuid();
       // To avoid org.hibernate.LazyInitializationException for campsite field,
       // use BookingService to fetch booking in question
-      Booking createdBooking = bookingService.findByUuid(uuid);
+      Booking createdBooking = classUnderTest.findByUuid(uuid);
 
       Booking newBooking = newBookings.stream().filter(b -> b.getUuid().equals(uuid)).findFirst().get();
       assertThat(createdBooking).usingRecursiveComparison()
@@ -176,7 +177,7 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
 
     private void when_updateBookingConcurrently() {
       executor = Executors.newFixedThreadPool(existingBookingUpdates.size());
-      existingBookingUpdates.forEach(b -> executor.execute(() -> bookingService.updateBooking(b)));
+      existingBookingUpdates.forEach(b -> executor.execute(() -> classUnderTest.updateBooking(b)));
       executor.shutdown();
     }
 

@@ -10,6 +10,7 @@ import jakarta.persistence.EntityManager;
 import org.hibernate.query.NativeQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +33,7 @@ class DerbyCustomRepositoryContextImplTest {
   EntityManager entityManager;
 
   @InjectMocks
-  DerbyCustomRepositoryContextImpl customRepositoryContext;
+  DerbyCustomRepositoryContextImpl classUnderTest;
 
   Long timeout;
   Integer count;
@@ -43,61 +44,68 @@ class DerbyCustomRepositoryContextImplTest {
     count = null;
   }
 
-  @Test
-  void set_lock_timeout__happy_path() {
-    given_timeout(3000L);
-    given_entityManagerCreatesNativeQuery();
-    given_queryExecutesUpdate(1);
+  @Nested
+  class SetLockTimeout {
 
-    when_setLockTimeout();
+    @Test
+    void happy_path() {
+      given_timeout(3000L);
+      given_entityManagerCreatesNativeQuery();
+      given_queryExecutesUpdate(1);
 
-    then_assertUpdateExecuted(1);
+      when_setLockTimeout();
+
+      then_assertUpdateExecuted(1);
+    }
+
+    private void given_timeout(long value) {
+      timeout = value;
+    }
+
+    private void given_queryExecutesUpdate(int updatedCount) {
+      doReturn(updatedCount).when(query).executeUpdate();
+    }
+
+    private void when_setLockTimeout() {
+      count = classUnderTest.setLockTimeout(timeout);
+    }
+
+    private void then_assertUpdateExecuted(int expectedCount) {
+      assertThat(count).isEqualTo(expectedCount);
+      verify(entityManager).createNativeQuery("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.waitTimeout',  '3')");
+      verify(query).executeUpdate();
+    }
   }
 
-  @Test
-  void get_lock_timeout__happy_path() {
-    given_entityManagerCreatesNativeQuery();
-    given_queryReturnsSingleResult("3");
+  @Nested
+  class GetLockTimeout {
 
-    when_getLockTimeout();
+    @Test
+    void happy_path() {
+      given_entityManagerCreatesNativeQuery();
+      given_queryReturnsSingleResult("3");
 
-    then_assertFetchedTimeout(3000L);
-  }
+      when_getLockTimeout();
 
-  private void given_timeout(long timeout) {
-    this.timeout = timeout;
+      then_assertFetchedTimeout(3000L);
+    }
+
+    private void given_queryReturnsSingleResult(String timeoutInSec) {
+      doReturn(timeoutInSec).when(query).getSingleResult();
+    }
+
+    private void when_getLockTimeout() {
+      timeout = classUnderTest.getLockTimeout();
+    }
+
+    private void then_assertFetchedTimeout(long expectedTimeout) {
+      assertThat(timeout).isEqualTo(expectedTimeout);
+      verify(entityManager).createNativeQuery("VALUES SYSCS_UTIL.SYSCS_GET_DATABASE_PROPERTY('derby.locks.waitTimeout')");
+      verify(query).getSingleResult();
+    }
   }
 
   private void given_entityManagerCreatesNativeQuery() {
     doReturn(query).when(entityManager).createNativeQuery(any());
   }
-
-  private void given_queryExecutesUpdate(int updatedCount) {
-    doReturn(updatedCount).when(query).executeUpdate();
-  }
-
-  private void given_queryReturnsSingleResult(String timeoutInSec) {
-    doReturn(timeoutInSec).when(query).getSingleResult();
-  }
-
-  private void when_setLockTimeout() {
-    count = customRepositoryContext.setLockTimeout(timeout);
-  }
-
-  private void when_getLockTimeout() {
-    timeout = customRepositoryContext.getLockTimeout();
-  }
-
-  private void then_assertUpdateExecuted(int expectedCount) {
-    assertThat(count).isEqualTo(expectedCount);
-    verify(entityManager).createNativeQuery("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.waitTimeout',  '3')");
-    verify(query).executeUpdate();
-  }
-
-  private void then_assertFetchedTimeout(long expectedTimeout) {
-    assertThat(timeout).isEqualTo(expectedTimeout);
-    verify(entityManager).createNativeQuery("VALUES SYSCS_UTIL.SYSCS_GET_DATABASE_PROPERTY('derby.locks.waitTimeout')");
-    verify(query).getSingleResult();
-  }
-
 }

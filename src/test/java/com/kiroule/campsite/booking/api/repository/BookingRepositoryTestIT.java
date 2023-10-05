@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 class BookingRepositoryTestIT  extends BaseTestIT {
 
   @Autowired
-  BookingRepository bookingRepository;
+  BookingRepository classUnderTest;
 
   @Autowired
   CampsiteRepository campsiteRepository;
@@ -42,7 +42,7 @@ class BookingRepositoryTestIT  extends BaseTestIT {
 
   @BeforeEach
   void beforeEach() {
-    bookingRepository.deleteAll();
+    classUnderTest.deleteAll();
 
     now = LocalDate.now();
     uuid = UUID.randomUUID();
@@ -50,7 +50,7 @@ class BookingRepositoryTestIT  extends BaseTestIT {
   }
 
   @Nested
-  class Find_By_Uuid {
+  class FindByUuid {
 
     Optional<Booking> bookingOptionalForUuid;
 
@@ -69,7 +69,7 @@ class BookingRepositoryTestIT  extends BaseTestIT {
     }
 
     private void when_findByUuid() {
-      bookingOptionalForUuid = bookingRepository.findByUuid(uuid);
+      bookingOptionalForUuid = classUnderTest.findByUuid(uuid);
     }
 
     private void then_assertBookingFoundForUuid() {
@@ -81,7 +81,7 @@ class BookingRepositoryTestIT  extends BaseTestIT {
   }
 
   @Nested
-  class Find_For_Date_Range {
+  class FindForDateRange {
 
     List<Booking> bookingsForDateRange;
 
@@ -191,7 +191,7 @@ class BookingRepositoryTestIT  extends BaseTestIT {
     }
 
     private void when_findBookingsForDateRange(int startPlusDays, int endPlusDays) {
-      bookingsForDateRange = bookingRepository.findForDateRange(
+      bookingsForDateRange = classUnderTest.findForDateRange(
               now.plusDays(startPlusDays), now.plusDays(endPlusDays), CAMPSITE_ID);
     }
 
@@ -208,10 +208,9 @@ class BookingRepositoryTestIT  extends BaseTestIT {
 
   private void given_existingBooking(int startPlusDays, int endPlusDays) {
     Booking booking = buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid);
-    existingBooking = bookingRepository.save(booking);
+    existingBooking = classUnderTest.save(booking);
 
     assumeThat(existingBooking.isNew()).isFalse();
     assumeThat(existingBooking.isActive()).isTrue();
   }
-
 }

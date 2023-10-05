@@ -26,14 +26,14 @@ import org.junit.jupiter.api.Test;
 class BookingValidatorTest {
 
   ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-  Validator validator;
+  Validator classUnderTest;
   LocalDate now;
   BookingDto bookingDto;
   Set<ConstraintViolation<BookingDto>> violations;
 
   @BeforeEach
   void beforeEach() {
-    validator = factory.getValidator();
+    classUnderTest = factory.getValidator();
     now = LocalDate.now();
     bookingDto = null;
     violations = null;
@@ -128,7 +128,7 @@ class BookingValidatorTest {
   }
 
   private void when_validateBooking() {
-    violations = validator.validate(bookingDto);
+    violations = classUnderTest.validate(bookingDto);
   }
 
   private void then_assertNoValidationErrorsThrown() {

@@ -47,7 +47,7 @@ class BookingServiceImplTest {
   BookingRepository bookingRepository;
 
   @InjectMocks
-  BookingServiceImpl bookingService;
+  BookingServiceImpl classUnderTest;
 
   LocalDate now;
   UUID uuid;
@@ -63,7 +63,7 @@ class BookingServiceImplTest {
   }
 
   @Nested
-  class Find_Booking_By_Uuid {
+  class FindBookingByUuid {
 
     Booking foundBooking;
 
@@ -94,7 +94,7 @@ class BookingServiceImplTest {
     }
 
     private void when_findBookingByUuid() {
-      foundBooking = bookingService.findByUuid(uuid);
+      foundBooking = classUnderTest.findByUuid(uuid);
     }
 
     private void then_assertBookingFound() {
@@ -104,12 +104,12 @@ class BookingServiceImplTest {
 
     private void when_findBookingByUuidThenAssertExceptionThrown(
         Class<? extends Exception> exception) {
-      assertThrows(exception, () -> bookingService.findByUuid(any()));
+      assertThrows(exception, () -> classUnderTest.findByUuid(any()));
     }
   }
 
   @Nested
-  class Create_Booking {
+  class CreateBooking {
 
     @Test
     void given_booking_dates_not_available__then_booking_dates_not_available_and_exception_thrown() {
@@ -150,7 +150,7 @@ class BookingServiceImplTest {
     }
 
     private void when_createBooking() {
-      bookingService.createBooking(newBooking);
+      classUnderTest.createBooking(newBooking);
     }
 
     private void then_assertBookingCreated() {
@@ -162,17 +162,17 @@ class BookingServiceImplTest {
 
     private void when_createBookingFromNewBookingThenAssertExceptionThrown(
         Class<? extends Exception> exception) {
-      assertThrows(exception, () -> bookingService.createBooking(newBooking));
+      assertThrows(exception, () -> classUnderTest.createBooking(newBooking));
     }
 
     private void when_createBookingFromExistingBookingThenAssertExceptionThrown(
         Class<? extends Exception> exception) {
-      assertThrows(exception, () -> bookingService.createBooking(existingBooking));
+      assertThrows(exception, () -> classUnderTest.createBooking(existingBooking));
     }
   }
 
   @Nested
-  class Find_Vacant_Dates {
+  class FindVacantDates {
 
     LocalDate startDate;
     LocalDate endDate;
@@ -258,12 +258,12 @@ class BookingServiceImplTest {
     }
 
     private void when_findVacantDays() {
-      vacantDates = bookingService.findVacantDays(startDate, endDate, CAMPSITE_ID);
+      vacantDates = classUnderTest.findVacantDays(startDate, endDate, CAMPSITE_ID);
     }
 
     private void when_findVacantDaysThenAssertExceptionThrown(
         Class<? extends Exception> exception) {
-      assertThrows(exception, () -> bookingService.findVacantDays(startDate, endDate, CAMPSITE_ID));
+      assertThrows(exception, () -> classUnderTest.findVacantDays(startDate, endDate, CAMPSITE_ID));
     }
 
     private void then_assertVacantDaysFound(List<LocalDate> expected) {
@@ -272,7 +272,7 @@ class BookingServiceImplTest {
   }
 
   @Nested
-  class Update_Booking {
+  class UpdateBooking {
 
     Booking otherExistingBooking;
     Booking existingBookingWithNewBookingDates;
@@ -346,7 +346,7 @@ class BookingServiceImplTest {
     }
 
     private void when_updateBookingThenAssertExceptionThrown(Class<? extends Exception> exception) {
-      assertThrows(exception, () -> bookingService.updateBooking(existingBooking));
+      assertThrows(exception, () -> classUnderTest.updateBooking(existingBooking));
     }
 
     private void when_updateBookingWithNewBookingDatesThenAssertExceptionThrown(
@@ -354,11 +354,11 @@ class BookingServiceImplTest {
       Booking existingBookingWithUpdatedBookingDates =
           buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid);
       assertThrows(
-          exception, () -> bookingService.updateBooking(existingBookingWithUpdatedBookingDates));
+          exception, () -> classUnderTest.updateBooking(existingBookingWithUpdatedBookingDates));
     }
 
     private void when_updateBooking() {
-      bookingService.updateBooking(existingBookingWithNewBookingDates);
+      classUnderTest.updateBooking(existingBookingWithNewBookingDates);
     }
 
     private void then_assertBookingUpdated() {
@@ -393,7 +393,7 @@ class BookingServiceImplTest {
     }
 
     private void then_cancelBooking() {
-      cancelled = bookingService.cancelBooking(existingBooking.getUuid());
+      cancelled = classUnderTest.cancelBooking(existingBooking.getUuid());
     }
 
     private void then_assertCancelledBooking() {

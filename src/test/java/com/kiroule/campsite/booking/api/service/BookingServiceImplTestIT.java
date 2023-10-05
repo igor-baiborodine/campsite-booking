@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Integration tests for {@link BookingServiceImpl}.
@@ -21,8 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 class BookingServiceImplTestIT extends BaseTestIT {
 
-  @Autowired
-  BookingService bookingService;
+  @Autowired @Qualifier("bookingService")
+  BookingService classUnderTest;
 
   @Autowired
   BookingRepository bookingRepository;
@@ -39,7 +40,7 @@ class BookingServiceImplTestIT extends BaseTestIT {
   }
 
   @Nested
-  class Cancel_Booking {
+  class CancelBooking {
 
     boolean bookingCanceled;
 
@@ -60,7 +61,7 @@ class BookingServiceImplTestIT extends BaseTestIT {
     }
 
     private void when_cancelBooking() {
-      bookingCanceled = bookingService.cancelBooking(existingBooking.getUuid());
+      bookingCanceled = classUnderTest.cancelBooking(existingBooking.getUuid());
     }
 
     private void then_assertBookingCanceled() {
