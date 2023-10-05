@@ -4,7 +4,7 @@
 
   <groupId>com.kiroule</groupId>
   <artifactId>campsite-booking</artifactId>
-  <version>4.4.1-SNAPSHOT</version>
+  <version>5.0.0</version>
   <packaging>jar</packaging>
 
   <name>campsite-booking</name>
@@ -14,14 +14,14 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>3.1.4</version>
-    <relativePath/> <!-- lookup parent from repository -->
+    <relativePath /> <!-- lookup parent from repository -->
   </parent>
 
   <scm>
     <connection>scm:git:${project.scm.url}</connection>
     <developerConnection>scm:git:${project.scm.url}</developerConnection>
     <url>https://github.com/igor-baiborodine/campsite-booking.git</url>
-    <tag>HEAD</tag>
+    <tag>v5.0.0</tag>
   </scm>
 
   <distributionManagement>
