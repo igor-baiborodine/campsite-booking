@@ -1,6 +1,6 @@
 package com.kiroule.campsite.booking.api.repository.context;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

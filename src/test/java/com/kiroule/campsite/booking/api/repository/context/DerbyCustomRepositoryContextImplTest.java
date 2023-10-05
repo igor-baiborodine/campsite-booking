@@ -6,7 +6,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.hibernate.query.NativeQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;

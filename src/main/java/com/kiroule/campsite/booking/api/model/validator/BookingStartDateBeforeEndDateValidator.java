@@ -1,8 +1,8 @@
 package com.kiroule.campsite.booking.api.model.validator;
 
 import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * @author Igor Baiborodine
