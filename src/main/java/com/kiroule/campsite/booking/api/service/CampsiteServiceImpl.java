@@ -22,8 +22,11 @@ public class CampsiteServiceImpl implements CampsiteService {
   @Transactional(readOnly = true)
   public Campsite findById(Long id) {
 
-    return campsiteRepository.findById(id).orElseThrow(() ->
-        new CampsiteNotFoundException(String.format("Booking was not found for id=%d", id)));
+    return campsiteRepository
+        .findById(id)
+        .orElseThrow(
+            () ->
+                new CampsiteNotFoundException(
+                    String.format("Booking was not found for id=%d", id)));
   }
-
 }

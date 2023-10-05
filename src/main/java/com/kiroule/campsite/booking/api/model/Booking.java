@@ -3,10 +3,6 @@ package com.kiroule.campsite.booking.api.model;
 import static java.sql.Types.VARCHAR;
 import static java.util.Objects.isNull;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,6 +13,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,16 +41,12 @@ import org.hibernate.annotations.JdbcTypeCode;
 @Generated
 public class Booking extends DateAudit {
 
-  /**
-   * Persistence ID
-   */
+  /** Persistence ID */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  /**
-   * Business ID
-   */
+  /** Business ID */
   @Getter
   @EqualsAndHashCode.Include
   @Column(name = "uuid", nullable = false, unique = true)
@@ -102,5 +98,4 @@ public class Booking extends DateAudit {
   public Long getCampsiteId() {
     return Optional.of(campsite).orElseThrow().getId();
   }
-
 }

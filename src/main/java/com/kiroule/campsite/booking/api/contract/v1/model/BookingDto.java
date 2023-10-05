@@ -33,18 +33,14 @@ import lombok.Generated;
 @Generated
 public class BookingDto {
 
-  /**
-   * Persistence ID
-   */
+  /** Persistence ID */
   private Long id;
 
   @Version
   @Column(name = "version", nullable = false)
   private Long version;
 
-  /**
-   * Business ID
-   */
+  /** Business ID */
   @EqualsAndHashCode.Include
   @Column(name = "uuid", nullable = false, unique = true)
   private UUID uuid;
@@ -66,5 +62,4 @@ public class BookingDto {
   private LocalDate endDate;
 
   private boolean active;
-
 }

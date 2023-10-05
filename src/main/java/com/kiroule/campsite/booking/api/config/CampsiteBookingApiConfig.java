@@ -40,5 +40,4 @@ public class CampsiteBookingApiConfig {
   public CampsiteService campsiteService(CampsiteRepository campsiteRepository) {
     return new CampsiteServiceImpl(campsiteRepository);
   }
-
 }

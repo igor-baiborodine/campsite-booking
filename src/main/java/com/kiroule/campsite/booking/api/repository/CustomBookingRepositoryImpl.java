@@ -5,9 +5,9 @@ import static jakarta.persistence.LockModeType.PESSIMISTIC_WRITE;
 import com.kiroule.campsite.booking.api.config.QueryProperties;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.repository.context.CustomRepositoryContext;
+import jakarta.persistence.Query;
 import java.time.LocalDate;
 import java.util.List;
-import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,12 +24,14 @@ public class CustomBookingRepositoryImpl implements CustomBookingRepository {
 
     log.info("Lock timeout before executing query[{}]", customRepositoryContext.getLockTimeout());
 
-    Query query = customRepositoryContext.getEntityManager()
-        .createQuery(FIND_FOR_DATE_RANGE)
-        .setParameter(1, startDate)
-        .setParameter(2, endDate)
-        .setParameter(3, campsiteId)
-        .setLockMode(PESSIMISTIC_WRITE);
+    Query query =
+        customRepositoryContext
+            .getEntityManager()
+            .createQuery(FIND_FOR_DATE_RANGE)
+            .setParameter(1, startDate)
+            .setParameter(2, endDate)
+            .setParameter(3, campsiteId)
+            .setLockMode(PESSIMISTIC_WRITE);
 
     customRepositoryContext.setLockTimeout(
         queryProperties.getFindForDateRangeWithPessimisticWriteLockingLockTimeoutInMs());

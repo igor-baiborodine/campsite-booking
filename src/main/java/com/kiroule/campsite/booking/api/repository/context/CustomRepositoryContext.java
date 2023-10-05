@@ -15,5 +15,4 @@ public abstract class CustomRepositoryContext {
   public abstract int setLockTimeout(long timeoutDurationInMs);
 
   public abstract long getLockTimeout();
-
 }

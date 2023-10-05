@@ -8,7 +8,10 @@ import com.kiroule.campsite.booking.api.service.CampsiteService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", injectionStrategy = CONSTRUCTOR, uses = { CampsiteService.class })
+@Mapper(
+    componentModel = "spring",
+    injectionStrategy = CONSTRUCTOR,
+    uses = {CampsiteService.class})
 public interface BookingMapper {
 
   @Mapping(source = "campsiteId", target = "campsite")

@@ -1,8 +1,10 @@
 package com.kiroule.campsite.booking.api.repository.context;
 
+import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
-import java.util.concurrent.TimeUnit;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 
@@ -14,18 +16,21 @@ public class DerbyCustomRepositoryContextImpl extends CustomRepositoryContext {
 
   @Override
   public int setLockTimeout(long timeoutDurationInMs) {
-    long timeoutDurationInSec = TimeUnit.MILLISECONDS.toSeconds(timeoutDurationInMs);
-    Query query = getEntityManager().createNativeQuery(String.format(
-        "CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.waitTimeout',  '%d')", timeoutDurationInSec));
-    return query.executeUpdate();
+    String query =
+        format(
+            "CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.waitTimeout',  '%d')",
+            MILLISECONDS.toSeconds(timeoutDurationInMs));
+    return getEntityManager().createNativeQuery(query).executeUpdate();
   }
 
   @Override
   public long getLockTimeout() {
-    Query query = getEntityManager().createNativeQuery(
-        "VALUES SYSCS_UTIL.SYSCS_GET_DATABASE_PROPERTY('derby.locks.waitTimeout')");
-    long timeoutDurationInSec = ofNullable((String) query.getSingleResult()).map(Long::parseLong).orElse(0L);
-    return TimeUnit.SECONDS.toMillis(timeoutDurationInSec);
+    Query query =
+        getEntityManager()
+            .createNativeQuery(
+                "VALUES SYSCS_UTIL.SYSCS_GET_DATABASE_PROPERTY('derby.locks.waitTimeout')");
+    long timeoutDurationInSec =
+        ofNullable((String) query.getSingleResult()).map(Long::parseLong).orElse(0L);
+    return SECONDS.toMillis(timeoutDurationInSec);
   }
-
 }

@@ -28,17 +28,13 @@ import lombok.NoArgsConstructor;
 @Generated
 public class Campsite extends DateAudit {
 
-  /**
-   * Persistence ID
-   */
+  /** Persistence ID */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @EqualsAndHashCode.Include
   private Long id;
 
-  /**
-   * Capacity, max number of people that campsite can accommodate
-   */
+  /** Capacity, max number of people that campsite can accommodate */
   @Column(name = "capacity", nullable = false)
   private int capacity;
 
@@ -56,5 +52,4 @@ public class Campsite extends DateAudit {
 
   @Column(name = "active", nullable = false)
   private boolean active;
-
 }

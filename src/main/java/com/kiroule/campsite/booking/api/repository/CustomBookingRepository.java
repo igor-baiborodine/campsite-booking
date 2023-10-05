@@ -6,12 +6,13 @@ import java.util.List;
 
 public interface CustomBookingRepository {
 
-  String FIND_FOR_DATE_RANGE = "select b from Booking b "
-      + "where ((b.startDate < ?1 and ?2 < b.endDate) "
-      + "or (?1 < b.endDate and b.endDate <= ?2) "
-      + "or (?1 <= b.startDate and b.startDate <=?2)) "
-      + "and b.active = true "
-      + "and b.campsite.id = ?3 ";
+  String FIND_FOR_DATE_RANGE =
+      "select b from Booking b "
+          + "where ((b.startDate < ?1 and ?2 < b.endDate) "
+          + "or (?1 < b.endDate and b.endDate <= ?2) "
+          + "or (?1 <= b.startDate and b.startDate <=?2)) "
+          + "and b.active = true "
+          + "and b.campsite.id = ?3 ";
 
   /**
    * Find active bookings for the given date range and campsite ID with pessimistic write locking.
@@ -21,6 +22,6 @@ public interface CustomBookingRepository {
    * @param campsiteId campsite ID
    * @return list of active bookings for the given date range and campsite ID
    */
-  List<Booking> findForDateRangeWithPessimisticWriteLocking(LocalDate startDate, LocalDate endDate, Long campsiteId);
-
+  List<Booking> findForDateRangeWithPessimisticWriteLocking(
+      LocalDate startDate, LocalDate endDate, Long campsiteId);
 }

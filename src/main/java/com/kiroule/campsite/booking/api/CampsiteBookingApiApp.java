@@ -30,15 +30,16 @@ public class CampsiteBookingApiApp implements ApplicationRunner {
   public void run(ApplicationArguments args) {
 
     for (int i = 1; i < 4; i++) {
-      Campsite campsite = Campsite.builder()
-          .id((long) i)
-          .capacity(i * 2)
-          .restrooms(true)
-          .drinkingWater(true)
-          .picnicTable(true)
-          .firePit(true)
-          .active(true)
-          .build();
+      Campsite campsite =
+          Campsite.builder()
+              .id((long) i)
+              .capacity(i * 2)
+              .restrooms(true)
+              .drinkingWater(true)
+              .picnicTable(true)
+              .firePit(true)
+              .active(true)
+              .build();
 
       campsiteRepository.save(campsite);
     }

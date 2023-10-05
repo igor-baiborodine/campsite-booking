@@ -14,14 +14,13 @@ import org.springframework.http.HttpStatus;
 @Generated
 public class ApiError {
 
-    private HttpStatus status;
+  private HttpStatus status;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private LocalDateTime timestamp;
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
+  private LocalDateTime timestamp;
 
-    private String message;
+  private String message;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<String> subErrors;
-
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private List<String> subErrors;
 }

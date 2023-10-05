@@ -33,5 +33,4 @@ public interface BookingRepository extends CrudRepository<Booking, Long>, Custom
    */
   @Query(FIND_FOR_DATE_RANGE)
   List<Booking> findForDateRange(LocalDate startDate, LocalDate endDate, Long campsiteId);
-
 }

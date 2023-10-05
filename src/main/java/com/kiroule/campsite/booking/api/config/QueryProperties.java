@@ -10,7 +10,5 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("query")
 public class QueryProperties {
 
-  @NotNull
-  private Long findForDateRangeWithPessimisticWriteLockingLockTimeoutInMs;
-
+  @NotNull private Long findForDateRangeWithPessimisticWriteLockingLockTimeoutInMs;
 }

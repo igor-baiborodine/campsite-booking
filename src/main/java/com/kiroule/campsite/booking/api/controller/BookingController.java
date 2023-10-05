@@ -1,6 +1,8 @@
 package com.kiroule.campsite.booking.api.controller;
 
 import static java.util.Objects.isNull;
+import static org.springframework.hateoas.IanaLinkRelations.*;
+import static org.springframework.http.HttpStatus.*;
 
 import com.kiroule.campsite.booking.api.contract.v2.BookingApiContractV2;
 import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
@@ -13,10 +15,8 @@ import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +31,8 @@ public class BookingController implements BookingApiContractV2 {
 
   private BookingMapper bookingMapper;
 
-  public ResponseEntity<List<LocalDate>> getVacantDates(LocalDate startDate, LocalDate endDate, Long campsiteId) {
+  public ResponseEntity<List<LocalDate>> getVacantDates(
+      LocalDate startDate, LocalDate endDate, Long campsiteId) {
     if (isNull(startDate)) {
       startDate = LocalDate.now().plusDays(1);
     }
@@ -39,43 +40,40 @@ public class BookingController implements BookingApiContractV2 {
       endDate = startDate.plusMonths(1);
     }
     var vacantDates = bookingService.findVacantDays(startDate, endDate, campsiteId);
-    return new ResponseEntity<>(vacantDates, HttpStatus.OK);
+    return new ResponseEntity<>(vacantDates, OK);
   }
 
   public ResponseEntity<EntityModel<BookingDto>> getBooking(UUID uuid) {
     var booking = bookingService.findByUuid(uuid);
-    return new ResponseEntity<>(getResource(booking), HttpStatus.OK);
+    return new ResponseEntity<>(getResource(booking), OK);
   }
 
   public ResponseEntity<EntityModel<BookingDto>> addBooking(BookingDto bookingDto) {
     var addedBooking = bookingService.createBooking(bookingMapper.toBooking(bookingDto));
     var resource = getResource(addedBooking);
     var headers = new HttpHeaders();
-    headers.setLocation(URI.create(resource.getRequiredLink(IanaLinkRelations.SELF).getHref()));
+    headers.setLocation(URI.create(resource.getRequiredLink(SELF).getHref()));
 
-    return new ResponseEntity<>(resource, headers, HttpStatus.CREATED);
+    return new ResponseEntity<>(resource, headers, CREATED);
   }
 
   public ResponseEntity<EntityModel<BookingDto>> updateBooking(UUID uuid, BookingDto bookingDto) {
-    var updatedBooking = bookingService.updateBooking(
-        bookingMapper.toBooking(bookingDto));
-    return new ResponseEntity<>(getResource(updatedBooking), HttpStatus.OK);
+    var updatedBooking = bookingService.updateBooking(bookingMapper.toBooking(bookingDto));
+    return new ResponseEntity<>(getResource(updatedBooking), OK);
   }
 
   public ResponseEntity<Void> cancelBooking(UUID uuid) {
     var cancelled = bookingService.cancelBooking(uuid);
     if (cancelled) {
-      return new ResponseEntity<>(HttpStatus.OK);
+      return new ResponseEntity<>(OK);
     }
-    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(BAD_REQUEST);
   }
 
   private EntityModel<BookingDto> getResource(Booking booking) {
     var resource = EntityModel.of(bookingMapper.toBookingDto(booking));
-    var selfLink = WebMvcLinkBuilder
-        .linkTo(this.getClass()).slash(booking.getUuid()).withSelfRel();
+    var selfLink = WebMvcLinkBuilder.linkTo(this.getClass()).slash(booking.getUuid()).withSelfRel();
     resource.add(selfLink);
     return resource;
   }
-
 }
