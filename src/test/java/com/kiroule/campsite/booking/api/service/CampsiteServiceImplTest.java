@@ -31,11 +31,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayNameGeneration(CustomReplaceUnderscores.class)
 class CampsiteServiceImplTest {
 
-  @Mock
-  CampsiteRepository campsiteRepository;
+  @Mock CampsiteRepository campsiteRepository;
 
-  @InjectMocks
-  CampsiteServiceImpl classUnderTest;
+  @InjectMocks CampsiteServiceImpl classUnderTest;
 
   Campsite existingCampsite;
 
@@ -96,7 +94,5 @@ class CampsiteServiceImplTest {
         Class<? extends Exception> exception) {
       assertThrows(exception, () -> classUnderTest.findById(any()));
     }
-    
   }
-
 }

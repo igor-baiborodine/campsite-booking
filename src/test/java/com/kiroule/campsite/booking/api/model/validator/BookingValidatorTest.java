@@ -5,13 +5,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
 import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
-import java.lang.annotation.Annotation;
-import java.time.LocalDate;
-import java.util.Set;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import java.lang.annotation.Annotation;
+import java.time.LocalDate;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
@@ -39,6 +39,27 @@ class BookingValidatorTest {
     violations = null;
   }
 
+  private void given_bookingDto(LocalDate startDate, LocalDate endDate) {
+    bookingDto = buildBookingDto(startDate, endDate);
+  }
+
+  private void when_validateBooking() {
+    violations = classUnderTest.validate(bookingDto);
+  }
+
+  private void then_assertNoValidationErrorsThrown() {
+    assertThat(violations.size()).isZero();
+  }
+
+  private void then_assertValidationErrorsThrown(Class<?> constraint) {
+    assertThat(violations.size()).isEqualTo(1);
+
+    ConstraintViolation<BookingDto> violation = violations.iterator().next();
+    Annotation annotation = violation.getConstraintDescriptor().getAnnotation();
+    assertThat(annotation.annotationType().getCanonicalName())
+        .isEqualTo(constraint.getCanonicalName());
+  }
+
   @Nested
   class BookingAllowedStartDateValidator {
 
@@ -61,7 +82,8 @@ class BookingValidatorTest {
     }
 
     @Test
-    void given_booking_start_date_1_month_and_1_day_ahead__then_BookingAllowedStartSate_error_thrown() {
+    void
+        given_booking_start_date_1_month_and_1_day_ahead__then_BookingAllowedStartSate_error_thrown() {
       given_bookingDto(now.plusMonths(1).plusDays(1), now.plusMonths(1).plusDays(3));
 
       when_validateBooking();
@@ -121,26 +143,5 @@ class BookingValidatorTest {
 
       then_assertValidationErrorsThrown(BookingMaximumStay.class);
     }
-  }
-
-  private void given_bookingDto(LocalDate startDate, LocalDate endDate) {
-    bookingDto = buildBookingDto(startDate, endDate);
-  }
-
-  private void when_validateBooking() {
-    violations = classUnderTest.validate(bookingDto);
-  }
-
-  private void then_assertNoValidationErrorsThrown() {
-    assertThat(violations.size()).isZero();
-  }
-
-  private void then_assertValidationErrorsThrown(Class<?> constraint) {
-    assertThat(violations.size()).isEqualTo(1);
-
-    ConstraintViolation<BookingDto> violation = violations.iterator().next();
-    Annotation annotation = violation.getConstraintDescriptor().getAnnotation();
-    assertThat(annotation.annotationType().getCanonicalName())
-        .isEqualTo(constraint.getCanonicalName());
   }
 }

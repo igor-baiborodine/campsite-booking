@@ -26,14 +26,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayNameGeneration(CustomReplaceUnderscores.class)
 class MysqlCustomRepositoryContextImplTest {
 
-  @Mock
-  NativeQuery query;
+  @Mock NativeQuery query;
 
-  @Mock
-  EntityManager entityManager;
+  @Mock EntityManager entityManager;
 
-  @InjectMocks
-  MysqlCustomRepositoryContextImpl classUnderTest;
+  @InjectMocks MysqlCustomRepositoryContextImpl classUnderTest;
 
   Long timeout;
   Integer count;
@@ -42,6 +39,10 @@ class MysqlCustomRepositoryContextImplTest {
   void beforeEach() {
     timeout = null;
     count = null;
+  }
+
+  private void given_entityManagerCreatesNativeQuery() {
+    doReturn(query).when(entityManager).createNativeQuery(any());
   }
 
   @Nested
@@ -103,9 +104,5 @@ class MysqlCustomRepositoryContextImplTest {
       verify(entityManager).createNativeQuery("select @@innodb_lock_wait_timeout");
       verify(query).getSingleResult();
     }
-  }
-
-  private void given_entityManagerCreatesNativeQuery() {
-    doReturn(query).when(entityManager).createNativeQuery(any());
   }
 }

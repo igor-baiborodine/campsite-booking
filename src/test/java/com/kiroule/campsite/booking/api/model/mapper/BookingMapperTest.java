@@ -34,11 +34,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayNameGeneration(CustomReplaceUnderscores.class)
 class BookingMapperTest {
 
-  @Mock
-  CampsiteService campsiteService;
+  @Mock CampsiteService campsiteService;
 
-  @InjectMocks
-  BookingMapperImpl classUnderTest;
+  @InjectMocks BookingMapperImpl classUnderTest;
 
   LocalDate now;
   UUID uuid;
@@ -130,7 +128,6 @@ class BookingMapperTest {
     private void then_assertNullBooking() {
       assertThat(booking).isNull();
     }
-
   }
 
   @Nested
@@ -183,7 +180,5 @@ class BookingMapperTest {
     private void then_assertNullBookingDto() {
       assertThat(bookingDto).isNull();
     }
-
   }
-
 }

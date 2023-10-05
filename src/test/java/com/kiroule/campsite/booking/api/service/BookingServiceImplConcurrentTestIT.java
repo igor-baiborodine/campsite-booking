@@ -35,14 +35,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
  */
 class BookingServiceImplConcurrentTestIT extends BaseTestIT {
 
-  @Autowired
-  BookingRepository bookingRepository;
+  @Autowired BookingRepository bookingRepository;
 
-  @Autowired @Qualifier("bookingService")
+  @Autowired
+  @Qualifier("bookingService")
   BookingService classUnderTest;
 
-  @Autowired
-  CampsiteRepository campsiteRepository;
+  @Autowired CampsiteRepository campsiteRepository;
 
   ExecutorService executor;
   LocalDate now;
@@ -51,6 +50,11 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
   void tearDown() {
     bookingRepository.deleteAll();
     now = LocalDate.now();
+  }
+
+  @SneakyThrows
+  private void then_assertExecutorTerminated() {
+    assertTrue(executor.awaitTermination(1, TimeUnit.MINUTES));
   }
 
   @Nested
@@ -75,10 +79,23 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
 
     private void given_threeBookingsWithSameBookingDates(int startPlusDays, int endPlusDays) {
       Campsite campsite = campsiteRepository.findById(CAMPSITE_ID).get();
-      newBookings = asList(
-          buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays), UUID.randomUUID(), campsite),
-          buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays), UUID.randomUUID(), campsite),
-          buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays), UUID.randomUUID(), campsite));
+      newBookings =
+          asList(
+              buildBooking(
+                  now.plusDays(startPlusDays),
+                  now.plusDays(endPlusDays),
+                  UUID.randomUUID(),
+                  campsite),
+              buildBooking(
+                  now.plusDays(startPlusDays),
+                  now.plusDays(endPlusDays),
+                  UUID.randomUUID(),
+                  campsite),
+              buildBooking(
+                  now.plusDays(startPlusDays),
+                  now.plusDays(endPlusDays),
+                  UUID.randomUUID(),
+                  campsite));
     }
 
     private void when_createBookingsConcurrently() {
@@ -96,13 +113,17 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
       // use BookingService to fetch booking in question
       Booking createdBooking = classUnderTest.findByUuid(uuid);
 
-      Booking newBooking = newBookings.stream().filter(b -> b.getUuid().equals(uuid)).findFirst().get();
-      assertThat(createdBooking).usingRecursiveComparison()
-          .ignoringFields("id", "version", "createdAt", "updatedAt", "campsite").isEqualTo(newBooking);
-      assertThat(createdBooking.getCampsite()).usingRecursiveComparison()
-          .ignoringFields("$$_hibernate_interceptor").isEqualTo(newBooking.getCampsite());
+      Booking newBooking =
+          newBookings.stream().filter(b -> b.getUuid().equals(uuid)).findFirst().get();
+      assertThat(createdBooking)
+          .usingRecursiveComparison()
+          .ignoringFields("id", "version", "createdAt", "updatedAt", "campsite")
+          .isEqualTo(newBooking);
+      assertThat(createdBooking.getCampsite())
+          .usingRecursiveComparison()
+          .ignoringFields("$$_hibernate_interceptor")
+          .isEqualTo(newBooking.getCampsite());
     }
-
   }
 
   @Nested
@@ -152,23 +173,26 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
     }
 
     private void given_twoUpdatesForExistingBooking() {
-      existingBookingUpdates = asList(
-          updateBooking(0, 3, 5),
-          updateBooking(0, 13, 15));
+      existingBookingUpdates = asList(updateBooking(0, 3, 5), updateBooking(0, 13, 15));
     }
 
-    private void given_sameBookingDatesUpdateForExistingBookings(int startPlusDays, int endPlusDays) {
-      existingBookingUpdates = asList(
-          updateBooking(0, startPlusDays, endPlusDays),
-          updateBooking(1, startPlusDays, endPlusDays),
-          updateBooking(2, startPlusDays, endPlusDays));
+    private void given_sameBookingDatesUpdateForExistingBookings(
+        int startPlusDays, int endPlusDays) {
+      existingBookingUpdates =
+          asList(
+              updateBooking(0, startPlusDays, endPlusDays),
+              updateBooking(1, startPlusDays, endPlusDays),
+              updateBooking(2, startPlusDays, endPlusDays));
     }
 
     private Booking updateBooking(int index, int startPlusDays, int endPlusDays) {
       Booking booking = existingBookings.get(index);
 
-      Booking updatedBooking = booking.toBuilder().startDate(now.plusDays(startPlusDays))
-          .endDate(now.plusDays(endPlusDays)).build();
+      Booking updatedBooking =
+          booking.toBuilder()
+              .startDate(now.plusDays(startPlusDays))
+              .endDate(now.plusDays(endPlusDays))
+              .build();
       updatedBooking.setCreatedAt(booking.getCreatedAt());
       updatedBooking.setUpdatedAt(booking.getUpdatedAt());
 
@@ -187,7 +211,8 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
 
       Booking updatedBooking = bookings.get(0);
       assertThat(updatedBooking.getVersion()).isEqualTo(1L);
-      assertThat(updatedBooking.getStartDate()).isNotEqualTo(existingBookings.get(0).getStartDate());
+      assertThat(updatedBooking.getStartDate())
+          .isNotEqualTo(existingBookings.get(0).getStartDate());
       assertThat(updatedBooking.getEndDate()).isNotEqualTo(existingBookings.get(0).getEndDate());
     }
 
@@ -195,24 +220,18 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
       List<Booking> bookings = newArrayList(bookingRepository.findAll());
       assertThat(bookings).hasSize(3);
 
-      bookings.forEach(b -> {
-        if (b.getVersion() == 0L) {
-          assertThat(b.getStartDate()).isNotEqualTo(now.plusDays(startPlusDays));
-          assertThat(b.getEndDate()).isNotEqualTo(now.plusDays(endPlusDays));
-        } else if (b.getVersion() == 1L) {
-          assertThat(b.getStartDate()).isEqualTo(now.plusDays(startPlusDays));
-          assertThat(b.getEndDate()).isEqualTo(now.plusDays(endPlusDays));
-        } else {
-          fail("Illegal version value for %s", b);
-        }
-      });
+      bookings.forEach(
+          b -> {
+            if (b.getVersion() == 0L) {
+              assertThat(b.getStartDate()).isNotEqualTo(now.plusDays(startPlusDays));
+              assertThat(b.getEndDate()).isNotEqualTo(now.plusDays(endPlusDays));
+            } else if (b.getVersion() == 1L) {
+              assertThat(b.getStartDate()).isEqualTo(now.plusDays(startPlusDays));
+              assertThat(b.getEndDate()).isEqualTo(now.plusDays(endPlusDays));
+            } else {
+              fail("Illegal version value for %s", b);
+            }
+          });
     }
-
   }
-
-  @SneakyThrows
-  private void then_assertExecutorTerminated() {
-    assertTrue(executor.awaitTermination(1, TimeUnit.MINUTES));
-  }
-
 }

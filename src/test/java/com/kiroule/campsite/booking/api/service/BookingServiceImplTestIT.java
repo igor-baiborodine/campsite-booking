@@ -22,11 +22,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
  */
 class BookingServiceImplTestIT extends BaseTestIT {
 
-  @Autowired @Qualifier("bookingService")
+  @Autowired
+  @Qualifier("bookingService")
   BookingService classUnderTest;
 
-  @Autowired
-  BookingRepository bookingRepository;
+  @Autowired BookingRepository bookingRepository;
 
   UUID uuid;
   Booking existingBooking;
@@ -54,7 +54,8 @@ class BookingServiceImplTestIT extends BaseTestIT {
     }
 
     private void given_existingActiveBooking(int startPlusDays, int endPlusDays) {
-      Booking booking = buildBooking(now().plusDays(startPlusDays), now().plusDays(endPlusDays), uuid);
+      Booking booking =
+          buildBooking(now().plusDays(startPlusDays), now().plusDays(endPlusDays), uuid);
       existingBooking = bookingRepository.save(booking);
       assumeThat(existingBooking.isNew()).isFalse();
       assumeThat(existingBooking.isActive()).isTrue();

@@ -18,7 +18,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
  */
 class CampsiteServiceImplTestIT extends BaseTestIT {
 
-  @Autowired @Qualifier("campsiteService")
+  @Autowired
+  @Qualifier("campsiteService")
   CampsiteService classUnderTest;
 
   Campsite existingCampsite;

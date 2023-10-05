@@ -28,11 +28,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayNameGeneration(CustomReplaceUnderscores.class)
 public class BookingControllerTest {
 
-  @Mock
-  BookingService bookingService;
+  @Mock BookingService bookingService;
 
-  @InjectMocks
-  BookingController classUnderTest;
+  @InjectMocks BookingController classUnderTest;
 
   LocalDate now;
 
