@@ -9,7 +9,7 @@ import com.kiroule.campsite.booking.api.service.BookingService;
 import com.kiroule.campsite.booking.api.service.BookingServiceImpl;
 import com.kiroule.campsite.booking.api.service.CampsiteService;
 import com.kiroule.campsite.booking.api.service.CampsiteServiceImpl;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

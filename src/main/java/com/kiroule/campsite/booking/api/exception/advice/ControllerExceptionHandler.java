@@ -9,12 +9,13 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.lang.NonNullApi;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,11 +23,13 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
+
 /**
  * @author Igor Baiborodine
  */
 @Slf4j
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -55,9 +58,8 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @Override
-  protected ResponseEntity<Object> handleMethodArgumentNotValid(
-      MethodArgumentNotValidException ex, HttpHeaders headers,
-      HttpStatus status, WebRequest request) {
+  public ResponseEntity<Object> handleMethodArgumentNotValid(
+          MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
     var subErrors = ex.getBindingResult().getFieldErrors()
         .stream()
@@ -80,8 +82,8 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @Override
-  protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
-      HttpHeaders headers, HttpStatus status, WebRequest request) {
+  public ResponseEntity<Object> handleHttpMessageNotReadable(
+          HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
     var servletWebRequest = (ServletWebRequest) request;
     log.info("{} to {}", servletWebRequest.getHttpMethod(),
         servletWebRequest.getRequest().getServletPath());
@@ -96,7 +98,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler(StaleObjectStateException.class)
-  protected ResponseEntity<Object> handleStaleObjectStateException(StaleObjectStateException ex) {
+  public ResponseEntity<Object> handleStaleObjectStateException(StaleObjectStateException ex) {
 
     var apiError = ApiError.builder()
         .timestamp(LocalDateTime.now())

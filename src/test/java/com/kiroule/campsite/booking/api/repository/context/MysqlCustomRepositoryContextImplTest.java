@@ -6,8 +6,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
-import java.math.BigInteger;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.hibernate.query.NativeQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -58,11 +57,11 @@ class MysqlCustomRepositoryContextImplTest {
   @Test
   void get_lock_timeout__happy_path() {
     given_entityManagerCreatesNativeQuery();
-    given_queryReturnsSingleResult("3");
+    given_queryReturnsSingleResult(3L); // seconds
 
     when_getLockTimeout();
 
-    then_assertFetchedTimeout(3000L);
+    then_assertFetchedTimeout(3000L); // milliseconds
   }
 
   private void given_timeout(long timeout) {
@@ -77,8 +76,8 @@ class MysqlCustomRepositoryContextImplTest {
     doReturn(updatedCount).when(query).executeUpdate();
   }
 
-  private void given_queryReturnsSingleResult(String timeoutInSec) {
-    doReturn(new BigInteger(timeoutInSec)).when(query).getSingleResult();
+  private void given_queryReturnsSingleResult(long timeoutInSec) {
+    doReturn(timeoutInSec).when(query).getSingleResult();
   }
 
   private void when_setLockTimeout() {

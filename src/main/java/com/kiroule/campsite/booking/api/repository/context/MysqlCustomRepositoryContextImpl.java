@@ -1,10 +1,11 @@
 package com.kiroule.campsite.booking.api.repository.context;
 
-import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class MysqlCustomRepositoryContextImpl extends CustomRepositoryContext {
 
   public MysqlCustomRepositoryContextImpl(EntityManager entityManager) {
@@ -20,7 +21,7 @@ public class MysqlCustomRepositoryContextImpl extends CustomRepositoryContext {
 
   public long getLockTimeout() {
     Query query = getEntityManager().createNativeQuery("select @@innodb_lock_wait_timeout");
-    long timeoutDurationInSec = ((BigInteger) query.getSingleResult()).longValue();
+    long timeoutDurationInSec = (long) query.getSingleResult();
     return TimeUnit.SECONDS.toMillis(timeoutDurationInSec);
   }
 

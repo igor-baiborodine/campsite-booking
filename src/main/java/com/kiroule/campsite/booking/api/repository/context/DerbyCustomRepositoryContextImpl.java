@@ -3,8 +3,8 @@ package com.kiroule.campsite.booking.api.repository.context;
 import static java.util.Optional.ofNullable;
 
 import java.util.concurrent.TimeUnit;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 public class DerbyCustomRepositoryContextImpl extends CustomRepositoryContext {
 
