@@ -1,5 +1,8 @@
 package com.kiroule.campsite.booking.api;
 
+import static java.lang.String.format;
+import static java.util.Objects.nonNull;
+
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayNameGenerator;
 
@@ -7,12 +10,12 @@ public class CustomReplaceUnderscores extends DisplayNameGenerator.ReplaceUnders
 
   @Override
   public String generateDisplayNameForMethod(Class<?> testClass, Method testMethod) {
-    String methodName = testMethod.getName()
-        .replace("__", ", ").replace("_", " ");
+    String methodName = testMethod.getName().replace("__", ", ").replace("_", " ");
 
-    if (testMethod.getAnnotation(DisplayNamePrefix.class) != null) {
-      methodName = String
-          .format("%s, %s", testMethod.getAnnotation(DisplayNamePrefix.class).value(), methodName);
+    if (nonNull(testMethod.getAnnotation(DisplayNamePrefix.class))) {
+      methodName =
+          format(
+              "%s, %s", testMethod.getAnnotation(DisplayNamePrefix.class).value(), methodName);
     }
     return methodName;
   }

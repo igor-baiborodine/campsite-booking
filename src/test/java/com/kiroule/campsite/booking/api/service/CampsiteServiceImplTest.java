@@ -31,11 +31,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayNameGeneration(CustomReplaceUnderscores.class)
 class CampsiteServiceImplTest {
 
-  @Mock
-  CampsiteRepository campsiteRepository;
+  @Mock CampsiteRepository campsiteRepository;
 
-  @InjectMocks
-  CampsiteServiceImpl campsiteService;
+  @InjectMocks CampsiteServiceImpl classUnderTest;
 
   Campsite existingCampsite;
 
@@ -45,7 +43,7 @@ class CampsiteServiceImplTest {
   }
 
   @Nested
-  class Find_By_Id {
+  class FindById {
 
     Campsite foundCampsite;
 
@@ -84,7 +82,7 @@ class CampsiteServiceImplTest {
     }
 
     private void when_findCampsiteById() {
-      foundCampsite = campsiteService.findById(CAMPSITE_ID);
+      foundCampsite = classUnderTest.findById(CAMPSITE_ID);
     }
 
     private void then_assertCampsiteFound() {
@@ -94,9 +92,7 @@ class CampsiteServiceImplTest {
 
     private void when_findCampsiteById_and_thenAssertExceptionThrown(
         Class<? extends Exception> exception) {
-      assertThrows(exception, () -> campsiteService.findById(any()));
+      assertThrows(exception, () -> classUnderTest.findById(any()));
     }
-    
   }
-
 }

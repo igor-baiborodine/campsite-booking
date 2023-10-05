@@ -22,8 +22,14 @@ public class TestHelper {
     return buildBookingDto(CAMPSITE_ID, startDate, endDate, uuid, FULL_NAME, EMAIL, true);
   }
 
-  public static BookingDto buildBookingDto(Long campsiteId, LocalDate startDate, LocalDate endDate, UUID uuid,
-      String fullName, String email, boolean active) {
+  public static BookingDto buildBookingDto(
+      Long campsiteId,
+      LocalDate startDate,
+      LocalDate endDate,
+      UUID uuid,
+      String fullName,
+      String email,
+      boolean active) {
     return BookingDto.builder()
         .campsiteId(campsiteId)
         .startDate(startDate)
@@ -43,12 +49,19 @@ public class TestHelper {
     return buildBooking(buildCampsite(), startDate, endDate, uuid, FULL_NAME, EMAIL, true);
   }
 
-  public static Booking buildBooking(LocalDate startDate, LocalDate endDate, UUID uuid, Campsite campsite) {
+  public static Booking buildBooking(
+      LocalDate startDate, LocalDate endDate, UUID uuid, Campsite campsite) {
     return buildBooking(campsite, startDate, endDate, uuid, FULL_NAME, EMAIL, true);
   }
 
-  public static Booking buildBooking(Campsite campsite, LocalDate startDate, LocalDate endDate, UUID uuid,
-      String fullName, String email, boolean active) {
+  public static Booking buildBooking(
+      Campsite campsite,
+      LocalDate startDate,
+      LocalDate endDate,
+      UUID uuid,
+      String fullName,
+      String email,
+      boolean active) {
     return Booking.builder()
         .campsite(campsite)
         .startDate(startDate)
@@ -64,8 +77,14 @@ public class TestHelper {
     return buildCampsite(CAMPSITE_ID, CAMPSITE_CAPACITY, true, true, true, true, true);
   }
 
-  private static Campsite buildCampsite(Long id, int capacity, boolean restrooms, boolean drinkingWater,
-      boolean picnicTable, boolean firePit, boolean active) {
+  private static Campsite buildCampsite(
+      Long id,
+      int capacity,
+      boolean restrooms,
+      boolean drinkingWater,
+      boolean picnicTable,
+      boolean firePit,
+      boolean active) {
     return Campsite.builder()
         .id(id)
         .capacity(capacity)

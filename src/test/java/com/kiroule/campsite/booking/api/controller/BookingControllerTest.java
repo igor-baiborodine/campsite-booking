@@ -28,11 +28,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayNameGeneration(CustomReplaceUnderscores.class)
 public class BookingControllerTest {
 
-  @Mock
-  BookingService bookingService;
+  @Mock BookingService bookingService;
 
-  @InjectMocks
-  BookingController bookingController;
+  @InjectMocks BookingController classUnderTest;
 
   LocalDate now;
 
@@ -44,7 +42,7 @@ public class BookingControllerTest {
   }
 
   @Nested
-  class Get_Vacant_Dates {
+  class GetVacantDates {
 
     LocalDate startDate;
     LocalDate endDate;
@@ -81,7 +79,7 @@ public class BookingControllerTest {
     }
 
     private void when_getVacantDates() {
-      vacantDates = bookingController.getVacantDates(startDate, endDate, campsiteId).getBody();
+      vacantDates = classUnderTest.getVacantDates(startDate, endDate, campsiteId).getBody();
     }
 
     private void then_assertVacantDates(

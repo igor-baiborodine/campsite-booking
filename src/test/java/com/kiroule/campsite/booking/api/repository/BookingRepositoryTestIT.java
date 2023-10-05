@@ -28,13 +28,11 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 @TestMethodOrder(MethodOrderer.MethodName.class)
-class BookingRepositoryTestIT  extends BaseTestIT {
+class BookingRepositoryTestIT extends BaseTestIT {
 
-  @Autowired
-  BookingRepository bookingRepository;
+  @Autowired BookingRepository classUnderTest;
 
-  @Autowired
-  CampsiteRepository campsiteRepository;
+  @Autowired CampsiteRepository campsiteRepository;
 
   LocalDate now;
   UUID uuid;
@@ -42,15 +40,23 @@ class BookingRepositoryTestIT  extends BaseTestIT {
 
   @BeforeEach
   void beforeEach() {
-    bookingRepository.deleteAll();
+    classUnderTest.deleteAll();
 
     now = LocalDate.now();
     uuid = UUID.randomUUID();
     existingBooking = null;
   }
 
+  private void given_existingBooking(int startPlusDays, int endPlusDays) {
+    Booking booking = buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid);
+    existingBooking = classUnderTest.save(booking);
+
+    assumeThat(existingBooking.isNew()).isFalse();
+    assumeThat(existingBooking.isActive()).isTrue();
+  }
+
   @Nested
-  class Find_By_Uuid {
+  class FindByUuid {
 
     Optional<Booking> bookingOptionalForUuid;
 
@@ -69,19 +75,20 @@ class BookingRepositoryTestIT  extends BaseTestIT {
     }
 
     private void when_findByUuid() {
-      bookingOptionalForUuid = bookingRepository.findByUuid(uuid);
+      bookingOptionalForUuid = classUnderTest.findByUuid(uuid);
     }
 
     private void then_assertBookingFoundForUuid() {
       assertAll(
           "foundBooking",
           () -> assertThat(bookingOptionalForUuid).hasValue(existingBooking),
-          () -> assertThat(bookingOptionalForUuid.get().getCreatedAt().toLocalDate()).isEqualTo(now));
+          () ->
+              assertThat(bookingOptionalForUuid.get().getCreatedAt().toLocalDate()).isEqualTo(now));
     }
   }
 
   @Nested
-  class Find_For_Date_Range {
+  class FindForDateRange {
 
     List<Booking> bookingsForDateRange;
 
@@ -102,7 +109,8 @@ class BookingRepositoryTestIT  extends BaseTestIT {
 
     @Test
     @DisplayNamePrefix("-S|E|----|-|--")
-    void given_booking_start_date_before_range_start_date_and_booking_end_date_equals_to_range_start_date__then_no_booking_found() {
+    void
+        given_booking_start_date_before_range_start_date_and_booking_end_date_equals_to_range_start_date__then_no_booking_found() {
       given_existingBooking(1, 2);
 
       when_findBookingsForDateRange(2, 3);
@@ -112,7 +120,8 @@ class BookingRepositoryTestIT  extends BaseTestIT {
 
     @Test
     @DisplayNamePrefix("-S|-|E---|-|--")
-    void given_booking_start_date_before_range_start_date_and_booking_end_date_within_range_dates__then_booking_found() {
+    void
+        given_booking_start_date_before_range_start_date_and_booking_end_date_within_range_dates__then_booking_found() {
       given_existingBooking(1, 3);
 
       when_findBookingsForDateRange(2, 4);
@@ -122,7 +131,8 @@ class BookingRepositoryTestIT  extends BaseTestIT {
 
     @Test
     @DisplayNamePrefix("--|S|E---|-|--")
-    void given_booking_start_date_equals_to_range_start_date_and_booking_end_date_within_range_dates__then_booking_found() {
+    void
+        given_booking_start_date_equals_to_range_start_date_and_booking_end_date_within_range_dates__then_booking_found() {
       given_existingBooking(1, 2);
 
       when_findBookingsForDateRange(1, 3);
@@ -142,7 +152,8 @@ class BookingRepositoryTestIT  extends BaseTestIT {
 
     @Test
     @DisplayNamePrefix("--|-|---S|E|--")
-    void given_booking_start_date_within_range_dates_and_booking_end_date_equals_to_range_end_date__then_booking_found() {
+    void
+        given_booking_start_date_within_range_dates_and_booking_end_date_equals_to_range_end_date__then_booking_found() {
       given_existingBooking(2, 3);
 
       when_findBookingsForDateRange(1, 3);
@@ -152,7 +163,8 @@ class BookingRepositoryTestIT  extends BaseTestIT {
 
     @Test
     @DisplayNamePrefix("--|-|---S|-|E-")
-    void given_booking_start_date_before_range_end_date_and_booking_end_date_after_range_end_date__then_booking_found() {
+    void
+        given_booking_start_date_before_range_end_date_and_booking_end_date_after_range_end_date__then_booking_found() {
       given_existingBooking(2, 4);
 
       when_findBookingsForDateRange(1, 3);
@@ -162,7 +174,8 @@ class BookingRepositoryTestIT  extends BaseTestIT {
 
     @Test
     @DisplayNamePrefix("--|-|----|S|E-")
-    void given_booking_start_date_equals_to_range_end_date_and_booking_end_date_after_range_end_date__then_booking_found() {
+    void
+        given_booking_start_date_equals_to_range_end_date_and_booking_end_date_after_range_end_date__then_booking_found() {
       given_existingBooking(3, 4);
 
       when_findBookingsForDateRange(1, 3);
@@ -191,7 +204,8 @@ class BookingRepositoryTestIT  extends BaseTestIT {
     }
 
     private void when_findBookingsForDateRange(int startPlusDays, int endPlusDays) {
-      bookingsForDateRange = bookingRepository.findForDateRange(
+      bookingsForDateRange =
+          classUnderTest.findForDateRange(
               now.plusDays(startPlusDays), now.plusDays(endPlusDays), CAMPSITE_ID);
     }
 
@@ -205,13 +219,4 @@ class BookingRepositoryTestIT  extends BaseTestIT {
           () -> assertThat(existingBooking).isIn(bookingsForDateRange));
     }
   }
-
-  private void given_existingBooking(int startPlusDays, int endPlusDays) {
-    Booking booking = buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid);
-    existingBooking = bookingRepository.save(booking);
-
-    assumeThat(existingBooking.isNew()).isFalse();
-    assumeThat(existingBooking.isActive()).isTrue();
-  }
-
 }

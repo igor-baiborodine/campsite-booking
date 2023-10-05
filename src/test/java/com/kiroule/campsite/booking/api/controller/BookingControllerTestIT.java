@@ -2,10 +2,12 @@ package com.kiroule.campsite.booking.api.controller;
 
 import static com.kiroule.campsite.booking.api.TestHelper.buildBookingDto;
 import static io.restassured.RestAssured.given;
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import com.kiroule.campsite.booking.api.BaseTestIT;
 import com.kiroule.campsite.booking.api.contract.v2.model.ApiError;
@@ -27,11 +29,9 @@ import org.springframework.http.MediaType;
 
 class BookingControllerTestIT extends BaseTestIT {
 
-  @Autowired
-  BookingRepository bookingRepository;
+  @Autowired BookingRepository bookingRepository;
 
-  @LocalServerPort
-  int port;
+  @LocalServerPort int port;
 
   String controllerPath = "/v2/booking";
   UUID uuid;
@@ -53,18 +53,40 @@ class BookingControllerTestIT extends BaseTestIT {
     bookingRepository.deleteAll();
   }
 
+  private void given_existingBooking(int startPlusDays, int endPlusDays) {
+    existingBookingDto =
+        given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(buildBookingDto(now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid))
+            .when()
+            .post(controllerPath)
+            .as(BookingDto.class);
+
+    assumeThat(existingBookingDto.getId()).isNotNull();
+    assumeThat(existingBookingDto.getVersion()).isEqualTo(0L);
+    assumeThat(existingBookingDto.isActive()).isTrue();
+  }
+
+  private void then_assertApiErrorThrown(HttpStatus expectedHttpStatus, String expectedMessage) {
+    assertThat(apiError.getStatus()).isEqualTo(expectedHttpStatus);
+    assertThat(apiError.getMessage()).isEqualTo(expectedMessage);
+  }
+
   @Nested
-  class Get_Actuator_Health {
+  class GetActuatorHealth {
     @Test
     void given_service_is_running__then_status_OK() {
       given()
-          .when().get("/actuator/health")
-          .then().statusCode(HttpStatus.OK.value()).body("status", equalTo("UP"));
+          .when()
+          .get("/actuator/health")
+          .then()
+          .statusCode(HttpStatus.OK.value())
+          .body("status", equalTo("UP"));
     }
   }
 
   @Nested
-  class Get_Vacant_Dates {
+  class GetVacantDates {
 
     List<String> vacantDates;
 
@@ -80,26 +102,33 @@ class BookingControllerTestIT extends BaseTestIT {
       then_assertVacantDatesFound(1, 3);
     }
 
-    private void given_dateRangeAndWhenGetVacantDates(int startPlusDays, int endPlusDays, long campsiteId) {
-      vacantDates = given()
-          .param("start_date", now.plusDays(startPlusDays).toString())
-          .param("end_date", now.plusDays(endPlusDays).toString())
-          .param("campsite_id", String.valueOf(campsiteId))
-          .when().get(controllerPath + "/vacant-dates")
-          .then().extract().body().as(List.class);
+    private void given_dateRangeAndWhenGetVacantDates(
+        int startPlusDays, int endPlusDays, long campsiteId) {
+      vacantDates =
+          given()
+              .param("start_date", now.plusDays(startPlusDays).toString())
+              .param("end_date", now.plusDays(endPlusDays).toString())
+              .param("campsite_id", String.valueOf(campsiteId))
+              .when()
+              .get(controllerPath + "/vacant-dates")
+              .then()
+              .extract()
+              .body()
+              .as(List.class);
     }
 
     private void then_assertVacantDatesFound(int startPlusDays, int endPlusDays) {
-      List<String> expected = now.plusDays(startPlusDays)
-          .datesUntil(now.plusDays(endPlusDays + 1))
-          .map(String::valueOf)
-          .collect(Collectors.toList());
+      List<String> expected =
+          now.plusDays(startPlusDays)
+              .datesUntil(now.plusDays(endPlusDays + 1))
+              .map(String::valueOf)
+              .collect(Collectors.toList());
       assertThat(vacantDates).hasSize(expected.size()).hasSameElementsAs(expected);
     }
   }
 
   @Nested
-  class Get_Booking {
+  class GetBooking {
 
     BookingDto foundBookingDto;
 
@@ -112,8 +141,10 @@ class BookingControllerTestIT extends BaseTestIT {
     void given_non_existing_booking_uuid__then_status_not_found() {
       given()
           .pathParam("uuid", UUID.randomUUID())
-          .when().get(controllerPath + "/{uuid}")
-          .then().statusCode(HttpStatus.NOT_FOUND.value());
+          .when()
+          .get(controllerPath + "/{uuid}")
+          .then()
+          .statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -126,18 +157,28 @@ class BookingControllerTestIT extends BaseTestIT {
     }
 
     private void when_getBooking() {
-      foundBookingDto = given().pathParam("uuid", uuid)
-          .when().get(controllerPath + "/{uuid}")
-          .as(BookingDto.class);
+      foundBookingDto =
+          given()
+              .pathParam("uuid", uuid)
+              .when()
+              .get(controllerPath + "/{uuid}")
+              .as(BookingDto.class);
     }
 
     private void then_assertBookingFound() {
-      assertThat(foundBookingDto).isEqualToIgnoringGivenFields(existingBookingDto, "id", "version");
+      assertThat(foundBookingDto)
+          .usingRecursiveAssertion()
+          .ignoringFields("id", "version")
+          .isEqualTo(existingBookingDto);
+      assertThat(foundBookingDto)
+          .usingRecursiveAssertion()
+          .ignoringFields("id", "version")
+          .isEqualTo(existingBookingDto);
     }
   }
 
   @Nested
-  class Add_Booking {
+  class AddBooking {
 
     BookingDto newBookingDto;
 
@@ -152,8 +193,9 @@ class BookingControllerTestIT extends BaseTestIT {
 
       when_addBookingResultsInApiError(1, 2);
 
-      then_assertApiErrorThrown(HttpStatus.BAD_REQUEST, String.format(
-          "No vacant dates available from %s to %s", now.plusDays(1), now.plusDays(2)));
+      then_assertApiErrorThrown(
+          BAD_REQUEST,
+          format("No vacant dates available from %s to %s", now.plusDays(1), now.plusDays(2)));
     }
 
     @Test
@@ -162,20 +204,22 @@ class BookingControllerTestIT extends BaseTestIT {
 
       when_addBookingResultsInApiError(1, 5);
 
-      then_assertApiErrorThrown(HttpStatus.BAD_REQUEST, "Validation error");
+      then_assertApiErrorThrown(BAD_REQUEST, "Validation error");
     }
 
     private void when_addBookingResultsInApiError(int startPlusDays, int endPlusDays) {
-      apiError = given()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .body(buildBookingDto(now.plusDays(startPlusDays), now.plusDays(endPlusDays)))
-          .when().post(controllerPath)
-          .as(ApiError.class);
+      apiError =
+          given()
+              .contentType(MediaType.APPLICATION_JSON_VALUE)
+              .body(buildBookingDto(now.plusDays(startPlusDays), now.plusDays(endPlusDays)))
+              .when()
+              .post(controllerPath)
+              .as(ApiError.class);
     }
   }
 
   @Nested
-  class Update_Booking {
+  class UpdateBooking {
 
     BookingDto updatedBookingDto;
 
@@ -202,8 +246,10 @@ class BookingControllerTestIT extends BaseTestIT {
 
       when_updateBookingResultsInApiError();
 
-      then_assertApiErrorThrown(HttpStatus.BAD_REQUEST,
-          String.format("No vacant dates available from %s to %s",
+      then_assertApiErrorThrown(
+          BAD_REQUEST,
+          format(
+              "No vacant dates available from %s to %s",
               existingBookingDto.getStartDate(), existingBookingDto.getEndDate()));
     }
 
@@ -216,16 +262,21 @@ class BookingControllerTestIT extends BaseTestIT {
 
       when_updateBookingResultsInApiError();
 
-      then_assertApiErrorThrown(HttpStatus.CONFLICT,
+      then_assertApiErrorThrown(
+          HttpStatus.CONFLICT,
           "Optimistic locking error - booking was updated by another transaction");
     }
 
     private void given_otherExistingBooking(int startPlusDays, int endPlusDays) {
       given()
           .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .body(buildBookingDto(now.plusDays(startPlusDays), now.plusDays(endPlusDays), UUID.randomUUID()))
-          .when().post(controllerPath)
-          .then().statusCode(HttpStatus.CREATED.value());
+          .body(
+              buildBookingDto(
+                  now.plusDays(startPlusDays), now.plusDays(endPlusDays), UUID.randomUUID()))
+          .when()
+          .post(controllerPath)
+          .then()
+          .statusCode(HttpStatus.CREATED.value());
     }
 
     private void given_existingBookingEndDateChanged(int extendByDays) {
@@ -237,39 +288,50 @@ class BookingControllerTestIT extends BaseTestIT {
           .pathParam("uuid", uuid)
           .contentType(MediaType.APPLICATION_JSON_VALUE)
           .body(existingBookingDto)
-          .when().put(controllerPath + "/{uuid}")
-          .then().statusCode(HttpStatus.OK.value());
+          .when()
+          .put(controllerPath + "/{uuid}")
+          .then()
+          .statusCode(HttpStatus.OK.value());
     }
 
     private void when_updateBooking() {
-      updatedBookingDto = given()
-          .pathParam("uuid", uuid)
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .body(existingBookingDto)
-          .when().put(controllerPath + "/{uuid}")
-          .as(BookingDto.class);
+      updatedBookingDto =
+          given()
+              .pathParam("uuid", uuid)
+              .contentType(MediaType.APPLICATION_JSON_VALUE)
+              .body(existingBookingDto)
+              .when()
+              .put(controllerPath + "/{uuid}")
+              .as(BookingDto.class);
     }
 
     private void when_updateBookingResultsInApiError() {
-      apiError = given()
-          .pathParam("uuid", existingBookingDto.getUuid())
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .body(existingBookingDto)
-          .when().put(controllerPath + "/{uuid}")
-          .as(ApiError.class);
+      apiError =
+          given()
+              .pathParam("uuid", existingBookingDto.getUuid())
+              .contentType(MediaType.APPLICATION_JSON_VALUE)
+              .body(existingBookingDto)
+              .when()
+              .put(controllerPath + "/{uuid}")
+              .as(ApiError.class);
     }
 
     private void then_assertBookingUpdated() {
       assertAll(
           "updatedBooking",
-          () -> assertThat(updatedBookingDto).usingRecursiveComparison().ignoringFields("version")
+          () ->
+              assertThat(updatedBookingDto)
+                  .usingRecursiveComparison()
+                  .ignoringFields("version")
                   .isEqualTo(existingBookingDto),
-          () -> assertThat(updatedBookingDto.getVersion()).isEqualTo(existingBookingDto.getVersion() + 1L));
+          () ->
+              assertThat(updatedBookingDto.getVersion())
+                  .isEqualTo(existingBookingDto.getVersion() + 1L));
     }
   }
 
   @Nested
-  class Cancel_Booking {
+  class CancelBooking {
 
     @Test
     void given_active_existing_booking__then_booking_canceled() {
@@ -279,26 +341,12 @@ class BookingControllerTestIT extends BaseTestIT {
     }
 
     private void when_bookingCanceledThenStatusOk() {
-      given().pathParam("uuid", uuid)
-          .when().delete(controllerPath + "/{uuid}")
-          .then().statusCode(HttpStatus.OK.value());
+      given()
+          .pathParam("uuid", uuid)
+          .when()
+          .delete(controllerPath + "/{uuid}")
+          .then()
+          .statusCode(HttpStatus.OK.value());
     }
-  }
-
-  private void given_existingBooking(int startPlusDays, int endPlusDays) {
-    existingBookingDto = given()
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .body(buildBookingDto(now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid))
-        .when().post(controllerPath)
-        .as(BookingDto.class);
-
-    assumeThat(existingBookingDto.getId()).isNotNull();
-    assumeThat(existingBookingDto.getVersion()).isEqualTo(0L);
-    assumeThat(existingBookingDto.isActive()).isTrue();
-  }
-
-  private void then_assertApiErrorThrown(HttpStatus expectedHttpStatus, String expectedMessage) {
-    assertThat(apiError.getStatus()).isEqualTo(expectedHttpStatus);
-    assertThat(apiError.getMessage()).isEqualTo(expectedMessage);
   }
 }

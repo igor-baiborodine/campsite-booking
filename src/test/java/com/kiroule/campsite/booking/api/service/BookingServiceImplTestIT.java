@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Integration tests for {@link BookingServiceImpl}.
@@ -22,10 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 class BookingServiceImplTestIT extends BaseTestIT {
 
   @Autowired
-  BookingService bookingService;
+  @Qualifier("bookingService")
+  BookingService classUnderTest;
 
-  @Autowired
-  BookingRepository bookingRepository;
+  @Autowired BookingRepository bookingRepository;
 
   UUID uuid;
   Booking existingBooking;
@@ -39,7 +40,7 @@ class BookingServiceImplTestIT extends BaseTestIT {
   }
 
   @Nested
-  class Cancel_Booking {
+  class CancelBooking {
 
     boolean bookingCanceled;
 
@@ -53,14 +54,15 @@ class BookingServiceImplTestIT extends BaseTestIT {
     }
 
     private void given_existingActiveBooking(int startPlusDays, int endPlusDays) {
-      Booking booking = buildBooking(now().plusDays(startPlusDays), now().plusDays(endPlusDays), uuid);
+      Booking booking =
+          buildBooking(now().plusDays(startPlusDays), now().plusDays(endPlusDays), uuid);
       existingBooking = bookingRepository.save(booking);
       assumeThat(existingBooking.isNew()).isFalse();
       assumeThat(existingBooking.isActive()).isTrue();
     }
 
     private void when_cancelBooking() {
-      bookingCanceled = bookingService.cancelBooking(existingBooking.getUuid());
+      bookingCanceled = classUnderTest.cancelBooking(existingBooking.getUuid());
     }
 
     private void then_assertBookingCanceled() {

@@ -7,5 +7,4 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("in-memory-db")
 @DisplayNameGeneration(CustomReplaceUnderscores.class)
-public abstract class BaseTestIT {
-}
+public abstract class BaseTestIT {}

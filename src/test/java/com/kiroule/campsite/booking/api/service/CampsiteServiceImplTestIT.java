@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Integration tests for {@link CampsiteServiceImpl}.
@@ -18,7 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 class CampsiteServiceImplTestIT extends BaseTestIT {
 
   @Autowired
-  CampsiteService campsiteService;
+  @Qualifier("campsiteService")
+  CampsiteService classUnderTest;
 
   Campsite existingCampsite;
 
@@ -28,8 +30,7 @@ class CampsiteServiceImplTestIT extends BaseTestIT {
   }
 
   @Nested
-  class Find_By_Id {
-
+  class FindById {
 
     @Test
     void happy_path() {
@@ -41,7 +42,7 @@ class CampsiteServiceImplTestIT extends BaseTestIT {
     }
 
     private void when_findById() {
-      existingCampsite = campsiteService.findById(CAMPSITE_ID);
+      existingCampsite = classUnderTest.findById(CAMPSITE_ID);
     }
 
     private void then_assertCampsiteFound() {
