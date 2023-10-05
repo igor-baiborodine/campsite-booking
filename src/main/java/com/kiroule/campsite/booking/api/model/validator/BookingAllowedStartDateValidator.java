@@ -1,9 +1,9 @@
 package com.kiroule.campsite.booking.api.model.validator;
 
 import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
-import java.time.LocalDate;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import java.time.LocalDate;
 
 public class BookingAllowedStartDateValidator
     implements ConstraintValidator<BookingAllowedStartDate, BookingDto> {
@@ -14,7 +14,8 @@ public class BookingAllowedStartDateValidator
   }
 
   @Override
-  public boolean isValid(BookingDto booking, ConstraintValidatorContext constraintValidatorContext) {
+  public boolean isValid(
+      BookingDto booking, ConstraintValidatorContext constraintValidatorContext) {
     return LocalDate.now().isBefore(booking.getStartDate())
         && booking.getStartDate().isBefore(LocalDate.now().plusMonths(1).plusDays(1));
   }

@@ -1,7 +1,9 @@
 package com.kiroule.campsite.booking.api.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 import com.kiroule.campsite.booking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsite.booking.api.exception.BookingNotFoundException;
@@ -16,7 +18,6 @@ import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -37,7 +38,8 @@ public class BookingServiceImpl implements BookingService {
     var now = LocalDate.now();
     checkArgument(startDate.isAfter(now), "Start date must be in the future");
     checkArgument(endDate.isAfter(now), "End date must be in the future");
-    checkArgument(startDate.isEqual(endDate) || startDate.isBefore(endDate),
+    checkArgument(
+        startDate.isEqual(endDate) || startDate.isBefore(endDate),
         "End date must be equal to start date or greater than start date");
 
     var vacantDays = startDate.datesUntil(endDate.plusDays(1)).collect(toList());
@@ -50,14 +52,16 @@ public class BookingServiceImpl implements BookingService {
   @Transactional(readOnly = true)
   public Booking findByUuid(UUID uuid) {
 
-    return bookingRepository.findByUuid(uuid).orElseThrow(
-        () -> new BookingNotFoundException(String.format("Booking was not found for uuid=%s", uuid)));
+    return bookingRepository
+        .findByUuid(uuid)
+        .orElseThrow(
+            () -> new BookingNotFoundException(format("Booking was not found for uuid=%s", uuid)));
   }
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(propagation = REQUIRES_NEW)
   @Retryable(
-      include = CannotAcquireLockException.class,
+      retryFor = CannotAcquireLockException.class,
       maxAttempts = 2,
       backoff = @Backoff(delay = 500, maxDelay = 1000))
   public Booking createBooking(Booking booking) {
@@ -72,15 +76,17 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
-  @Retryable(include = CannotAcquireLockException.class,
-      maxAttempts = 5, backoff=@Backoff(delay = 500, maxDelay = 1000))
+  @Transactional(propagation = REQUIRES_NEW)
+  @Retryable(
+      retryFor = CannotAcquireLockException.class,
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 500, maxDelay = 1000))
   public Booking updateBooking(Booking booking) {
 
     var persistedBooking = findByUuid(booking.getUuid());
 
     if (!persistedBooking.isActive()) {
-      var message = String.format("Booking with uuid=%s is cancelled", booking.getUuid());
+      var message = format("Booking with uuid=%s is cancelled", booking.getUuid());
       throw new IllegalBookingStateException(message);
     }
     validateVacantDates(booking);
@@ -104,19 +110,22 @@ public class BookingServiceImpl implements BookingService {
 
     var vacantDays =
         booking.getStartDate().datesUntil(booking.getEndDate().plusDays(1)).collect(toList());
-    var bookings = bookingRepository.findForDateRangeWithPessimisticWriteLocking(
-        booking.getStartDate(), booking.getEndDate(), booking.getCampsiteId());
-    bookings.forEach(b -> {
-      if (!b.getUuid().equals(booking.getUuid())) {
-        vacantDays.removeAll(b.getBookingDatesWithEndDateExclusive());
-      }
-    });
+    var bookings =
+        bookingRepository.findForDateRangeWithPessimisticWriteLocking(
+            booking.getStartDate(), booking.getEndDate(), booking.getCampsiteId());
+    bookings.forEach(
+        b -> {
+          if (!b.getUuid().equals(booking.getUuid())) {
+            vacantDays.removeAll(b.getBookingDatesWithEndDateExclusive());
+          }
+        });
 
     if (!vacantDays.containsAll(booking.getBookingDatesWithEndDateExclusive())) {
-      var message = String.format("No vacant dates available from %s to %s",
-          booking.getStartDate(), booking.getEndDate());
+      var message =
+          format(
+              "No vacant dates available from %s to %s",
+              booking.getStartDate(), booking.getEndDate());
       throw new BookingDatesNotAvailableException(message);
     }
   }
-
 }

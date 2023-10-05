@@ -16,5 +16,4 @@ public interface BookingService {
   Booking updateBooking(Booking booking);
 
   boolean cancelBooking(UUID uuid);
-
 }

@@ -26,9 +26,7 @@ public class LoggingAspect {
 
   @Before("serviceLoggingTargets()")
   public void logEnterMethod(JoinPoint jp) {
-    var args = Stream.of(jp.getArgs())
-        .map(Object::toString)
-        .collect(Collectors.joining(", "));
+    var args = Stream.of(jp.getArgs()).map(Object::toString).collect(Collectors.joining(", "));
     log.info("{}: args[{}]", jp.getSignature().toShortString(), args);
   }
 
@@ -37,10 +35,8 @@ public class LoggingAspect {
     log.info("{}: result[{}]", jp.getSignature().toShortString(), result);
   }
 
-  @AfterThrowing(
-      value = "execution(public * com.kiroule.campsite.booking..*(..))", throwing = "ex")
+  @AfterThrowing(value = "execution(public * com.kiroule.campsite.booking..*(..))", throwing = "ex")
   public void logThrowException(JoinPoint jp, Exception ex) {
     log.error("{}: error[{}]", jp.getSignature().toShortString(), ex.getMessage(), ex);
   }
-
 }

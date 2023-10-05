@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.kiroule.campsite.booking.api.model.validator.BookingAllowedStartDate;
 import com.kiroule.campsite.booking.api.model.validator.BookingMaximumStay;
 import com.kiroule.campsite.booking.api.model.validator.BookingStartDateBeforeEndDate;
-import java.time.LocalDate;
-import java.util.UUID;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDate;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,22 +31,15 @@ import lombok.Generated;
 @Generated
 public class BookingDto {
 
-  /**
-   * Persistence ID
-   */
+  /** Persistence ID */
   private Long id;
 
-  /**
-   * Business ID
-   */
-  @NotNull
-  @EqualsAndHashCode.Include
-  private UUID uuid;
+  /** Business ID */
+  @NotNull @EqualsAndHashCode.Include private UUID uuid;
 
   private Long version;
 
-  @NotNull
-  private Long campsiteId;
+  @NotNull private Long campsiteId;
 
   @NotEmpty
   @Size(max = 50)
@@ -65,5 +58,4 @@ public class BookingDto {
   private LocalDate endDate;
 
   private boolean active;
-
 }
