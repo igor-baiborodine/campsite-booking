@@ -1,19 +1,20 @@
 package com.kiroule.campsite.booking.api.repository;
 
-import com.kiroule.campsite.booking.api.model.Booking;
+import com.kiroule.campsite.booking.api.repository.entity.BookingEntity;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 
 /**
- * Repository interface for {@link Booking} instances.
+ * Repository interface for {@link BookingEntity} instances.
  *
  * @author Igor Baiborodine
  */
-public interface BookingRepository extends CrudRepository<Booking, Long>, CustomBookingRepository {
+public interface BookingRepository
+    extends JpaRepository<BookingEntity, Long>, CustomBookingRepository {
 
   /**
    * Find a booking for the given UUID.
@@ -21,7 +22,7 @@ public interface BookingRepository extends CrudRepository<Booking, Long>, Custom
    * @param uuid booking uuid
    * @return booking for the given UUID
    */
-  Optional<Booking> findByUuid(UUID uuid);
+  Optional<BookingEntity> findByUuid(UUID uuid);
 
   /**
    * Find active bookings for the given date range and campsite ID with pessimistic write locking.
@@ -31,6 +32,6 @@ public interface BookingRepository extends CrudRepository<Booking, Long>, Custom
    * @param campsiteId campsite ID
    * @return list of active bookings for the given date range and campsite ID
    */
-  @Query(FIND_FOR_DATE_RANGE)
-  List<Booking> findForDateRange(LocalDate startDate, LocalDate endDate, Long campsiteId);
+  @Query(FIND_FOR_DATE_RANGE_QUERY)
+  List<BookingEntity> findForDateRange(LocalDate startDate, LocalDate endDate, Long campsiteId);
 }

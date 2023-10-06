@@ -8,16 +8,17 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRES_NE
 import com.kiroule.campsite.booking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsite.booking.api.exception.BookingNotFoundException;
 import com.kiroule.campsite.booking.api.exception.IllegalBookingStateException;
+import com.kiroule.campsite.booking.api.mapper.BookingMapper;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -25,11 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author Igor Baiborodine
  */
-@Service
 @AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
   private BookingRepository bookingRepository;
+
+  private BookingMapper bookingMapper;
 
   @Override
   @Transactional(readOnly = true)
@@ -43,8 +45,12 @@ public class BookingServiceImpl implements BookingService {
         "End date must be equal to start date or greater than start date");
 
     var vacantDays = startDate.datesUntil(endDate.plusDays(1)).collect(toList());
-    var bookings = bookingRepository.findForDateRange(startDate, endDate, campsiteId);
-    bookings.forEach(b -> vacantDays.removeAll(b.getBookingDatesWithEndDateExclusive()));
+    var bookingEntities = bookingRepository.findForDateRange(startDate, endDate, campsiteId);
+
+    bookingEntities.forEach(
+        e ->
+            vacantDays.removeAll(bookingMapper.toBooking(e).getBookingDatesWithEndDateExclusive()));
+
     return vacantDays;
   }
 
@@ -52,10 +58,11 @@ public class BookingServiceImpl implements BookingService {
   @Transactional(readOnly = true)
   public Booking findByUuid(UUID uuid) {
 
-    return bookingRepository
-        .findByUuid(uuid)
-        .orElseThrow(
-            () -> new BookingNotFoundException(format("Booking was not found for uuid=%s", uuid)));
+    Supplier<BookingNotFoundException> exceptionSupplier =
+        () -> new BookingNotFoundException(format("Booking was not found for uuid=%s", uuid));
+    var bookingEntity = bookingRepository.findByUuid(uuid).orElseThrow(exceptionSupplier);
+
+    return bookingMapper.toBooking(bookingEntity);
   }
 
   @Override
@@ -71,8 +78,9 @@ public class BookingServiceImpl implements BookingService {
     }
     validateVacantDates(booking);
     booking.setActive(true);
+    var bookingEntity = bookingMapper.toBookingEntity(booking);
 
-    return bookingRepository.save(booking);
+    return bookingMapper.toBooking(bookingRepository.save(bookingEntity));
   }
 
   @Override
@@ -83,6 +91,8 @@ public class BookingServiceImpl implements BookingService {
       backoff = @Backoff(delay = 500, maxDelay = 1000))
   public Booking updateBooking(Booking booking) {
 
+    // cancelBooking method should be used to cancel booking
+    checkArgument(booking.isActive(), "Booking must be active");
     var persistedBooking = findByUuid(booking.getUuid());
 
     if (!persistedBooking.isActive()) {
@@ -90,10 +100,11 @@ public class BookingServiceImpl implements BookingService {
       throw new IllegalBookingStateException(message);
     }
     validateVacantDates(booking);
+    booking.setId(persistedBooking.getId());
+    var bookingEntity = bookingMapper.toBookingEntity(booking);
+    var savedBookingEntity = bookingRepository.saveAndFlush(bookingEntity);
 
-    // cancelBooking method should be used to cancel booking
-    booking.setActive(persistedBooking.isActive());
-    return bookingRepository.save(booking);
+    return bookingMapper.toBooking(savedBookingEntity);
   }
 
   @Override
@@ -102,7 +113,9 @@ public class BookingServiceImpl implements BookingService {
 
     var booking = findByUuid(uuid);
     booking.setActive(false);
-    booking = bookingRepository.save(booking);
+    var bookingEntity = bookingMapper.toBookingEntity(booking);
+    booking = bookingMapper.toBooking(bookingRepository.save(bookingEntity));
+
     return !booking.isActive();
   }
 
@@ -110,13 +123,14 @@ public class BookingServiceImpl implements BookingService {
 
     var vacantDays =
         booking.getStartDate().datesUntil(booking.getEndDate().plusDays(1)).collect(toList());
-    var bookings =
+    var bookingEntities =
         bookingRepository.findForDateRangeWithPessimisticWriteLocking(
             booking.getStartDate(), booking.getEndDate(), booking.getCampsiteId());
-    bookings.forEach(
-        b -> {
-          if (!b.getUuid().equals(booking.getUuid())) {
-            vacantDays.removeAll(b.getBookingDatesWithEndDateExclusive());
+
+    bookingEntities.forEach(
+        e -> {
+          if (!e.getUuid().equals(booking.getUuid())) {
+            vacantDays.removeAll(bookingMapper.toBooking(e).getBookingDatesWithEndDateExclusive());
           }
         });
 

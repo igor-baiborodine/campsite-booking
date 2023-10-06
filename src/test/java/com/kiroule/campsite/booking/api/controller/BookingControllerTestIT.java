@@ -62,7 +62,7 @@ class BookingControllerTestIT extends BaseTestIT {
             .post(controllerPath)
             .as(BookingDto.class);
 
-    assumeThat(existingBookingDto.getId()).isNotNull();
+    assumeThat(existingBookingDto.getUuid()).isNotNull();
     assumeThat(existingBookingDto.getVersion()).isEqualTo(0L);
     assumeThat(existingBookingDto.isActive()).isTrue();
   }

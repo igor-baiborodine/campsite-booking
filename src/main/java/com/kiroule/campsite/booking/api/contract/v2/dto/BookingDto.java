@@ -31,9 +31,6 @@ import lombok.Generated;
 @Generated
 public class BookingDto {
 
-  /** Persistence ID */
-  private Long id;
-
   /** Business ID */
   @NotNull @EqualsAndHashCode.Include private UUID uuid;
 

@@ -2,13 +2,16 @@ package com.kiroule.campsite.booking.api.repository;
 
 import static com.kiroule.campsite.booking.api.TestHelper.CAMPSITE_ID;
 import static com.kiroule.campsite.booking.api.TestHelper.buildBooking;
+import static java.time.LocalDate.now;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.kiroule.campsite.booking.api.BaseTestIT;
 import com.kiroule.campsite.booking.api.DisplayNamePrefix;
+import com.kiroule.campsite.booking.api.mapper.BookingMapper;
 import com.kiroule.campsite.booking.api.model.Booking;
+import com.kiroule.campsite.booking.api.repository.entity.BookingEntity;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -34,31 +37,30 @@ class BookingRepositoryTestIT extends BaseTestIT {
 
   @Autowired CampsiteRepository campsiteRepository;
 
+  @Autowired BookingMapper bookingMapper;
+
   LocalDate now;
   UUID uuid;
-  Booking existingBooking;
+  BookingEntity existingBookingEntity;
 
   @BeforeEach
   void beforeEach() {
     classUnderTest.deleteAll();
 
-    now = LocalDate.now();
-    uuid = UUID.randomUUID();
-    existingBooking = null;
+    now = now();
+    uuid = randomUUID();
+    existingBookingEntity = null;
   }
 
   private void given_existingBooking(int startPlusDays, int endPlusDays) {
     Booking booking = buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid);
-    existingBooking = classUnderTest.save(booking);
-
-    assumeThat(existingBooking.isNew()).isFalse();
-    assumeThat(existingBooking.isActive()).isTrue();
+    existingBookingEntity = classUnderTest.save(bookingMapper.toBookingEntity(booking));
   }
 
   @Nested
   class FindByUuid {
 
-    Optional<Booking> bookingOptionalForUuid;
+    Optional<BookingEntity> bookingOptionalForUuid;
 
     @BeforeEach
     void beforeEach() {
@@ -81,7 +83,7 @@ class BookingRepositoryTestIT extends BaseTestIT {
     private void then_assertBookingFoundForUuid() {
       assertAll(
           "foundBooking",
-          () -> assertThat(bookingOptionalForUuid).hasValue(existingBooking),
+          () -> assertThat(bookingOptionalForUuid).hasValue(existingBookingEntity),
           () ->
               assertThat(bookingOptionalForUuid.get().getCreatedAt().toLocalDate()).isEqualTo(now));
     }
@@ -90,7 +92,7 @@ class BookingRepositoryTestIT extends BaseTestIT {
   @Nested
   class FindForDateRange {
 
-    List<Booking> bookingsForDateRange;
+    List<BookingEntity> bookingsForDateRange;
 
     @BeforeEach
     void beforeEach() {
@@ -216,7 +218,7 @@ class BookingRepositoryTestIT extends BaseTestIT {
     private void then_assertBookingFoundForDateRange() {
       assertAll(
           () -> assertThat(bookingsForDateRange).size().isEqualTo(1),
-          () -> assertThat(existingBooking).isIn(bookingsForDateRange));
+          () -> assertThat(existingBookingEntity).isIn(bookingsForDateRange));
     }
   }
 }

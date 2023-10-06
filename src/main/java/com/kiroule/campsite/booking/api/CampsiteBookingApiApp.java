@@ -1,7 +1,7 @@
 package com.kiroule.campsite.booking.api;
 
-import com.kiroule.campsite.booking.api.model.Campsite;
 import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
+import com.kiroule.campsite.booking.api.repository.entity.CampsiteEntity;
 import lombok.AllArgsConstructor;
 import lombok.Generated;
 import org.springframework.boot.ApplicationArguments;
@@ -30,8 +30,8 @@ public class CampsiteBookingApiApp implements ApplicationRunner {
   public void run(ApplicationArguments args) {
 
     for (int i = 1; i < 4; i++) {
-      Campsite campsite =
-          Campsite.builder()
+      CampsiteEntity campsite =
+          CampsiteEntity.builder()
               .id((long) i)
               .capacity(i * 2)
               .restrooms(true)

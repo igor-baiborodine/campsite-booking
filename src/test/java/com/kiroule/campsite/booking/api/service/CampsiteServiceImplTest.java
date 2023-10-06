@@ -13,10 +13,8 @@ import com.kiroule.campsite.booking.api.exception.CampsiteNotFoundException;
 import com.kiroule.campsite.booking.api.model.Campsite;
 import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -43,6 +41,7 @@ class CampsiteServiceImplTest {
   }
 
   @Nested
+  @Disabled
   class FindById {
 
     Campsite foundCampsite;

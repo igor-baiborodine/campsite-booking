@@ -1,5 +1,7 @@
 package com.kiroule.campsite.booking.api.config;
 
+import com.kiroule.campsite.booking.api.mapper.BookingMapper;
+import com.kiroule.campsite.booking.api.mapper.CampsiteMapper;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
 import com.kiroule.campsite.booking.api.repository.context.CustomRepositoryContext;
@@ -32,12 +34,14 @@ public class CampsiteBookingApiConfig {
   }
 
   @Bean
-  public BookingService bookingService(BookingRepository bookingRepository) {
-    return new BookingServiceImpl(bookingRepository);
+  public BookingService bookingService(
+      BookingRepository bookingRepository, BookingMapper bookingMapper) {
+    return new BookingServiceImpl(bookingRepository, bookingMapper);
   }
 
   @Bean
-  public CampsiteService campsiteService(CampsiteRepository campsiteRepository) {
-    return new CampsiteServiceImpl(campsiteRepository);
+  public CampsiteService campsiteService(
+      CampsiteRepository campsiteRepository, CampsiteMapper campsiteMapper) {
+    return new CampsiteServiceImpl(campsiteRepository, campsiteMapper);
   }
 }
