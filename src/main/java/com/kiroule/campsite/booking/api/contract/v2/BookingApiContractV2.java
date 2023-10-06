@@ -1,6 +1,6 @@
 package com.kiroule.campsite.booking.api.contract.v2;
 
-import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
+import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

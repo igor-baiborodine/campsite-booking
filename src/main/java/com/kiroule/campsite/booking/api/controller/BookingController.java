@@ -5,9 +5,9 @@ import static org.springframework.hateoas.IanaLinkRelations.*;
 import static org.springframework.http.HttpStatus.*;
 
 import com.kiroule.campsite.booking.api.contract.v2.BookingApiContractV2;
-import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
+import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
+import com.kiroule.campsite.booking.api.mapper.BookingMapperImpl;
 import com.kiroule.campsite.booking.api.model.Booking;
-import com.kiroule.campsite.booking.api.model.mapper.BookingMapper;
 import com.kiroule.campsite.booking.api.service.BookingService;
 import java.net.URI;
 import java.time.LocalDate;
@@ -29,7 +29,7 @@ public class BookingController implements BookingApiContractV2 {
 
   private BookingService bookingService;
 
-  private BookingMapper bookingMapper;
+  private BookingMapperImpl bookingMapper;
 
   public ResponseEntity<List<LocalDate>> getVacantDates(
       LocalDate startDate, LocalDate endDate, Long campsiteId) {

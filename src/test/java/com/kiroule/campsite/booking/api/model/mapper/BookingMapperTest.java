@@ -14,8 +14,9 @@ import static org.mockito.Mockito.verify;
 
 import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
 import com.kiroule.campsite.booking.api.TestHelper;
-import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
+import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import com.kiroule.campsite.booking.api.exception.CampsiteNotFoundException;
+import com.kiroule.campsite.booking.api.mapper.BookingMapperImpl;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.model.Campsite;
 import com.kiroule.campsite.booking.api.service.CampsiteService;
@@ -165,7 +166,6 @@ class BookingMapperTest {
 
     private void then_assertBookingDto(int startPlusDays, int endPlusDays) {
       assertThat(bookingDto.getCampsiteId()).isEqualTo(CAMPSITE_ID);
-      assertThat(bookingDto.getId()).isNull();
       assertThat(bookingDto.getUuid()).isEqualTo(uuid);
 
       assertThat(bookingDto.getVersion()).isNull();

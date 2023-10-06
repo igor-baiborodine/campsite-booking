@@ -2,7 +2,7 @@ package com.kiroule.campsite.booking.api.exception.advice;
 
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
-import com.kiroule.campsite.booking.api.contract.v2.model.ApiError;
+import com.kiroule.campsite.booking.api.contract.v2.error.ApiError;
 import com.kiroule.campsite.booking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsite.booking.api.exception.BookingNotFoundException;
 import com.kiroule.campsite.booking.api.exception.IllegalBookingStateException;

@@ -6,8 +6,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
 import com.kiroule.campsite.booking.api.BaseTestIT;
+import com.kiroule.campsite.booking.api.mapper.BookingMapper;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
+import com.kiroule.campsite.booking.api.repository.entity.BookingEntity;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -27,6 +29,8 @@ class BookingServiceImplTestIT extends BaseTestIT {
   BookingService classUnderTest;
 
   @Autowired BookingRepository bookingRepository;
+
+  @Autowired BookingMapper bookingMapper;
 
   UUID uuid;
   Booking existingBooking;
@@ -54,9 +58,10 @@ class BookingServiceImplTestIT extends BaseTestIT {
     }
 
     private void given_existingActiveBooking(int startPlusDays, int endPlusDays) {
-      Booking booking =
-          buildBooking(now().plusDays(startPlusDays), now().plusDays(endPlusDays), uuid);
-      existingBooking = bookingRepository.save(booking);
+      BookingEntity bookingEntity =
+          bookingMapper.toBookingEntity(
+              buildBooking(now().plusDays(startPlusDays), now().plusDays(endPlusDays), uuid));
+      existingBooking = bookingMapper.toBooking(bookingRepository.save(bookingEntity));
       assumeThat(existingBooking.isNew()).isFalse();
       assumeThat(existingBooking.isActive()).isTrue();
     }

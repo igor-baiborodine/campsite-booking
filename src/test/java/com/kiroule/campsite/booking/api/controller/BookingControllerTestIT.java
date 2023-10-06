@@ -10,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import com.kiroule.campsite.booking.api.BaseTestIT;
-import com.kiroule.campsite.booking.api.contract.v2.model.ApiError;
-import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
+import com.kiroule.campsite.booking.api.contract.v2.error.ApiError;
+import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
@@ -62,7 +62,7 @@ class BookingControllerTestIT extends BaseTestIT {
             .post(controllerPath)
             .as(BookingDto.class);
 
-    assumeThat(existingBookingDto.getId()).isNotNull();
+    assumeThat(existingBookingDto.getUuid()).isNotNull();
     assumeThat(existingBookingDto.getVersion()).isEqualTo(0L);
     assumeThat(existingBookingDto.isActive()).isTrue();
   }

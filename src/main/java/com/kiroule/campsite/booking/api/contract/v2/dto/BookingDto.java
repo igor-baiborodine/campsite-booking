@@ -1,4 +1,4 @@
-package com.kiroule.campsite.booking.api.contract.v2.model;
+package com.kiroule.campsite.booking.api.contract.v2.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.kiroule.campsite.booking.api.model.validator.BookingAllowedStartDate;
@@ -30,9 +30,6 @@ import lombok.Generated;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Generated
 public class BookingDto {
-
-  /** Persistence ID */
-  private Long id;
 
   /** Business ID */
   @NotNull @EqualsAndHashCode.Include private UUID uuid;

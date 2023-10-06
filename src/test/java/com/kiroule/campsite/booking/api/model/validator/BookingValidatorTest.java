@@ -4,7 +4,7 @@ import static com.kiroule.campsite.booking.api.TestHelper.buildBookingDto;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
-import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
+import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

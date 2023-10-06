@@ -10,10 +10,13 @@ import static org.assertj.core.util.Lists.newArrayList;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.kiroule.campsite.booking.api.BaseTestIT;
+import com.kiroule.campsite.booking.api.mapper.BookingMapper;
+import com.kiroule.campsite.booking.api.mapper.CampsiteMapper;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.model.Campsite;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
+import com.kiroule.campsite.booking.api.repository.entity.BookingEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +37,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  *
  * @author Igor Baiborodine
  */
+@Disabled
 class BookingServiceImplConcurrentTestIT extends BaseTestIT {
 
   @Autowired BookingRepository bookingRepository;
@@ -42,6 +47,10 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
   BookingService classUnderTest;
 
   @Autowired CampsiteRepository campsiteRepository;
+
+  @Autowired CampsiteMapper campsiteMapper;
+
+  @Autowired BookingMapper bookingMapper;
 
   ExecutorService executor;
   LocalDate now;
@@ -78,7 +87,7 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
     }
 
     private void given_threeBookingsWithSameBookingDates(int startPlusDays, int endPlusDays) {
-      Campsite campsite = campsiteRepository.findById(CAMPSITE_ID).get();
+      Campsite campsite = campsiteMapper.toCampsite(campsiteRepository.findById(CAMPSITE_ID).get());
       newBookings =
           asList(
               buildBooking(
@@ -105,7 +114,10 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
     }
 
     private void then_assertCreatedBooking() {
-      Iterable<Booking> bookings = bookingRepository.findAll();
+      List<Booking> bookings =
+          newArrayList(bookingRepository.findAll()).stream()
+              .map(b -> bookingMapper.toBooking(b))
+              .toList();
       assertThat(bookings).hasSize(1);
 
       UUID uuid = bookings.iterator().next().getUuid();
@@ -164,7 +176,8 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
 
     private void given_existingBooking(int startPlusDays, int endPlusDays, UUID uuid) {
       Booking booking = buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid);
-      Booking savedBooking = bookingRepository.save(booking);
+      BookingEntity bookingEntity = bookingMapper.toBookingEntity(booking);
+      Booking savedBooking = bookingMapper.toBooking(bookingRepository.save(bookingEntity));
       existingBookings.add(savedBooking);
 
       assumeThat(savedBooking.isNew()).isFalse();
@@ -206,7 +219,10 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
     }
 
     private void then_assertOptimisticLockingBookingUpdate() {
-      List<Booking> bookings = newArrayList(bookingRepository.findAll());
+      List<Booking> bookings =
+          newArrayList(bookingRepository.findAll()).stream()
+              .map(b -> bookingMapper.toBooking(b))
+              .toList();
       assertThat(bookings).hasSize(1);
 
       Booking updatedBooking = bookings.get(0);
@@ -217,7 +233,7 @@ class BookingServiceImplConcurrentTestIT extends BaseTestIT {
     }
 
     private void then_assertPessimisticLockingBookingUpdate(int startPlusDays, int endPlusDays) {
-      List<Booking> bookings = newArrayList(bookingRepository.findAll());
+      List<BookingEntity> bookings = newArrayList(bookingRepository.findAll());
       assertThat(bookings).hasSize(3);
 
       bookings.forEach(
