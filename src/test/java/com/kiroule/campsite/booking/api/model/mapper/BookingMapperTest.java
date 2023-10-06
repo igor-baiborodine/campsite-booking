@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verify;
 
 import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
 import com.kiroule.campsite.booking.api.TestHelper;
-import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
+import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import com.kiroule.campsite.booking.api.exception.CampsiteNotFoundException;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.model.Campsite;

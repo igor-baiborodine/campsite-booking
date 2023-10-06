@@ -2,7 +2,7 @@ package com.kiroule.campsite.booking.api.model.mapper;
 
 import static org.mapstruct.InjectionStrategy.CONSTRUCTOR;
 
-import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
+import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.service.CampsiteService;
 import org.mapstruct.Mapper;

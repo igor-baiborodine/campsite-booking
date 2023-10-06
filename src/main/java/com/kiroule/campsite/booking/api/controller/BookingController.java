@@ -5,7 +5,7 @@ import static org.springframework.hateoas.IanaLinkRelations.*;
 import static org.springframework.http.HttpStatus.*;
 
 import com.kiroule.campsite.booking.api.contract.v2.BookingApiContractV2;
-import com.kiroule.campsite.booking.api.contract.v2.model.BookingDto;
+import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.model.mapper.BookingMapper;
 import com.kiroule.campsite.booking.api.service.BookingService;

@@ -1,4 +1,4 @@
-package com.kiroule.campsite.booking.api.contract.v2.model;
+package com.kiroule.campsite.booking.api.contract.v2.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.kiroule.campsite.booking.api.model.validator.BookingAllowedStartDate;
