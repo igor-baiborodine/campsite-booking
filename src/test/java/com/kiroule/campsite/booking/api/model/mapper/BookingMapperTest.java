@@ -12,7 +12,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
-import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
 import com.kiroule.campsite.booking.api.TestHelper;
 import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import com.kiroule.campsite.booking.api.exception.CampsiteNotFoundException;
@@ -23,7 +22,6 @@ import com.kiroule.campsite.booking.api.service.CampsiteService;
 import java.time.LocalDate;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +30,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayNameGeneration(CustomReplaceUnderscores.class)
 class BookingMapperTest {
 
   @Mock CampsiteService campsiteService;

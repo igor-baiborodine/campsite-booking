@@ -6,12 +6,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
-import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
 import com.kiroule.campsite.booking.api.service.BookingService;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +23,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * @author Igor Baiborodine
  */
 @ExtendWith(MockitoExtension.class)
-@DisplayNameGeneration(CustomReplaceUnderscores.class)
 public class BookingControllerTest {
 
   @Mock BookingService bookingService;

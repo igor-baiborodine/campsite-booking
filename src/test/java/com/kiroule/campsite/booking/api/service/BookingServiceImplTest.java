@@ -11,7 +11,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.quality.Strictness.LENIENT;
 
-import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
 import com.kiroule.campsite.booking.api.DisplayNamePrefix;
 import com.kiroule.campsite.booking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsite.booking.api.exception.BookingNotFoundException;
@@ -40,7 +39,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = LENIENT)
-@DisplayNameGeneration(CustomReplaceUnderscores.class)
 class BookingServiceImplTest {
 
   @Mock BookingRepository bookingRepository;

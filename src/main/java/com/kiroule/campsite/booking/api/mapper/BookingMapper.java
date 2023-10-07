@@ -7,6 +7,7 @@ import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.repository.entity.BookingEntity;
 import com.kiroule.campsite.booking.api.service.CampsiteService;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -25,4 +26,8 @@ public interface BookingMapper {
   Booking toBooking(BookingDto bookingDto);
 
   Booking toBooking(BookingEntity bookingEntity);
+
+  default List<Booking> toBookingsList(List<BookingEntity> bookingEntities) {
+    return bookingEntities.stream().map(this::toBooking).toList();
+  }
 }

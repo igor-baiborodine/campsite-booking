@@ -8,12 +8,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
-import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
 import com.kiroule.campsite.booking.api.exception.CampsiteNotFoundException;
 import com.kiroule.campsite.booking.api.model.Campsite;
 import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
 import java.util.Optional;
-
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * @author Igor Baiborodine
  */
 @ExtendWith(MockitoExtension.class)
-@DisplayNameGeneration(CustomReplaceUnderscores.class)
+
 class CampsiteServiceImplTest {
 
   @Mock CampsiteRepository campsiteRepository;

@@ -3,7 +3,6 @@ package com.kiroule.campsite.booking.api.model.validator;
 import static com.kiroule.campsite.booking.api.TestHelper.buildBookingDto;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
 import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -13,7 +12,6 @@ import java.lang.annotation.Annotation;
 import java.time.LocalDate;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +20,6 @@ import org.junit.jupiter.api.Test;
  *
  * @author Igor Baiborodine
  */
-@DisplayNameGeneration(CustomReplaceUnderscores.class)
 class BookingValidatorTest {
 
   ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
