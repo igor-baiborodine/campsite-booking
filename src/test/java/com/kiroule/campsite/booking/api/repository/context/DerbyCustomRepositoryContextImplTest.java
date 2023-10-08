@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 
 import jakarta.persistence.EntityManager;
 import org.hibernate.query.NativeQuery;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,53 +22,25 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class DerbyCustomRepositoryContextImplTest {
 
-  @Mock NativeQuery query;
+  @Mock NativeQuery<?> query;
 
   @Mock EntityManager entityManager;
 
   @InjectMocks DerbyCustomRepositoryContextImpl classUnderTest;
-
-  Long timeout;
-  Integer count;
-
-  @BeforeEach
-  void beforeEach() {
-    timeout = null;
-    count = null;
-  }
-
-  private void given_entityManagerCreatesNativeQuery() {
-    doReturn(query).when(entityManager).createNativeQuery(any());
-  }
 
   @Nested
   class SetLockTimeout {
 
     @Test
     void happy_path() {
-      given_timeout(3000L);
-      given_entityManagerCreatesNativeQuery();
-      given_queryExecutesUpdate(1);
-
-      when_setLockTimeout();
-
-      then_assertUpdateExecuted(1);
-    }
-
-    private void given_timeout(long value) {
-      timeout = value;
-    }
-
-    private void given_queryExecutesUpdate(int updatedCount) {
-      doReturn(updatedCount).when(query).executeUpdate();
-    }
-
-    private void when_setLockTimeout() {
-      count = classUnderTest.setLockTimeout(timeout);
-    }
-
-    private void then_assertUpdateExecuted(int expectedCount) {
-      assertThat(count).isEqualTo(expectedCount);
+      // given
+      var timeout = 3000L;
+      doReturn(query).when(entityManager).createNativeQuery(any());
+      doReturn(1).when(query).executeUpdate();
+      // when
+      var count = classUnderTest.setLockTimeout(timeout);
+      // then
+      assertThat(count).isEqualTo(1);
       verify(entityManager)
           .createNativeQuery(
               "CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.waitTimeout',  '3')");
@@ -82,24 +53,13 @@ class DerbyCustomRepositoryContextImplTest {
 
     @Test
     void happy_path() {
-      given_entityManagerCreatesNativeQuery();
-      given_queryReturnsSingleResult("3");
-
-      when_getLockTimeout();
-
-      then_assertFetchedTimeout(3000L);
-    }
-
-    private void given_queryReturnsSingleResult(String timeoutInSec) {
-      doReturn(timeoutInSec).when(query).getSingleResult();
-    }
-
-    private void when_getLockTimeout() {
-      timeout = classUnderTest.getLockTimeout();
-    }
-
-    private void then_assertFetchedTimeout(long expectedTimeout) {
-      assertThat(timeout).isEqualTo(expectedTimeout);
+      // given
+      doReturn(query).when(entityManager).createNativeQuery(any());
+      doReturn("3").when(query).getSingleResult();
+      // when
+      var timeout = classUnderTest.getLockTimeout();
+      // then
+      assertThat(timeout).isEqualTo(3000L);
       verify(entityManager)
           .createNativeQuery(
               "VALUES SYSCS_UTIL.SYSCS_GET_DATABASE_PROPERTY('derby.locks.waitTimeout')");
