@@ -24,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * @author Igor Baiborodine
  */
 @ExtendWith(MockitoExtension.class)
-
 class CampsiteServiceImplTest {
 
   @Mock CampsiteRepository campsiteRepository;
