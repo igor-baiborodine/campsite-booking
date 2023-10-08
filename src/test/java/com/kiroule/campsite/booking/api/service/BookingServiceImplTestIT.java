@@ -62,7 +62,7 @@ class BookingServiceImplTestIT extends BaseTestIT {
           bookingMapper.toBookingEntity(
               buildBooking(now().plusDays(startPlusDays), now().plusDays(endPlusDays), uuid));
       existingBooking = bookingMapper.toBooking(bookingRepository.save(bookingEntity));
-      assumeThat(existingBooking.isNew()).isFalse();
+      //      assumeThat(existingBooking.isNew()).isFalse();
       assumeThat(existingBooking.isActive()).isTrue();
     }
 

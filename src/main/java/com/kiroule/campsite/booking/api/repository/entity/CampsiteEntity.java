@@ -1,17 +1,14 @@
 package com.kiroule.campsite.booking.api.repository.entity;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Generated;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Entity domain object representing a campsite.
@@ -20,18 +17,17 @@ import lombok.NoArgsConstructor;
  */
 @Entity()
 @Table(name = "campsites")
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+@SuperBuilder(toBuilder = true)
+@EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@AllArgsConstructor
 @Generated
 public class CampsiteEntity extends DateAuditEntity {
 
   /** Persistence ID */
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @EqualsAndHashCode.Include
+  @GeneratedValue(strategy = IDENTITY)
   private Long id;
 
   /** Capacity, max number of people that campsite can accommodate */

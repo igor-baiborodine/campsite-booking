@@ -6,7 +6,6 @@ import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.quality.Strictness.LENIENT;
@@ -70,7 +69,7 @@ class BookingServiceImplTest {
   private void given_newBooking(int startPlusDays, int endPlusDays) {
     newBooking = buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays));
     newBooking.setActive(false);
-    assumeTrue(newBooking.isNew());
+    //    assumeTrue(newBooking.isNew());
     assumeFalse(newBooking.isActive());
   }
 

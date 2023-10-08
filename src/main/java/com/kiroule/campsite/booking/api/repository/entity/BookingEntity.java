@@ -1,26 +1,18 @@
 package com.kiroule.campsite.booking.api.repository.entity;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.sql.Types.VARCHAR;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import java.time.LocalDate;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Generated;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.JdbcTypeCode;
 
 /**
@@ -30,17 +22,17 @@ import org.hibernate.annotations.JdbcTypeCode;
  */
 @Entity()
 @Table(name = "bookings")
-@Builder(toBuilder = true)
 @Data
+@SuperBuilder(toBuilder = true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Generated
 public class BookingEntity extends DateAuditEntity {
 
   /** Persistence ID */
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = IDENTITY)
   private Long id;
 
   /** Business ID */
@@ -54,9 +46,8 @@ public class BookingEntity extends DateAuditEntity {
   @Column(name = "version", nullable = false)
   private Long version;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "campsite_id")
-  private CampsiteEntity campsite;
+  @Column(name = "campsite_id", nullable = false)
+  private Long campsiteId;
 
   @Column(name = "email", nullable = false, length = 50)
   private String email;

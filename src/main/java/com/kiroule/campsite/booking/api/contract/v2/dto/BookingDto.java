@@ -21,7 +21,7 @@ import lombok.Generated;
  *
  * @author Igor Baiborodine
  */
-@Builder
+@Builder(toBuilder = true)
 @Data
 @AllArgsConstructor
 @BookingStartDateBeforeEndDate
@@ -33,8 +33,6 @@ public class BookingDto {
 
   /** Business ID */
   @NotNull @EqualsAndHashCode.Include private UUID uuid;
-
-  private Long version;
 
   @NotNull private Long campsiteId;
 

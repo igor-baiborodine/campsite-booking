@@ -149,6 +149,12 @@
       <version>1.5.3.Final</version>
       <optional>true</optional>
     </dependency>
+    <!--TESTS-->
+    <dependency>
+      <groupId>org.jeasy</groupId>
+      <artifactId>easy-random-core</artifactId>
+      <version>5.0.0</version>
+    </dependency>
   </dependencies>
 
   <build>

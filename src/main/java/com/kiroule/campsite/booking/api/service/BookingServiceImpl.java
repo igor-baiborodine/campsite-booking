@@ -73,9 +73,7 @@ public class BookingServiceImpl implements BookingService {
       backoff = @Backoff(delay = 500, maxDelay = 1000))
   public Booking createBooking(Booking booking) {
 
-    if (!booking.isNew()) {
-      throw new IllegalBookingStateException("New booking must not have persistence id");
-    }
+    // TODO: add validation if booking for the given UUID exists
     validateVacantDates(booking);
     booking.setActive(true);
     var bookingEntity = bookingMapper.toBookingEntity(booking);
