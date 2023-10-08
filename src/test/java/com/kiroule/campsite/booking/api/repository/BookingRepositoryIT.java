@@ -7,7 +7,7 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.kiroule.campsite.booking.api.BaseTestIT;
+import com.kiroule.campsite.booking.api.BaseIT;
 import com.kiroule.campsite.booking.api.DisplayNamePrefix;
 import com.kiroule.campsite.booking.api.mapper.BookingMapper;
 import com.kiroule.campsite.booking.api.model.Booking;
@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 @TestMethodOrder(MethodOrderer.MethodName.class)
-class BookingRepositoryTestIT extends BaseTestIT {
+class BookingRepositoryIT extends BaseIT {
 
   @Autowired BookingRepository classUnderTest;
 

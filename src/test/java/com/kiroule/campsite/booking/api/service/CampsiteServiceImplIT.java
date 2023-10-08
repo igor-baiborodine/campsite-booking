@@ -3,7 +3,7 @@ package com.kiroule.campsite.booking.api.service;
 import static com.kiroule.campsite.booking.api.TestHelper.CAMPSITE_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.kiroule.campsite.booking.api.BaseTestIT;
+import com.kiroule.campsite.booking.api.BaseIT;
 import com.kiroule.campsite.booking.api.model.Campsite;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  *
  * @author Igor Baiborodine
  */
-class CampsiteServiceImplTestIT extends BaseTestIT {
+class CampsiteServiceImplIT extends BaseIT {
 
   @Autowired
   @Qualifier("campsiteService")

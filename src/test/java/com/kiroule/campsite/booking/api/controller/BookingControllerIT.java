@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
-import com.kiroule.campsite.booking.api.BaseTestIT;
+import com.kiroule.campsite.booking.api.BaseIT;
 import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import com.kiroule.campsite.booking.api.contract.v2.error.ApiError;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
@@ -27,7 +27,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-class BookingControllerTestIT extends BaseTestIT {
+class BookingControllerIT extends BaseIT {
 
   @Autowired BookingRepository bookingRepository;
 

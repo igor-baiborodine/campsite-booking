@@ -5,7 +5,7 @@ import static java.time.LocalDate.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
-import com.kiroule.campsite.booking.api.BaseTestIT;
+import com.kiroule.campsite.booking.api.BaseIT;
 import com.kiroule.campsite.booking.api.mapper.BookingMapper;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  *
  * @author Igor Baiborodine
  */
-class BookingServiceImplTestIT extends BaseTestIT {
+class BookingServiceImplIT extends BaseIT {
 
   @Autowired
   @Qualifier("bookingService")

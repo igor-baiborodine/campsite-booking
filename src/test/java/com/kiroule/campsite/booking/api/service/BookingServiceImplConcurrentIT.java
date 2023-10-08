@@ -9,7 +9,7 @@ import static org.assertj.core.api.Fail.fail;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.kiroule.campsite.booking.api.BaseTestIT;
+import com.kiroule.campsite.booking.api.BaseIT;
 import com.kiroule.campsite.booking.api.mapper.BookingMapper;
 import com.kiroule.campsite.booking.api.mapper.CampsiteMapper;
 import com.kiroule.campsite.booking.api.model.Booking;
@@ -38,7 +38,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @author Igor Baiborodine
  */
 @Disabled
-class BookingServiceImplConcurrentTestIT extends BaseTestIT {
+class BookingServiceImplConcurrentIT extends BaseIT {
 
   @Autowired BookingRepository bookingRepository;
 
