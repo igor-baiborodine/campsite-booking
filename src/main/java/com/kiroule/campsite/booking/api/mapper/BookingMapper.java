@@ -7,11 +7,9 @@ import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.repository.entity.BookingEntity;
 import java.util.List;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
 
-@Mapper(
-    componentModel = SPRING,
-    injectionStrategy = CONSTRUCTOR)
+@Mapper(componentModel = SPRING, injectionStrategy = CONSTRUCTOR)
 public interface BookingMapper {
 
   BookingDto toBookingDto(Booking booking);
