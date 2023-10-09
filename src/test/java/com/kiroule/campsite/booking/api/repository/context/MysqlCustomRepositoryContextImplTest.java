@@ -34,13 +34,13 @@ class MysqlCustomRepositoryContextImplTest {
     @Test
     void happy_path() {
       // given
-      var timeout = 3000L;
+      long timeout = 3000L;
       doReturn(query).when(entityManager).createNativeQuery(any());
       doReturn(1).when(query).executeUpdate();
       // when
-      var count = classUnderTest.setLockTimeout(timeout);
+      int result = classUnderTest.setLockTimeout(timeout);
       // then
-      assertThat(count).isEqualTo(1);
+      assertThat(result).isEqualTo(1);
       verify(entityManager).createNativeQuery("set session innodb_lock_wait_timeout = 3");
       verify(query).executeUpdate();
     }
@@ -55,9 +55,9 @@ class MysqlCustomRepositoryContextImplTest {
       doReturn(query).when(entityManager).createNativeQuery(any());
       doReturn(3L).when(query).getSingleResult();
       // when
-      var timeout = classUnderTest.getLockTimeout();
+      long result = classUnderTest.getLockTimeout();
       // then
-      assertThat(timeout).isEqualTo(3000L);
+      assertThat(result).isEqualTo(3000L);
       verify(entityManager).createNativeQuery("select @@innodb_lock_wait_timeout");
       verify(query).getSingleResult();
     }

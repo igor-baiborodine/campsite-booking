@@ -34,13 +34,13 @@ class DerbyCustomRepositoryContextImplTest {
     @Test
     void happy_path() {
       // given
-      var timeout = 3000L;
+      long timeout = 3000L;
       doReturn(query).when(entityManager).createNativeQuery(any());
       doReturn(1).when(query).executeUpdate();
       // when
-      var count = classUnderTest.setLockTimeout(timeout);
+      int result = classUnderTest.setLockTimeout(timeout);
       // then
-      assertThat(count).isEqualTo(1);
+      assertThat(result).isEqualTo(1);
       verify(entityManager)
           .createNativeQuery(
               "CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.waitTimeout',  '3')");
@@ -57,9 +57,9 @@ class DerbyCustomRepositoryContextImplTest {
       doReturn(query).when(entityManager).createNativeQuery(any());
       doReturn("3").when(query).getSingleResult();
       // when
-      var timeout = classUnderTest.getLockTimeout();
+      long result = classUnderTest.getLockTimeout();
       // then
-      assertThat(timeout).isEqualTo(3000L);
+      assertThat(result).isEqualTo(3000L);
       verify(entityManager)
           .createNativeQuery(
               "VALUES SYSCS_UTIL.SYSCS_GET_DATABASE_PROPERTY('derby.locks.waitTimeout')");

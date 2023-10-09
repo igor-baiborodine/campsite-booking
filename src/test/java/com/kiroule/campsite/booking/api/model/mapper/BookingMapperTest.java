@@ -1,6 +1,6 @@
 package com.kiroule.campsite.booking.api.model.mapper;
 
-import static com.kiroule.campsite.booking.api.TestDataGenerator.*;
+import static com.kiroule.campsite.booking.api.TestDataHelper.*;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,11 +22,11 @@ class BookingMapperTest {
     @Test
     void happy_path() {
       // given
-      var bookingDto = nextBookingDto();
+      BookingDto bookingDto = nextBookingDto();
       // when
-      var booking = classUnderTest.toBooking(bookingDto);
+      Booking result = classUnderTest.toBooking(bookingDto);
       // then
-      assertThat(booking)
+      assertThat(result)
           .usingRecursiveComparison()
           .ignoringFields("id", "version", "createdAt", "updatedAt")
           .isEqualTo(bookingDto);
@@ -37,9 +37,9 @@ class BookingMapperTest {
       // given
       BookingDto bookingDto = null;
       // when
-      var booking = classUnderTest.toBooking(bookingDto);
+      Booking result = classUnderTest.toBooking(bookingDto);
       // then
-      assertThat(booking).isNull();
+      assertThat(result).isNull();
     }
   }
 
@@ -49,11 +49,11 @@ class BookingMapperTest {
     @Test
     void happy_path() {
       // given
-      var bookingEntity = nextBookingEntity();
+      BookingEntity bookingEntity = nextBookingEntity();
       // when
-      var booking = classUnderTest.toBooking(bookingEntity);
+      Booking result = classUnderTest.toBooking(bookingEntity);
       // then
-      assertThat(booking).usingRecursiveComparison().isEqualTo(bookingEntity);
+      assertThat(result).usingRecursiveComparison().isEqualTo(bookingEntity);
     }
 
     @Test
@@ -61,9 +61,9 @@ class BookingMapperTest {
       // given
       BookingEntity bookingEntity = null;
       // when
-      var booking = classUnderTest.toBooking(bookingEntity);
+      Booking result = classUnderTest.toBooking(bookingEntity);
       // then
-      assertThat(booking).isNull();
+      assertThat(result).isNull();
     }
   }
 
@@ -73,11 +73,11 @@ class BookingMapperTest {
     @Test
     void happy_path() {
       // given
-      var booking = nextBooking();
+      Booking booking = nextBooking();
       // when
-      var bookingDto = classUnderTest.toBookingDto(booking);
+      BookingDto result = classUnderTest.toBookingDto(booking);
       // then
-      assertThat(bookingDto)
+      assertThat(result)
           .usingRecursiveComparison()
           .ignoringFields("id", "version")
           .isEqualTo(booking);
@@ -88,9 +88,9 @@ class BookingMapperTest {
       // given
       Booking booking = null;
       // when
-      var bookingDto = classUnderTest.toBookingDto(booking);
+      BookingDto result = classUnderTest.toBookingDto(booking);
       // then
-      assertThat(bookingDto).isNull();
+      assertThat(result).isNull();
     }
   }
 
@@ -100,11 +100,11 @@ class BookingMapperTest {
     @Test
     void happy_path() {
       // given
-      var booking = nextBooking();
+      Booking booking = nextBooking();
       // when
-      var bookingEntity = classUnderTest.toBookingEntity(booking);
+      BookingEntity result = classUnderTest.toBookingEntity(booking);
       // then
-      assertThat(bookingEntity).usingRecursiveComparison().isEqualTo(booking);
+      assertThat(result).usingRecursiveComparison().isEqualTo(booking);
     }
 
     @Test
@@ -112,9 +112,9 @@ class BookingMapperTest {
       // given
       Booking booking = null;
       // when
-      var bookingEntity = classUnderTest.toBookingEntity(booking);
+      BookingEntity result = classUnderTest.toBookingEntity(booking);
       // then
-      assertThat(bookingEntity).isNull();
+      assertThat(result).isNull();
     }
   }
 
@@ -126,10 +126,10 @@ class BookingMapperTest {
       // given
       List<BookingEntity> bookingEntities = asList(nextBookingEntity(), nextBookingEntity());
       // when
-      List<Booking> bookings = classUnderTest.toBookingsList(bookingEntities);
+      List<Booking> result = classUnderTest.toBookingsList(bookingEntities);
       // then
-      for (int i = 0; i < bookings.size(); i++) {
-        assertThat(bookings.get(i)).usingRecursiveComparison().isEqualTo(bookingEntities.get(i));
+      for (int i = 0; i < result.size(); i++) {
+        assertThat(result.get(i)).usingRecursiveComparison().isEqualTo(bookingEntities.get(i));
       }
     }
   }
