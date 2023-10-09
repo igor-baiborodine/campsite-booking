@@ -39,7 +39,7 @@ public class BookingController implements BookingApiContractV2 {
     if (isNull(endDate)) {
       endDate = startDate.plusMonths(1);
     }
-    var vacantDates = bookingService.findVacantDays(startDate, endDate, campsiteId);
+    var vacantDates = bookingService.findVacantDates(startDate, endDate, campsiteId);
     return new ResponseEntity<>(vacantDates, OK);
   }
 

@@ -72,7 +72,7 @@ public class BookingControllerTest {
     }
 
     private void given_bookingServiceFindVacantDates(List<LocalDate> vacantDates) {
-      doReturn(vacantDates).when(bookingService).findVacantDays(any(), any(), any());
+      doReturn(vacantDates).when(bookingService).findVacantDates(any(), any(), any());
     }
 
     private void when_getVacantDates() {
@@ -82,7 +82,7 @@ public class BookingControllerTest {
     private void then_assertVacantDates(
         LocalDate startDate, LocalDate endDate, List<LocalDate> vacantDates) {
       assertThat(this.vacantDates).isEqualTo(vacantDates);
-      verify(bookingService).findVacantDays(startDate, endDate, campsiteId);
+      verify(bookingService).findVacantDates(startDate, endDate, campsiteId);
     }
   }
 }

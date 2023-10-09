@@ -8,6 +8,7 @@ import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto;
 import com.kiroule.campsite.booking.api.contract.v2.dto.BookingDto.BookingDtoBuilder;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.model.Booking.BookingBuilder;
+import com.kiroule.campsite.booking.api.model.Campsite;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
 import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
 import com.kiroule.campsite.booking.api.repository.entity.BookingEntity;
@@ -35,13 +36,24 @@ public class TestDataHelper {
 
   @Autowired BookingRepository bookingRepository;
 
-  public static Long nextCampsiteId() {
+  private static Long nextCampsiteId() {
     return EASY_RANDOM.nextLong(Short.MAX_VALUE);
+  }
+
+  private static Integer nextCampsiteCapacity() {
+    return EASY_RANDOM.nextInt(Byte.MAX_VALUE);
+  }
+
+  public static Campsite nextCampsite() {
+    return EASY_RANDOM.nextObject(Campsite.class).toBuilder()
+        .capacity(nextCampsiteCapacity())
+        .active(true)
+        .build();
   }
 
   public static CampsiteEntity nextCampsiteEntity() {
     return EASY_RANDOM.nextObject(CampsiteEntity.class).toBuilder()
-        .capacity(EASY_RANDOM.nextInt(Byte.MAX_VALUE))
+        .capacity(nextCampsiteCapacity())
         .active(true)
         .build();
   }

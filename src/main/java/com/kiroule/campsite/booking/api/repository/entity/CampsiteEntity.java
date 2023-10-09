@@ -32,7 +32,7 @@ public class CampsiteEntity extends DateAuditEntity {
 
   /** Capacity, max number of people that campsite can accommodate */
   @Column(name = "capacity", nullable = false)
-  private int capacity;
+  private Integer capacity;
 
   @Column(name = "restrooms", nullable = false)
   private boolean restrooms;

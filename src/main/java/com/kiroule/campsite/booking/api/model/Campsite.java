@@ -18,7 +18,7 @@ public class Campsite extends DateAudit {
   private Long id;
 
   /** Capacity, max number of people that campsite can accommodate */
-  private int capacity;
+  private Integer capacity;
 
   private boolean restrooms;
 

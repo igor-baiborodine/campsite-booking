@@ -2,15 +2,16 @@ package com.kiroule.campsite.booking.api.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 import com.kiroule.campsite.booking.api.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsite.booking.api.exception.BookingNotFoundException;
-import com.kiroule.campsite.booking.api.exception.IllegalBookingStateException;
 import com.kiroule.campsite.booking.api.mapper.BookingMapper;
 import com.kiroule.campsite.booking.api.model.Booking;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
+import com.kiroule.campsite.booking.api.repository.entity.BookingEntity;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<LocalDate> findVacantDays(LocalDate startDate, LocalDate endDate, Long campsiteId) {
+  public List<LocalDate> findVacantDates(LocalDate startDate, LocalDate endDate, Long campsiteId) {
 
     var now = LocalDate.now();
     checkArgument(startDate.isAfter(now), "Start date must be in the future");
@@ -46,10 +47,9 @@ public class BookingServiceImpl implements BookingService {
 
     var vacantDays = startDate.datesUntil(endDate.plusDays(1)).collect(toList());
     var bookingEntities = bookingRepository.findForDateRange(startDate, endDate, campsiteId);
-
-    bookingEntities.forEach(
-        e ->
-            vacantDays.removeAll(bookingMapper.toBooking(e).getBookingDatesWithEndDateExclusive()));
+    bookingMapper
+        .toBookingsList(bookingEntities)
+        .forEach(b -> vacantDays.removeAll(b.getBookingDatesWithEndDateExclusive()));
 
     return vacantDays;
   }
@@ -73,12 +73,12 @@ public class BookingServiceImpl implements BookingService {
       backoff = @Backoff(delay = 500, maxDelay = 1000))
   public Booking createBooking(Booking booking) {
 
-    // TODO: add validation if booking for the given UUID exists
+    checkArgument(isNull(booking.getUuid()), "New booking must not have UUID");
+    checkArgument(booking.isActive(), "Booking must be active");
     validateVacantDates(booking);
-    booking.setActive(true);
     var bookingEntity = bookingMapper.toBookingEntity(booking);
 
-    return bookingMapper.toBooking(bookingRepository.save(bookingEntity));
+    return bookingMapper.toBooking(bookingRepository.saveAndFlush(bookingEntity));
   }
 
   @Override
@@ -92,13 +92,10 @@ public class BookingServiceImpl implements BookingService {
     // cancelBooking method should be used to cancel booking
     checkArgument(booking.isActive(), "Booking must be active");
     var persistedBooking = findByUuid(booking.getUuid());
-
-    if (!persistedBooking.isActive()) {
-      var message = format("Booking with uuid=%s is cancelled", booking.getUuid());
-      throw new IllegalBookingStateException(message);
-    }
     validateVacantDates(booking);
+
     booking.setId(persistedBooking.getId());
+    booking.setVersion(persistedBooking.getVersion());
     var bookingEntity = bookingMapper.toBookingEntity(booking);
     var savedBookingEntity = bookingRepository.saveAndFlush(bookingEntity);
 
@@ -121,16 +118,17 @@ public class BookingServiceImpl implements BookingService {
 
     var vacantDays =
         booking.getStartDate().datesUntil(booking.getEndDate().plusDays(1)).collect(toList());
-    var bookingEntities =
+    List<BookingEntity> bookingEntities =
         bookingRepository.findForDateRangeWithPessimisticWriteLocking(
             booking.getStartDate(), booking.getEndDate(), booking.getCampsiteId());
-
-    bookingEntities.forEach(
-        e -> {
-          if (!e.getUuid().equals(booking.getUuid())) {
-            vacantDays.removeAll(bookingMapper.toBooking(e).getBookingDatesWithEndDateExclusive());
-          }
-        });
+    bookingMapper
+        .toBookingsList(bookingEntities)
+        .forEach(
+            b -> {
+              if (!b.getUuid().equals(booking.getUuid())) {
+                vacantDays.removeAll(b.getBookingDatesWithEndDateExclusive());
+              }
+            });
 
     if (!vacantDays.containsAll(booking.getBookingDatesWithEndDateExclusive())) {
       var message =
