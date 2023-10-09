@@ -45,13 +45,13 @@ public class BookingServiceImpl implements BookingService {
         startDate.isEqual(endDate) || startDate.isBefore(endDate),
         "End date must be equal to start date or greater than start date");
 
-    var vacantDays = startDate.datesUntil(endDate.plusDays(1)).collect(toList());
+    var vacantDates = startDate.datesUntil(endDate.plusDays(1)).collect(toList());
     var bookingEntities = bookingRepository.findForDateRange(startDate, endDate, campsiteId);
     bookingMapper
         .toBookingsList(bookingEntities)
-        .forEach(b -> vacantDays.removeAll(b.getBookingDatesWithEndDateExclusive()));
+        .forEach(b -> vacantDates.removeAll(b.getBookingDatesWithEndDateExclusive()));
 
-    return vacantDays;
+    return vacantDates;
   }
 
   @Override
