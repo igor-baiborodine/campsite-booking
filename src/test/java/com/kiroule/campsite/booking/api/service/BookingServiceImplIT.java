@@ -1,17 +1,11 @@
 package com.kiroule.campsite.booking.api.service;
 
-import static com.kiroule.campsite.booking.api.TestHelper.buildBooking;
-import static java.time.LocalDate.now;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assumptions.assumeThat;
 
 import com.kiroule.campsite.booking.api.BaseIT;
-import com.kiroule.campsite.booking.api.mapper.BookingMapper;
-import com.kiroule.campsite.booking.api.model.Booking;
-import com.kiroule.campsite.booking.api.repository.BookingRepository;
+import com.kiroule.campsite.booking.api.TestDataHelper;
 import com.kiroule.campsite.booking.api.repository.entity.BookingEntity;
-import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
+import com.kiroule.campsite.booking.api.repository.entity.CampsiteEntity;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,50 +22,20 @@ class BookingServiceImplIT extends BaseIT {
   @Qualifier("bookingService")
   BookingService classUnderTest;
 
-  @Autowired BookingRepository bookingRepository;
-
-  @Autowired BookingMapper bookingMapper;
-
-  UUID uuid;
-  Booking existingBooking;
-
-  @BeforeEach
-  void beforeEach() {
-    bookingRepository.deleteAll();
-
-    uuid = UUID.randomUUID();
-    existingBooking = null;
-  }
+  @Autowired TestDataHelper testDataHelper;
 
   @Nested
   class CancelBooking {
 
-    boolean bookingCanceled;
-
     @Test
     void happy_path() {
-      given_existingActiveBooking(1, 2);
-
-      when_cancelBooking();
-
-      then_assertBookingCanceled();
-    }
-
-    private void given_existingActiveBooking(int startPlusDays, int endPlusDays) {
-      BookingEntity bookingEntity =
-          bookingMapper.toBookingEntity(
-              buildBooking(now().plusDays(startPlusDays), now().plusDays(endPlusDays), uuid));
-      existingBooking = bookingMapper.toBooking(bookingRepository.save(bookingEntity));
-      //      assumeThat(existingBooking.isNew()).isFalse();
-      assumeThat(existingBooking.isActive()).isTrue();
-    }
-
-    private void when_cancelBooking() {
-      bookingCanceled = classUnderTest.cancelBooking(existingBooking.getUuid());
-    }
-
-    private void then_assertBookingCanceled() {
-      assertThat(bookingCanceled).isTrue();
+      // given
+      CampsiteEntity campsite = testDataHelper.createCampsiteEntity();
+      BookingEntity booking = testDataHelper.createBookingEntity(campsite.getId());
+      // when
+      boolean cancelled = classUnderTest.cancelBooking(booking.getUuid());
+      // then
+      assertThat(cancelled).isTrue();
     }
   }
 }
