@@ -1,32 +1,28 @@
 package com.kiroule.campsite.booking.api.service;
 
-import static com.kiroule.campsite.booking.api.TestHelper.CAMPSITE_ID;
-import static com.kiroule.campsite.booking.api.TestHelper.buildBooking;
-import static java.util.Arrays.asList;
+import static com.kiroule.campsite.booking.api.TestDataHelper.nextBooking;
+import static java.time.LocalDate.now;
+import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assumptions.assumeThat;
-import static org.assertj.core.api.Fail.fail;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.kiroule.campsite.booking.api.BaseIT;
+import com.kiroule.campsite.booking.api.TestDataHelper;
 import com.kiroule.campsite.booking.api.mapper.BookingMapper;
-import com.kiroule.campsite.booking.api.mapper.CampsiteMapper;
 import com.kiroule.campsite.booking.api.model.Booking;
-import com.kiroule.campsite.booking.api.model.Campsite;
 import com.kiroule.campsite.booking.api.repository.BookingRepository;
-import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
 import com.kiroule.campsite.booking.api.repository.entity.BookingEntity;
+import com.kiroule.campsite.booking.api.repository.entity.CampsiteEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,104 +33,68 @@ import org.springframework.beans.factory.annotation.Qualifier;
  *
  * @author Igor Baiborodine
  */
-@Disabled
 class BookingServiceImplConcurrentIT extends BaseIT {
-
-  @Autowired BookingRepository bookingRepository;
 
   @Autowired
   @Qualifier("bookingService")
   BookingService classUnderTest;
 
-  @Autowired CampsiteRepository campsiteRepository;
-
-  @Autowired CampsiteMapper campsiteMapper;
+  @Autowired BookingRepository bookingRepository;
 
   @Autowired BookingMapper bookingMapper;
 
-  ExecutorService executor;
-  LocalDate now;
-
-  @BeforeEach
-  void tearDown() {
-    bookingRepository.deleteAll();
-    now = LocalDate.now();
-  }
-
-  @SneakyThrows
-  private void then_assertExecutorTerminated() {
-    assertTrue(executor.awaitTermination(1, TimeUnit.MINUTES));
-  }
+  @Autowired TestDataHelper testDataHelper;
 
   @Nested
   class CreateBooking {
 
-    List<Booking> newBookings;
-
-    @BeforeEach
-    void beforeEach() {
-      newBookings = null;
-    }
-
     @Test
+    @SneakyThrows
     void given_3_new_bookings_with_same_booking_dates__then_only_1_created() {
-      given_threeBookingsWithSameBookingDates(1, 2);
-
-      when_createBookingsConcurrently();
-
-      then_assertExecutorTerminated();
-      then_assertCreatedBooking();
-    }
-
-    private void given_threeBookingsWithSameBookingDates(int startPlusDays, int endPlusDays) {
-      Campsite campsite = campsiteMapper.toCampsite(campsiteRepository.findById(CAMPSITE_ID).get());
-      newBookings =
-          asList(
-              buildBooking(
-                  now.plusDays(startPlusDays),
-                  now.plusDays(endPlusDays),
-                  UUID.randomUUID(),
-                  CAMPSITE_ID),
-              buildBooking(
-                  now.plusDays(startPlusDays),
-                  now.plusDays(endPlusDays),
-                  UUID.randomUUID(),
-                  CAMPSITE_ID),
-              buildBooking(
-                  now.plusDays(startPlusDays),
-                  now.plusDays(endPlusDays),
-                  UUID.randomUUID(),
-                  CAMPSITE_ID));
-    }
-
-    private void when_createBookingsConcurrently() {
-      executor = Executors.newFixedThreadPool(newBookings.size());
-      newBookings.forEach(b -> executor.execute(() -> classUnderTest.createBooking(b)));
-      executor.shutdown();
-    }
-
-    private void then_assertCreatedBooking() {
+      // given
+      CampsiteEntity campsiteEntity = testDataHelper.createCampsiteEntity();
       List<Booking> bookings =
-          newArrayList(bookingRepository.findAll()).stream()
-              .map(b -> bookingMapper.toBooking(b))
-              .toList();
-      assertThat(bookings).hasSize(1);
+          newArrayList(
+              buildBooking(campsiteEntity.getId()),
+              buildBooking(campsiteEntity.getId()),
+              buildBooking(campsiteEntity.getId()));
+      // when
+      ExecutorService executor = newFixedThreadPool(bookings.size());
+      bookings.forEach(b -> executor.execute(() -> classUnderTest.createBooking(b)));
+      executor.shutdown();
+      // then
+      assertTrue(executor.awaitTermination(1, TimeUnit.MINUTES));
 
-      UUID uuid = bookings.iterator().next().getUuid();
-      // To avoid org.hibernate.LazyInitializationException for campsite field,
-      // use BookingService to fetch booking in question
-      Booking createdBooking = classUnderTest.findByUuid(uuid);
+      List<BookingEntity> bookingEntities =
+          bookingRepository.findForDateRange(
+              bookings.get(0).getStartDate(), bookings.get(0).getEndDate(), campsiteEntity.getId());
+      assertThat(bookingEntities).hasSize(1);
 
-      Booking newBooking =
-          newBookings.stream().filter(b -> b.getUuid().equals(uuid)).findFirst().get();
-      assertThat(createdBooking)
-          .usingRecursiveComparison()
-          .ignoringFields("id", "version", "createdAt", "updatedAt", "campsite")
-          .isEqualTo(newBooking);
-      //      assertThat(createdBooking.getCampsite())
-      //          .usingRecursiveComparison()
-      //          .ignoringFields("$$_hibernate_interceptor")
-      //          .isEqualTo(newBooking.getCampsite());
+      BookingEntity createdBookingEntity = bookingEntities.get(0);
+      assertThat(createdBookingEntity).hasNoNullFieldsOrProperties();
+
+      Predicate<Booking> bookingPredicate =
+          b ->
+              b.getCampsiteId().equals(createdBookingEntity.getCampsiteId())
+                  && b.getStartDate().equals(createdBookingEntity.getStartDate())
+                  && b.getEndDate().equals(createdBookingEntity.getEndDate())
+                  && b.getEmail().equals(createdBookingEntity.getEmail())
+                  && b.getFullName().equals(createdBookingEntity.getFullName());
+      List<Booking> filteredBookings = bookings.stream().filter(bookingPredicate).toList();
+      assertThat(filteredBookings).hasSize(1);
+    }
+
+    private Booking buildBooking(Long campsiteId) {
+      return nextBooking().toBuilder()
+          .id(null)
+          .uuid(null)
+          .version(null)
+          .campsiteId(campsiteId)
+          .startDate(now().plusDays(1))
+          .endDate(now().plusDays(2))
+          .createdAt(null)
+          .updatedAt(null)
+          .build();
     }
   }
 
@@ -151,103 +111,94 @@ class BookingServiceImplConcurrentIT extends BaseIT {
     }
 
     @Test
+    @SneakyThrows
     void given_2_updates_for_same_existing_booking__then_only_1_update_executed() {
-      given_existingBooking(1, 2, UUID.randomUUID());
-      given_twoUpdatesForExistingBooking();
+      // given
+      CampsiteEntity campsiteEntity = testDataHelper.createCampsiteEntity();
+      BookingEntity bookingEntity = testDataHelper.createBookingEntity(campsiteEntity.getId());
+      List<Booking> bookingUpdates =
+          List.of(
+              buildBookingUpdate(bookingEntity, 1, 3), //
+              buildBookingUpdate(bookingEntity, 2, 4));
+      // when
+      ExecutorService executor = newFixedThreadPool(bookingUpdates.size());
+      bookingUpdates.forEach(b -> executor.execute(() -> classUnderTest.updateBooking(b)));
+      executor.shutdown();
+      // then
+      assertTrue(executor.awaitTermination(1, TimeUnit.MINUTES));
 
-      when_updateBookingConcurrently();
+      Optional<BookingEntity> updatedBookingEntity =
+          bookingRepository.findByUuid(bookingEntity.getUuid());
+      assertThat(updatedBookingEntity).isPresent();
+      assertThat(updatedBookingEntity.get().getVersion()).isEqualTo(1L);
 
-      then_assertExecutorTerminated();
-      then_assertOptimisticLockingBookingUpdate();
+      Predicate<Booking> bookingPredicate =
+          b ->
+              b.getCampsiteId().equals(updatedBookingEntity.get().getCampsiteId())
+                  && b.getStartDate().equals(updatedBookingEntity.get().getStartDate())
+                  && b.getEndDate().equals(updatedBookingEntity.get().getEndDate());
+      List<Booking> filteredBookings = bookingUpdates.stream().filter(bookingPredicate).toList();
+      assertThat(filteredBookings).hasSize(1);
     }
 
     @Test
+    @SneakyThrows
     void given_3_updated_bookings_with_same_booking_dates__then_only_1_updated() {
-      given_existingBooking(1, 2, UUID.randomUUID());
-      given_existingBooking(3, 4, UUID.randomUUID());
-      given_existingBooking(5, 6, UUID.randomUUID());
-      given_sameBookingDatesUpdateForExistingBookings(7, 8);
+      // given
+      CampsiteEntity campsiteEntity = testDataHelper.createCampsiteEntity();
+      BookingEntity bookingEntity1 =
+          testDataHelper.createBookingEntity(campsiteEntity.getId(), 1, 2);
+      BookingEntity bookingEntity2 =
+          testDataHelper.createBookingEntity(campsiteEntity.getId(), 2, 3);
+      BookingEntity bookingEntity3 =
+          testDataHelper.createBookingEntity(campsiteEntity.getId(), 3, 4);
 
-      when_updateBookingConcurrently();
-
-      then_assertExecutorTerminated();
-      then_assertPessimisticLockingBookingUpdate(7, 8);
-    }
-
-    private void given_existingBooking(int startPlusDays, int endPlusDays, UUID uuid) {
-      Booking booking = buildBooking(now.plusDays(startPlusDays), now.plusDays(endPlusDays), uuid);
-      BookingEntity bookingEntity = bookingMapper.toBookingEntity(booking);
-      Booking savedBooking = bookingMapper.toBooking(bookingRepository.save(bookingEntity));
-      existingBookings.add(savedBooking);
-
-      //      assumeThat(savedBooking.isNew()).isFalse();
-      assumeThat(savedBooking.isActive()).isTrue();
-      assumeThat(savedBooking.getVersion()).isEqualTo(0L);
-    }
-
-    private void given_twoUpdatesForExistingBooking() {
-      existingBookingUpdates = asList(updateBooking(0, 3, 5), updateBooking(0, 13, 15));
-    }
-
-    private void given_sameBookingDatesUpdateForExistingBookings(
-        int startPlusDays, int endPlusDays) {
-      existingBookingUpdates =
-          asList(
-              updateBooking(0, startPlusDays, endPlusDays),
-              updateBooking(1, startPlusDays, endPlusDays),
-              updateBooking(2, startPlusDays, endPlusDays));
-    }
-
-    private Booking updateBooking(int index, int startPlusDays, int endPlusDays) {
-      Booking booking = existingBookings.get(index);
-
-      Booking updatedBooking =
-          booking.toBuilder()
-              .startDate(now.plusDays(startPlusDays))
-              .endDate(now.plusDays(endPlusDays))
-              .build();
-      updatedBooking.setCreatedAt(booking.getCreatedAt());
-      updatedBooking.setUpdatedAt(booking.getUpdatedAt());
-
-      return updatedBooking;
-    }
-
-    private void when_updateBookingConcurrently() {
-      executor = Executors.newFixedThreadPool(existingBookingUpdates.size());
-      existingBookingUpdates.forEach(b -> executor.execute(() -> classUnderTest.updateBooking(b)));
+      LocalDate newStartDate = now();
+      LocalDate newEndDate = newStartDate.plusDays(1);
+      List<Booking> bookingUpdates =
+          List.of(
+              buildBookingUpdate(bookingEntity1, newStartDate, newEndDate), //
+              buildBookingUpdate(bookingEntity2, newStartDate, newEndDate), //
+              buildBookingUpdate(bookingEntity3, newStartDate, newEndDate));
+      // when
+      ExecutorService executor = newFixedThreadPool(bookingUpdates.size());
+      bookingUpdates.forEach(b -> executor.execute(() -> classUnderTest.updateBooking(b)));
       executor.shutdown();
-    }
+      // then
+      assertTrue(executor.awaitTermination(1, TimeUnit.MINUTES));
 
-    private void then_assertOptimisticLockingBookingUpdate() {
-      List<Booking> bookings =
-          newArrayList(bookingRepository.findAll()).stream()
-              .map(b -> bookingMapper.toBooking(b))
+      List<BookingEntity> bookingEntities =
+          bookingRepository.findForDateRange(newStartDate, newEndDate, campsiteEntity.getId());
+      assertThat(bookingEntities).hasSize(1);
+
+      BookingEntity updatedBookingEntity = bookingEntities.get(0);
+      assertThat(updatedBookingEntity.getVersion()).isEqualTo(1L);
+
+      List<Booking> filteredBookingUpdates =
+          bookingUpdates.stream()
+              .filter(b -> !b.getUuid().equals(updatedBookingEntity.getUuid()))
               .toList();
-      assertThat(bookings).hasSize(1);
+      assertThat(filteredBookingUpdates).hasSize(2);
 
-      Booking updatedBooking = bookings.get(0);
-      assertThat(updatedBooking.getVersion()).isEqualTo(1L);
-      assertThat(updatedBooking.getStartDate())
-          .isNotEqualTo(existingBookings.get(0).getStartDate());
-      assertThat(updatedBooking.getEndDate()).isNotEqualTo(existingBookings.get(0).getEndDate());
+      filteredBookingUpdates.stream()
+          .map(b -> bookingRepository.findByUuid(b.getUuid()))
+          .forEach(e -> assertThat(e.get().getVersion()).isEqualTo(0L));
     }
 
-    private void then_assertPessimisticLockingBookingUpdate(int startPlusDays, int endPlusDays) {
-      List<BookingEntity> bookings = newArrayList(bookingRepository.findAll());
-      assertThat(bookings).hasSize(3);
+    private Booking buildBookingUpdate(
+        BookingEntity bookingEntity, int startDateDaysToAdd, int endDateDaysToAdd) {
+      return bookingMapper.toBooking(bookingEntity).toBuilder()
+          .startDate(bookingEntity.getStartDate().plusDays(startDateDaysToAdd))
+          .endDate(bookingEntity.getEndDate().plusDays(endDateDaysToAdd))
+          .build();
+    }
 
-      bookings.forEach(
-          b -> {
-            if (b.getVersion() == 0L) {
-              assertThat(b.getStartDate()).isNotEqualTo(now.plusDays(startPlusDays));
-              assertThat(b.getEndDate()).isNotEqualTo(now.plusDays(endPlusDays));
-            } else if (b.getVersion() == 1L) {
-              assertThat(b.getStartDate()).isEqualTo(now.plusDays(startPlusDays));
-              assertThat(b.getEndDate()).isEqualTo(now.plusDays(endPlusDays));
-            } else {
-              fail("Illegal version value for %s", b);
-            }
-          });
+    private Booking buildBookingUpdate(
+        BookingEntity bookingEntity, LocalDate startDate, LocalDate endDate) {
+      return bookingMapper.toBooking(bookingEntity).toBuilder()
+          .startDate(startDate)
+          .endDate(endDate)
+          .build();
     }
   }
 }

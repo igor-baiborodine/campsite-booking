@@ -3,6 +3,7 @@ package com.kiroule.campsite.booking.api.service;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
@@ -75,7 +76,9 @@ public class BookingServiceImpl implements BookingService {
 
     checkArgument(isNull(booking.getUuid()), "New booking must not have UUID");
     checkArgument(booking.isActive(), "Booking must be active");
+
     validateVacantDates(booking);
+    booking.setUuid(randomUUID());
     var bookingEntity = bookingMapper.toBookingEntity(booking);
 
     return bookingMapper.toBooking(bookingRepository.saveAndFlush(bookingEntity));

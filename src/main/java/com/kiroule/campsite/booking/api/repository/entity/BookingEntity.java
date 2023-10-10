@@ -36,10 +36,8 @@ public class BookingEntity extends DateAuditEntity {
   private Long id;
 
   /** Business ID */
-  @Getter
-  @EqualsAndHashCode.Include
-  @Column(name = "uuid", nullable = false, unique = true)
   @JdbcTypeCode(VARCHAR)
+  @Column(name = "uuid", nullable = false, unique = true)
   private UUID uuid;
 
   @Version

@@ -88,7 +88,7 @@ public class TestDataHelper {
     CampsiteEntity campsiteEntity =
         nextCampsiteEntity().toBuilder().id(null).createdAt(null).updatedAt(null).build();
 
-    CampsiteEntity savedCampsiteEntity = campsiteRepository.saveAndFlush(campsiteEntity);
+    CampsiteEntity savedCampsiteEntity = campsiteRepository.save(campsiteEntity);
     assumeTrue(nonNull(savedCampsiteEntity.getId()));
 
     return savedCampsiteEntity;
@@ -114,7 +114,7 @@ public class TestDataHelper {
     if (nonNull(endDateDaysToAdd)) {
       builder.endDate(builder.build().getStartDate().plusDays(endDateDaysToAdd));
     }
-    BookingEntity savedBookingEntity = bookingRepository.saveAndFlush(builder.build());
+    BookingEntity savedBookingEntity = bookingRepository.save(builder.build());
     assumeTrue(nonNull(savedBookingEntity.getId()));
     assumeTrue(savedBookingEntity.getVersion().equals(0L));
 
