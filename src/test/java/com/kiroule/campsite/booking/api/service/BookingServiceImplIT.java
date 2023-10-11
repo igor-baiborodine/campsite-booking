@@ -33,9 +33,9 @@ class BookingServiceImplIT extends BaseIT {
       CampsiteEntity campsite = testDataHelper.createCampsiteEntity();
       BookingEntity booking = testDataHelper.createBookingEntity(campsite.getId());
       // when
-      boolean cancelled = classUnderTest.cancelBooking(booking.getUuid());
+      boolean result = classUnderTest.cancelBooking(booking.getUuid());
       // then
-      assertThat(cancelled).isTrue();
+      assertThat(result).isTrue();
     }
   }
 }
