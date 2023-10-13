@@ -10,20 +10,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Generated;
+import lombok.*;
 
 /**
  * DTO domain object representing a booking.
  *
  * @author Igor Baiborodine
  */
-@Builder(toBuilder = true)
 @Data
-@AllArgsConstructor
+@Builder(toBuilder = true)
 @BookingStartDateBeforeEndDate
 @BookingAllowedStartDate
 @BookingMaximumStay
@@ -32,7 +27,7 @@ import lombok.Generated;
 public class BookingDto {
 
   /** Business ID */
-  @NotNull @EqualsAndHashCode.Include private UUID uuid;
+  private UUID uuid;
 
   @NotNull private Long campsiteId;
 
