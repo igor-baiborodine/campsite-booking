@@ -1,21 +1,21 @@
 package com.kiroule.campsite.booking.api.service;
 
-import static com.kiroule.campsite.booking.api.TestHelper.CAMPSITE_ID;
-import static com.kiroule.campsite.booking.api.TestHelper.buildCampsite;
+import static com.kiroule.campsite.booking.api.TestDataHelper.nextCampsite;
+import static com.kiroule.campsite.booking.api.TestDataHelper.nextCampsiteEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
-import com.kiroule.campsite.booking.api.CustomReplaceUnderscores;
 import com.kiroule.campsite.booking.api.exception.CampsiteNotFoundException;
+import com.kiroule.campsite.booking.api.mapper.CampsiteMapper;
 import com.kiroule.campsite.booking.api.model.Campsite;
 import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
+import com.kiroule.campsite.booking.api.repository.entity.CampsiteEntity;
 import java.util.Optional;
-
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -26,72 +26,42 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * @author Igor Baiborodine
  */
 @ExtendWith(MockitoExtension.class)
-@DisplayNameGeneration(CustomReplaceUnderscores.class)
 class CampsiteServiceImplTest {
 
   @Mock CampsiteRepository campsiteRepository;
 
+  @Mock CampsiteMapper campsiteMapper;
+
   @InjectMocks CampsiteServiceImpl classUnderTest;
 
-  Campsite existingCampsite;
-
-  @BeforeEach
-  void beforeEach() {
-    existingCampsite = null;
-  }
-
   @Nested
-  @Disabled
   class FindById {
-
-    Campsite foundCampsite;
-
-    @BeforeEach
-    void beforeEach() {
-      foundCampsite = null;
-    }
 
     @Test
     void happy_path() {
-      given_existingCampsite();
-      given_foundExistingCampsiteForId();
-
-      when_findCampsiteById();
-
-      then_assertCampsiteFound();
+      // given
+      Campsite campsite = nextCampsite();
+      CampsiteEntity campsiteEntity = nextCampsiteEntity();
+      doReturn(Optional.of(campsiteEntity)).when(campsiteRepository).findById(any());
+      doReturn(campsite).when(campsiteMapper).toCampsite(any(CampsiteEntity.class));
+      // when
+      Campsite result = classUnderTest.findById(campsite.getId());
+      // then
+      assertThat(result).isEqualTo(campsite);
+      verify(campsiteRepository).findById(campsite.getId());
+      verify(campsiteMapper).toCampsite(campsiteEntity);
     }
 
     @Test
     void given_non_existing_campsite_uuid__then_campsite_not_found_and_exception_thrown() {
-      given_foundNoExistingCampsiteForId();
-
-      when_findCampsiteById_and_thenAssertExceptionThrown(CampsiteNotFoundException.class);
-    }
-
-    private void given_existingCampsite() {
-      existingCampsite = buildCampsite();
-    }
-
-    private void given_foundNoExistingCampsiteForId() {
-      doReturn(Optional.empty()).when(campsiteRepository).findById(any());
-    }
-
-    private void given_foundExistingCampsiteForId() {
-      doReturn(Optional.of(existingCampsite)).when(campsiteRepository).findById(any());
-    }
-
-    private void when_findCampsiteById() {
-      foundCampsite = classUnderTest.findById(CAMPSITE_ID);
-    }
-
-    private void then_assertCampsiteFound() {
-      assertThat(foundCampsite).isEqualTo(existingCampsite);
-      verify(campsiteRepository).findById(CAMPSITE_ID);
-    }
-
-    private void when_findCampsiteById_and_thenAssertExceptionThrown(
-        Class<? extends Exception> exception) {
-      assertThrows(exception, () -> classUnderTest.findById(any()));
+      // given
+      Campsite campsite = nextCampsite();
+      // when
+      Executable executable = () -> classUnderTest.findById(campsite.getId());
+      // then
+      assertThrows(CampsiteNotFoundException.class, executable);
+      verify(campsiteRepository).findById(campsite.getId());
+      verify(campsiteMapper, never()).toCampsite(any());
     }
   }
 }

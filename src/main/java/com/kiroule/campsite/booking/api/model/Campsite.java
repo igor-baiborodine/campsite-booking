@@ -1,8 +1,7 @@
 package com.kiroule.campsite.booking.api.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Generated;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Model domain object representing a campsite.
@@ -10,7 +9,8 @@ import lombok.Generated;
  * @author Igor Baiborodine
  */
 @Data
-@Builder(toBuilder = true)
+@SuperBuilder(toBuilder = true)
+@EqualsAndHashCode(callSuper = true)
 @Generated
 public class Campsite extends DateAudit {
 
@@ -18,7 +18,7 @@ public class Campsite extends DateAudit {
   private Long id;
 
   /** Capacity, max number of people that campsite can accommodate */
-  private int capacity;
+  private Integer capacity;
 
   private boolean restrooms;
 

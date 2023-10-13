@@ -4,7 +4,6 @@ import com.kiroule.campsite.booking.api.exception.CampsiteNotFoundException;
 import com.kiroule.campsite.booking.api.mapper.CampsiteMapper;
 import com.kiroule.campsite.booking.api.model.Campsite;
 import com.kiroule.campsite.booking.api.repository.CampsiteRepository;
-import com.kiroule.campsite.booking.api.repository.entity.CampsiteEntity;
 import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +26,7 @@ public class CampsiteServiceImpl implements CampsiteService {
 
     Supplier<CampsiteNotFoundException> exceptionSupplier =
         () -> new CampsiteNotFoundException(String.format("Booking was not found for id=%d", id));
-    CampsiteEntity campsiteEntity = campsiteRepository.findById(id).orElseThrow(exceptionSupplier);
+    var campsiteEntity = campsiteRepository.findById(id).orElseThrow(exceptionSupplier);
     return campsiteMapper.toCampsite(campsiteEntity);
   }
 }

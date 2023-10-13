@@ -12,7 +12,7 @@ public interface CustomBookingRepository {
           + "or (?1 < b.endDate and b.endDate <= ?2) "
           + "or (?1 <= b.startDate and b.startDate <=?2)) "
           + "and b.active = true "
-          + "and b.campsite.id = ?3 ";
+          + "and b.campsiteId = ?3 ";
 
   /**
    * Find active bookings for the given date range and campsite ID with pessimistic write locking.

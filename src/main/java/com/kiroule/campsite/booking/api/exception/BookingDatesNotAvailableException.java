@@ -7,8 +7,7 @@ import java.io.Serial;
  */
 public class BookingDatesNotAvailableException extends RuntimeException {
 
-  @Serial
-  private static final long serialVersionUID = 3055008776888916764L;
+  @Serial private static final long serialVersionUID = 3055008776888916764L;
 
   public BookingDatesNotAvailableException(String message) {
     super(message);

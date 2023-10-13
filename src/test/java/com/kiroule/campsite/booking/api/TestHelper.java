@@ -48,16 +48,16 @@ public class TestHelper {
   }
 
   public static Booking buildBooking(LocalDate startDate, LocalDate endDate, UUID uuid) {
-    return buildBooking(buildCampsite(), startDate, endDate, uuid, FULL_NAME, EMAIL, true);
+    return buildBooking(CAMPSITE_ID, startDate, endDate, uuid, FULL_NAME, EMAIL, true);
   }
 
   public static Booking buildBooking(
-      LocalDate startDate, LocalDate endDate, UUID uuid, Campsite campsite) {
-    return buildBooking(campsite, startDate, endDate, uuid, FULL_NAME, EMAIL, true);
+      LocalDate startDate, LocalDate endDate, UUID uuid, Long campsiteId) {
+    return buildBooking(campsiteId, startDate, endDate, uuid, FULL_NAME, EMAIL, true);
   }
 
   public static Booking buildBooking(
-      Campsite campsite,
+      Long campsiteId,
       LocalDate startDate,
       LocalDate endDate,
       UUID uuid,
@@ -65,7 +65,7 @@ public class TestHelper {
       String email,
       boolean active) {
     return Booking.builder()
-        .campsite(campsite)
+        .campsiteId(campsiteId)
         .startDate(startDate)
         .endDate(endDate)
         .uuid(uuid)
@@ -81,16 +81,16 @@ public class TestHelper {
 
   public static BookingEntity buildBookingEntity(
       LocalDate startDate, LocalDate endDate, UUID uuid) {
-    return buildBookingEntity(buildCampsiteEntity(), startDate, endDate, uuid, FULL_NAME, EMAIL, true);
+    return buildBookingEntity(CAMPSITE_ID, startDate, endDate, uuid, FULL_NAME, EMAIL, true);
   }
 
   public static BookingEntity buildBookingEntity(
-      LocalDate startDate, LocalDate endDate, UUID uuid, CampsiteEntity campsite) {
-    return buildBookingEntity(campsite, startDate, endDate, uuid, FULL_NAME, EMAIL, true);
+      LocalDate startDate, LocalDate endDate, UUID uuid, Long campsiteId) {
+    return buildBookingEntity(campsiteId, startDate, endDate, uuid, FULL_NAME, EMAIL, true);
   }
 
   public static BookingEntity buildBookingEntity(
-      CampsiteEntity campsite,
+      Long campsiteId,
       LocalDate startDate,
       LocalDate endDate,
       UUID uuid,
@@ -98,7 +98,7 @@ public class TestHelper {
       String email,
       boolean active) {
     return BookingEntity.builder()
-        .campsite(campsite)
+        .campsiteId(campsiteId)
         .startDate(startDate)
         .endDate(endDate)
         .uuid(uuid)

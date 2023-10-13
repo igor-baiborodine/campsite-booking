@@ -14,8 +14,7 @@ public class CustomReplaceUnderscores extends DisplayNameGenerator.ReplaceUnders
 
     if (nonNull(testMethod.getAnnotation(DisplayNamePrefix.class))) {
       methodName =
-          format(
-              "%s, %s", testMethod.getAnnotation(DisplayNamePrefix.class).value(), methodName);
+          format("%s, %s", testMethod.getAnnotation(DisplayNamePrefix.class).value(), methodName);
     }
     return methodName;
   }
