@@ -134,12 +134,12 @@ the `Request Body` text area, and click on the `Execute`:
 
 ```json
 {
-  "uuid": "8db6b1f4-27ba-11eb-adc1-0242ac120001",  
-  "email": "john.smith.1@email.com",
-  "fullName": "John Smith 1",
-  "startDate": "2022-08-21",
-  "endDate": "2022-08-23", 
-  "campsiteId": "1"
+  "campsiteId": 1,
+  "email": "John Smith",
+  "fullName": "john.smith@email.com",
+  "startDate": "2023-10-29",
+  "endDate": "2023-10-30",
+  "active": true
 }
 ```
 ![Swagger UI Add Booking 1](/readme/swagger-add-booking-1.png)
@@ -161,36 +161,37 @@ Execute the [create-bookings.sh](concurrent-test/create-bookings.sh) script to s
 booking creation for the same booking dates:
 
 ```bash
-$ concurrent-test/create-bookings.sh 2022-09-16 2022-09-17 http:/localhost:80
+$ concurrent-test/create-bookings.sh 2023-10-16 2023-10-17 http:/localhost:80
 ```
 The response should be as follows after formatting, i.e., only one booking was created:
 ```json
-{
-   "id":2,
-   "version":0,
-   "campsiteId":1,
-   "uuid":"ea2e2f8f-749d-4497-b0ec-0da4bf437800",
-   "email":"john.smith.3@email.com",
-   "fullName":"John Smith 3",
-   "startDate":"2022-09-16",
-   "endDate":"2022-09-17",
-   "active":true,
-   "_links":{
-      "self":{
-         "href":"http://localhost/v2/booking/ea2e2f8f-749d-4497-b0ec-0da4bf437800"
+[
+  {
+    "status": "BAD_REQUEST",
+    "timestamp": "2023-10-15T16:36:53.563620238",
+    "message": "No vacant dates available from 2023-10-16 to 2023-10-17"
+  },
+  {
+    "status": "BAD_REQUEST",
+    "timestamp": "2023-10-15T16:36:53.568417093",
+    "message": "No vacant dates available from 2023-10-16 to 2023-10-17"
+  },
+  {
+    "uuid": "870cdaaa-592e-4f9e-92e4-8168f7d427b7",
+    "version": 0,
+    "campsiteId": 1,
+    "email": "john.smith.3@email.com",
+    "fullName": "John Smith 3",
+    "startDate": "2023-10-16",
+    "endDate": "2023-10-17",
+    "active": true,
+    "_links": {
+      "self": {
+        "href": "http://localhost:8080/v2/booking/870cdaaa-592e-4f9e-92e4-8168f7d427b7"
       }
-   }
-}
-{
-   "status":"BAD_REQUEST",
-   "timestamp":"2022-08-30T02:52:19.10936",
-   "message":"No vacant dates available from 2022-09-16 to 2022-09-17"
-}
-{
-   "status":"BAD_REQUEST",
-   "timestamp":"2022-08-30T02:52:19.210229",
-   "message":"No vacant dates available from 2022-09-16 to 2022-09-17"
-}
+    }
+  }
+]
 ```
 
 #### Booking Update
@@ -198,31 +199,32 @@ Execute the [update-booking.sh](concurrent-test/update-booking.sh) script to sim
 updates for the same booking:
 
 ```bash
-$ concurrent-test/update-booking.sh 2022-09-16 2022-09-17 http:/localhost:80
+$ concurrent-test/update-booking.sh 2022-10-25 2022-10-26 http:/localhost:80
 ```
 The response should be as follows after formatting, i.e., only one booking was updated:
 ```json
-{
-  "id": 16,
-  "uuid": "fb79da99-0189-417c-b3de-e91c827151c7",
-  "version": 1,
-  "campsiteId": 2,
-  "email": "john.smith.1@email.com",
-  "fullName": "John Smith 1",
-  "startDate": "2022-09-16",
-  "endDate": "2022-09-17",
-  "active": true,
-  "_links": {
-    "self": {
-      "href": "http://localhost/v2/booking/fb79da99-0189-417c-b3de-e91c827151c7"
+[
+  {
+    "uuid": "cbf91bf1-c533-4c3d-a9c5-c1e3b0396306",
+    "version": 0,
+    "campsiteId": 3,
+    "email": "john.smith.1@email.com",
+    "fullName": "John Smith 1",
+    "startDate": "2023-10-25",
+    "endDate": "2023-10-26",
+    "active": true,
+    "_links": {
+      "self": {
+        "href": "http://localhost:8080/v2/booking/cbf91bf1-c533-4c3d-a9c5-c1e3b0396306"
+      }
     }
+  },
+  {
+    "status": "CONFLICT",
+    "timestamp": "2023-10-15T17:04:18.606047801",
+    "message": "Optimistic locking error - booking was updated by another transaction"
   }
-}
-{
-  "status": "CONFLICT",
-  "timestamp": "2022-08-30T11:57:26.956261999",
-  "message": "Optimistic locking error - booking was updated by another transaction"
-}
+]
 ```
 
 ### Basic Load Testing 
