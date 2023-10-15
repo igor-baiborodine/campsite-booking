@@ -195,6 +195,7 @@ class BookingControllerIT extends BaseIT {
       BookingDto bookingDto =
           nextBookingDto().toBuilder()
               .uuid(bookingEntity.getUuid())
+              .version(bookingEntity.getVersion())
               .campsiteId(bookingEntity.getCampsiteId())
               .startDate(bookingEntity.getStartDate().plusDays(1))
               .endDate(bookingEntity.getEndDate().plusDays(2))
@@ -210,7 +211,11 @@ class BookingControllerIT extends BaseIT {
               .put(BASE_PATH + "/{uuid}")
               .as(BookingDto.class);
       // then
-      assertThat(updatedBookingDto).usingRecursiveComparison().isEqualTo(bookingDto);
+      assertThat(updatedBookingDto)
+          .usingRecursiveComparison()
+          .ignoringFields("version")
+          .isEqualTo(bookingDto);
+      assertThat(updatedBookingDto.getVersion()).isEqualTo(1L);
     }
 
     @Test
@@ -242,6 +247,37 @@ class BookingControllerIT extends BaseIT {
           format(
               "No vacant dates available from %s to %s",
               bookingDto1.getStartDate(), bookingDto1.getEndDate());
+      assertThat(apiError.getMessage()).isEqualTo(message);
+    }
+
+    @Test
+    void given_existing_booking_was_updated_by_another_transaction__then_status_conflict() {
+      // given
+      CampsiteEntity campsiteEntity = testDataHelper.createCampsiteEntity();
+      BookingEntity bookingEntity = testDataHelper.createBookingEntity(campsiteEntity.getId());
+      BookingDto bookingDto =
+          nextBookingDto().toBuilder()
+              .uuid(bookingEntity.getUuid())
+              .version(bookingEntity.getVersion())
+              .campsiteId(bookingEntity.getCampsiteId())
+              .startDate(bookingEntity.getStartDate())
+              .endDate(bookingEntity.getEndDate().plusDays(2))
+              .active(bookingEntity.isActive())
+              .build();
+      testDataHelper.updateBookingEntity(
+          bookingEntity.toBuilder().endDate(bookingEntity.getEndDate().plusDays(5)).build());
+      // when
+      ApiError apiError =
+          given()
+              .pathParam("uuid", bookingDto.getUuid())
+              .contentType(APPLICATION_JSON_VALUE)
+              .body(bookingDto)
+              .when()
+              .put(BASE_PATH + "/{uuid}")
+              .as(ApiError.class);
+      // then
+      assertThat(apiError.getStatus()).isEqualTo(CONFLICT);
+      String message = "Optimistic locking error - booking was updated by another transaction";
       assertThat(apiError.getMessage()).isEqualTo(message);
     }
   }

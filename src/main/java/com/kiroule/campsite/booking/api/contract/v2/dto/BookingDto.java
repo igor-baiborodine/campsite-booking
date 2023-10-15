@@ -29,6 +29,8 @@ public class BookingDto {
   /** Business ID */
   private UUID uuid;
 
+  private Long version;
+
   @NotNull private Long campsiteId;
 
   @NotEmpty

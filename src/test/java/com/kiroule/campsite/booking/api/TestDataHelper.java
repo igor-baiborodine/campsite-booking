@@ -120,4 +120,8 @@ public class TestDataHelper {
 
     return savedBookingEntity;
   }
+
+  public BookingEntity updateBookingEntity(BookingEntity bookingEntity) {
+    return bookingRepository.save(bookingEntity);
+  }
 }

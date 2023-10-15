@@ -98,7 +98,6 @@ public class BookingServiceImpl implements BookingService {
     validateVacantDates(booking);
 
     booking.setId(persistedBooking.getId());
-    booking.setVersion(persistedBooking.getVersion());
     var bookingEntity = bookingMapper.toBookingEntity(booking);
     var savedBookingEntity = bookingRepository.saveAndFlush(bookingEntity);
 
