@@ -75,7 +75,7 @@ class BookingServiceImplTest {
 
     @Test
     void happy_path() {
-      Booking booking = nextBooking().toBuilder().uuid(null).build();
+      Booking booking = nextBooking().toBuilder().uuid(null).version(null).build();
       BookingEntity bookingEntity = nextBookingEntity();
 
       doReturn(emptyList())
@@ -99,7 +99,7 @@ class BookingServiceImplTest {
     @Test
     void given_booking_dates_not_available__then_BookingDatesNotAvailableException_thrown() {
       // given
-      Booking booking = nextBooking().toBuilder().uuid(null).build();
+      Booking booking = nextBooking().toBuilder().uuid(null).version(null).build();
       Booking existingBooking =
           nextBooking().toBuilder()
               .startDate(booking.getStartDate())
