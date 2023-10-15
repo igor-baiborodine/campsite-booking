@@ -127,6 +127,7 @@ class BookingControllerIT extends BaseIT {
       BookingDto bookingDto =
           nextBookingDto().toBuilder()
               .uuid(null)
+              .version(null)
               .campsiteId(campsiteEntity.getId())
               .startDate(bookingEntity.getStartDate())
               .endDate(bookingEntity.getEndDate())

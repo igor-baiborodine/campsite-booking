@@ -1,8 +1,8 @@
 {
-  "uuid": "UUID",
   "email": "EMAIL",
   "fullName": "FULL_NAME",
   "startDate": "START_DATE",
   "endDate": "END_DATE",
-  "campsiteId": "1"
+  "campsiteId": "1",
+  "active": "true"
 }

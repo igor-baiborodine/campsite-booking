@@ -1,6 +1,7 @@
 package com.kiroule.campsite.booking.api.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.UUID.randomUUID;
@@ -75,6 +76,7 @@ public class BookingServiceImpl implements BookingService {
   public Booking createBooking(Booking booking) {
 
     checkArgument(isNull(booking.getUuid()), "New booking must not have UUID");
+    checkArgument(isNull(booking.getVersion()), "New booking must not have version");
     checkArgument(booking.isActive(), "Booking must be active");
 
     validateVacantDates(booking);
@@ -92,12 +94,13 @@ public class BookingServiceImpl implements BookingService {
       backoff = @Backoff(delay = 500, maxDelay = 1000))
   public Booking updateBooking(Booking booking) {
 
-    // cancelBooking method should be used to cancel booking
+    // update should not be used to cancel booking
     checkArgument(booking.isActive(), "Booking must be active");
-    var persistedBooking = findByUuid(booking.getUuid());
+    var existingBooking = findByUuid(booking.getUuid());
+    checkState(existingBooking.isActive(), "Non-active booking cannot be updated");
     validateVacantDates(booking);
 
-    booking.setId(persistedBooking.getId());
+    booking.setId(existingBooking.getId());
     var bookingEntity = bookingMapper.toBookingEntity(booking);
     var savedBookingEntity = bookingRepository.saveAndFlush(bookingEntity);
 
