@@ -14,7 +14,7 @@ RUN mvn --batch-mode package -DskipTests -DskipITs; \
 ################################################################################
 # Build stage 1: actual campsite-booking api image
 ################################################################################
-FROM azul/zulu-openjdk-debian:17-jre
+FROM azul/zulu-openjdk-debian:17-jre-latest
 
 LABEL \
     maintainer="Igor Baiborodine <igor@kiroule.com>" \
