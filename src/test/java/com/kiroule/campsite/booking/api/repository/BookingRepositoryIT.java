@@ -37,12 +37,12 @@ class BookingRepositoryIT extends BaseIT {
     @Test
     void happy_path() {
       // given
-      CampsiteEntity campsite = testDataGenerator.createCampsiteEntity();
-      BookingEntity booking = testDataGenerator.createBookingEntity(campsite.getId());
+      CampsiteEntity campsiteEntity = testDataGenerator.createCampsiteEntity();
+      BookingEntity bookingEntity = testDataGenerator.createBookingEntity(campsiteEntity.getId());
       // when
-      Optional<BookingEntity> result = classUnderTest.findByUuid(booking.getUuid());
+      Optional<BookingEntity> result = classUnderTest.findByUuid(bookingEntity.getUuid());
       // then
-      assertThat(result).hasValue(booking);
+      assertThat(result).hasValue(bookingEntity);
     }
   }
 
@@ -53,14 +53,15 @@ class BookingRepositoryIT extends BaseIT {
     @DisplayNamePrefix("SE|-|----|-|--")
     void given_booking_dates_before_range_start_date__then_no_booking_found() {
       // given
-      CampsiteEntity campsite = testDataGenerator.createCampsiteEntity();
-      BookingEntity booking = testDataGenerator.createBookingEntity(campsite.getId(), 1, 2);
+      CampsiteEntity campsiteEntity = testDataGenerator.createCampsiteEntity();
+      BookingEntity bookingEntity =
+          testDataGenerator.createBookingEntity(campsiteEntity.getId(), 1, 2);
       // when
       List<BookingEntity> result =
           classUnderTest.findForDateRange(
-              booking.getStartDate().plusDays(3),
-              booking.getStartDate().plusDays(4),
-              campsite.getId());
+              bookingEntity.getStartDate().plusDays(3),
+              bookingEntity.getStartDate().plusDays(4),
+              campsiteEntity.getId());
       // then
       assertThat(result).isEmpty();
     }
@@ -70,14 +71,15 @@ class BookingRepositoryIT extends BaseIT {
     void
         given_booking_start_date_before_range_start_date_and_booking_end_date_equals_to_range_start_date__then_no_booking_found() {
       // given
-      CampsiteEntity campsite = testDataGenerator.createCampsiteEntity();
-      BookingEntity booking = testDataGenerator.createBookingEntity(campsite.getId(), 1, 2);
+      CampsiteEntity campsiteEntity = testDataGenerator.createCampsiteEntity();
+      BookingEntity bookingEntity =
+          testDataGenerator.createBookingEntity(campsiteEntity.getId(), 1, 2);
       // when
       List<BookingEntity> result =
           classUnderTest.findForDateRange(
-              booking.getStartDate().plusDays(2),
-              booking.getStartDate().plusDays(3),
-              campsite.getId());
+              bookingEntity.getStartDate().plusDays(2),
+              bookingEntity.getStartDate().plusDays(3),
+              campsiteEntity.getId());
       // then
       assertThat(result).isEmpty();
     }
@@ -87,16 +89,17 @@ class BookingRepositoryIT extends BaseIT {
     void
         given_booking_start_date_before_range_start_date_and_booking_end_date_within_range_dates__then_booking_found() {
       // given
-      CampsiteEntity campsite = testDataGenerator.createCampsiteEntity();
-      BookingEntity booking = testDataGenerator.createBookingEntity(campsite.getId(), 1, 3);
+      CampsiteEntity campsiteEntity = testDataGenerator.createCampsiteEntity();
+      BookingEntity bookingEntity =
+          testDataGenerator.createBookingEntity(campsiteEntity.getId(), 1, 3);
       // when
       List<BookingEntity> result =
           classUnderTest.findForDateRange(
-              booking.getStartDate().plusDays(2),
-              booking.getStartDate().plusDays(4),
-              campsite.getId());
+              bookingEntity.getStartDate().plusDays(2),
+              bookingEntity.getStartDate().plusDays(4),
+              campsiteEntity.getId());
       // then
-      assertThat(result).hasSize(1).contains(booking);
+      assertThat(result).hasSize(1).contains(bookingEntity);
     }
 
     @Test
@@ -104,32 +107,34 @@ class BookingRepositoryIT extends BaseIT {
     void
         given_booking_start_date_equals_to_range_start_date_and_booking_end_date_within_range_dates__then_booking_found() {
       // given
-      CampsiteEntity campsite = testDataGenerator.createCampsiteEntity();
-      BookingEntity booking = testDataGenerator.createBookingEntity(campsite.getId(), 1, 2);
+      CampsiteEntity campsiteEntity = testDataGenerator.createCampsiteEntity();
+      BookingEntity bookingEntity =
+          testDataGenerator.createBookingEntity(campsiteEntity.getId(), 1, 2);
       // when
       List<BookingEntity> result =
           classUnderTest.findForDateRange(
-              booking.getStartDate().plusDays(1),
-              booking.getStartDate().plusDays(3),
-              campsite.getId());
+              bookingEntity.getStartDate().plusDays(1),
+              bookingEntity.getStartDate().plusDays(3),
+              campsiteEntity.getId());
       // then
-      assertThat(result).hasSize(1).contains(booking);
+      assertThat(result).hasSize(1).contains(bookingEntity);
     }
 
     @Test
     @DisplayNamePrefix("--|-|S--E|-|--")
     void given_booking_dates_within_range_dates__then_booking_found() {
       // given
-      CampsiteEntity campsite = testDataGenerator.createCampsiteEntity();
-      BookingEntity booking = testDataGenerator.createBookingEntity(campsite.getId(), 2, 3);
+      CampsiteEntity campsiteEntity = testDataGenerator.createCampsiteEntity();
+      BookingEntity bookingEntity =
+          testDataGenerator.createBookingEntity(campsiteEntity.getId(), 2, 3);
       // when
       List<BookingEntity> result =
           classUnderTest.findForDateRange(
-              booking.getStartDate().plusDays(1),
-              booking.getStartDate().plusDays(4),
-              campsite.getId());
+              bookingEntity.getStartDate().plusDays(1),
+              bookingEntity.getStartDate().plusDays(4),
+              campsiteEntity.getId());
       // then
-      assertThat(result).hasSize(1).contains(booking);
+      assertThat(result).hasSize(1).contains(bookingEntity);
     }
 
     @Test
@@ -137,16 +142,17 @@ class BookingRepositoryIT extends BaseIT {
     void
         given_booking_start_date_within_range_dates_and_booking_end_date_equals_to_range_end_date__then_booking_found() {
       // given
-      CampsiteEntity campsite = testDataGenerator.createCampsiteEntity();
-      BookingEntity booking = testDataGenerator.createBookingEntity(campsite.getId(), 2, 3);
+      CampsiteEntity campsiteEntity = testDataGenerator.createCampsiteEntity();
+      BookingEntity bookingEntity =
+          testDataGenerator.createBookingEntity(campsiteEntity.getId(), 2, 3);
       // when
       List<BookingEntity> result =
           classUnderTest.findForDateRange(
-              booking.getStartDate().plusDays(1),
-              booking.getStartDate().plusDays(3),
-              campsite.getId());
+              bookingEntity.getStartDate().plusDays(1),
+              bookingEntity.getStartDate().plusDays(3),
+              campsiteEntity.getId());
       // then
-      assertThat(result).hasSize(1).contains(booking);
+      assertThat(result).hasSize(1).contains(bookingEntity);
     }
 
     @Test
@@ -154,16 +160,17 @@ class BookingRepositoryIT extends BaseIT {
     void
         given_booking_start_date_before_range_end_date_and_booking_end_date_after_range_end_date__then_booking_found() {
       // given
-      CampsiteEntity campsite = testDataGenerator.createCampsiteEntity();
-      BookingEntity booking = testDataGenerator.createBookingEntity(campsite.getId(), 2, 4);
+      CampsiteEntity campsiteEntity = testDataGenerator.createCampsiteEntity();
+      BookingEntity bookingEntity =
+          testDataGenerator.createBookingEntity(campsiteEntity.getId(), 2, 4);
       // when
       List<BookingEntity> result =
           classUnderTest.findForDateRange(
-              booking.getStartDate().plusDays(1),
-              booking.getStartDate().plusDays(3),
-              campsite.getId());
+              bookingEntity.getStartDate().plusDays(1),
+              bookingEntity.getStartDate().plusDays(3),
+              campsiteEntity.getId());
       // then
-      assertThat(result).hasSize(1).contains(booking);
+      assertThat(result).hasSize(1).contains(bookingEntity);
     }
 
     @Test
@@ -171,48 +178,51 @@ class BookingRepositoryIT extends BaseIT {
     void
         given_booking_start_date_equals_to_range_end_date_and_booking_end_date_after_range_end_date__then_booking_found() {
       // given
-      CampsiteEntity campsite = testDataGenerator.createCampsiteEntity();
-      BookingEntity booking = testDataGenerator.createBookingEntity(campsite.getId(), 3, 4);
+      CampsiteEntity campsiteEntity = testDataGenerator.createCampsiteEntity();
+      BookingEntity bookingEntity =
+          testDataGenerator.createBookingEntity(campsiteEntity.getId(), 3, 4);
       // when
       List<BookingEntity> result =
           classUnderTest.findForDateRange(
-              booking.getStartDate().plusDays(1),
-              booking.getStartDate().plusDays(3),
-              campsite.getId());
+              bookingEntity.getStartDate().plusDays(1),
+              bookingEntity.getStartDate().plusDays(3),
+              campsiteEntity.getId());
       // then
-      assertThat(result).hasSize(1).contains(booking);
+      assertThat(result).hasSize(1).contains(bookingEntity);
     }
 
     @Test
     @DisplayNamePrefix("--|-|----|-|SE")
     void given_booking_dates_after_range_end_date__then_no_booking_found() {
       // given
-      CampsiteEntity campsite = testDataGenerator.createCampsiteEntity();
-      BookingEntity booking = testDataGenerator.createBookingEntity(campsite.getId(), 3, 4);
+      CampsiteEntity campsiteEntity = testDataGenerator.createCampsiteEntity();
+      BookingEntity bookingEntity =
+          testDataGenerator.createBookingEntity(campsiteEntity.getId(), 3, 4);
       // when
       List<BookingEntity> result =
           classUnderTest.findForDateRange(
-              booking.getStartDate().plusDays(1),
-              booking.getStartDate().plusDays(2),
-              campsite.getId());
+              bookingEntity.getStartDate().plusDays(1),
+              bookingEntity.getStartDate().plusDays(2),
+              campsiteEntity.getId());
       // then
-      assertThat(result).hasSize(1).contains(booking);
+      assertThat(result).hasSize(1).contains(bookingEntity);
     }
 
     @Test
     @DisplayNamePrefix("-S|-|----|-|E-")
     void given_booking_dates_overlap_range_dates__then_booking_found() {
       // given
-      CampsiteEntity campsite = testDataGenerator.createCampsiteEntity();
-      BookingEntity booking = testDataGenerator.createBookingEntity(campsite.getId(), 1, 4);
+      CampsiteEntity campsiteEntity = testDataGenerator.createCampsiteEntity();
+      BookingEntity bookingEntity =
+          testDataGenerator.createBookingEntity(campsiteEntity.getId(), 1, 4);
       // when
       List<BookingEntity> result =
           classUnderTest.findForDateRange(
-              booking.getStartDate().plusDays(2),
-              booking.getStartDate().plusDays(3),
-              campsite.getId());
+              bookingEntity.getStartDate().plusDays(2),
+              bookingEntity.getStartDate().plusDays(3),
+              campsiteEntity.getId());
       // then
-      assertThat(result).hasSize(1).contains(booking);
+      assertThat(result).hasSize(1).contains(bookingEntity);
     }
   }
 }

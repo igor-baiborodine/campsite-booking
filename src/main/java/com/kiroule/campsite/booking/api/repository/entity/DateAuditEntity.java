@@ -3,8 +3,7 @@ package com.kiroule.campsite.booking.api.repository.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import java.time.LocalDateTime;
-
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Generated;
@@ -25,9 +24,9 @@ public abstract class DateAuditEntity {
 
   @CreatedDate
   @Column(name = "created_at", nullable = false, updatable = false)
-  private LocalDateTime createdAt;
+  private Instant createdAt;
 
   @LastModifiedDate
   @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
+  private Instant updatedAt;
 }

@@ -1,5 +1,6 @@
 package com.kiroule.campsite.booking.api.service;
 
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.kiroule.campsite.booking.api.BaseIT;
@@ -38,11 +39,18 @@ class CampsiteServiceImplIT extends BaseIT {
     @Test
     void happy_path() {
       // given
-      CampsiteEntity campsite = testDataHelper.createCampsiteEntity();
+      CampsiteEntity campsiteEntity = testDataHelper.createCampsiteEntity();
       // when
-      Campsite result = classUnderTest.findById(campsite.getId());
+      Campsite result = classUnderTest.findById(campsiteEntity.getId());
       // then
-      assertThat(result).usingRecursiveComparison().isEqualTo(campsite);
+      assertThat(result)
+          .usingRecursiveComparison()
+          .ignoringFields("createdAt", "updatedAt")
+          .isEqualTo(campsiteEntity);
+      assertThat(result.getCreatedAt().truncatedTo(MILLIS))
+          .isEqualTo(campsiteEntity.getCreatedAt().truncatedTo(MILLIS));
+      assertThat(result.getUpdatedAt().truncatedTo(MILLIS))
+          .isEqualTo(campsiteEntity.getUpdatedAt().truncatedTo(MILLIS));
     }
   }
 }
