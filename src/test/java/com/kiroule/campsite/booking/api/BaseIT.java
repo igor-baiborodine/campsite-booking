@@ -17,9 +17,7 @@ public abstract class BaseIT {
   private static final String MYSQL_DOCKER_IMAGE_NAME = "mysql:8-debian";
   private static final String MYSQL_DATABASE_NAME = "test_campsite";
 
-  protected final DateTimeFormatter isoTimeStampFormatter =
-      new DateTimeFormatterBuilder().appendInstant(6).toFormatter();
-  static MySQLContainer<?> mySqlContainer;
+  static final MySQLContainer<?> mySqlContainer;
 
   static {
     mySqlContainer =

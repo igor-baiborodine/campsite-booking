@@ -1,6 +1,5 @@
 package com.kiroule.campsite.booking.api.service;
 
-import static java.time.temporal.ChronoUnit.MICROS;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,8 +12,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.time.temporal.ChronoUnit;
 
 /**
  * Integration tests for {@link BookingServiceImpl}.
