@@ -2,8 +2,6 @@ package com.kiroule.campsite.booking.api;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -27,9 +25,9 @@ public abstract class BaseIT {
 
   @DynamicPropertySource
   static void mysqlProperties(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", () -> mySqlContainer.getJdbcUrl());
-    registry.add("spring.datasource.username", () -> mySqlContainer.getUsername());
-    registry.add("spring.datasource.password", () -> mySqlContainer.getPassword());
+    registry.add("spring.datasource.url", mySqlContainer::getJdbcUrl);
+    registry.add("spring.datasource.username", mySqlContainer::getUsername);
+    registry.add("spring.datasource.password", mySqlContainer::getPassword);
     registry.add("spring.jpa.properties.hibernate.show_sql", () -> "true");
   }
 }
