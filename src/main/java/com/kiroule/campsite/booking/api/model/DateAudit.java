@@ -1,6 +1,6 @@
 package com.kiroule.campsite.booking.api.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import lombok.Data;
 import lombok.Generated;
 import lombok.experimental.SuperBuilder;
@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @Generated
 public abstract class DateAudit {
 
-  private LocalDateTime createdAt;
+  private Instant createdAt;
 
-  private LocalDateTime updatedAt;
+  private Instant updatedAt;
 }
