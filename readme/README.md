@@ -95,11 +95,11 @@ The Swagger UI is available at `http://localhost:80/swagger-ui.html` or `http://
 ```console
 $ docker run -e "SPRING_PROFILES_ACTIVE=in-memory-db" --name campsite-booking -p 80:8080 -d ibaiborodine/campsite-booking
 ```
-... or with in-memory DB [docker-compose](docker-compose.yml):
+... or with in-memory DB [docker-compose](../docker-compose.yml):
 ```console
 $ docker-compose up -d
 ```
-... or with MySQL [docker-compose](mysql/docker-compose.yml):
+... or with MySQL [docker-compose](../mysql/docker-compose.yml):
 ```console
 $ mysql/docker-compose up -d
 ```
@@ -150,14 +150,14 @@ If the operation is successful, you will get the following response:
 
 ### Concurrent Tests
 
-Start an instance of the Campsite Booking API via Docker Compose either in [the in-memory-db](docker-compose.yml) or
-in [mysql](mysql/docker-compose.yml) profile.
+Start an instance of the Campsite Booking API via Docker Compose either in [the in-memory-db](../docker-compose.yml) or
+in [mysql](../mysql/docker-compose.yml) profile.
 ```bash
 $ docker-compose.yml up -d
 ```
 
 #### Bookings Creation
-Execute the [create-bookings.sh](concurrent-test/create-bookings.sh) script to simulate concurrent
+Execute the [create-bookings.sh](../concurrent-test/create-bookings.sh) script to simulate concurrent
 booking creation for the same booking dates:
 
 ```bash
@@ -195,7 +195,7 @@ The response should be as follows after formatting, i.e., only one booking was c
 ```
 
 #### Booking Update
-Execute the [update-booking.sh](concurrent-test/update-booking.sh) script to simulate concurrent
+Execute the [update-booking.sh](../concurrent-test/update-booking.sh) script to simulate concurrent
 updates for the same booking:
 
 ```bash
