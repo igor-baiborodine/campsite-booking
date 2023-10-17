@@ -18,6 +18,6 @@ ALTER TABLE bookings
     ADD CONSTRAINT uc_bookings_uuid UNIQUE (uuid);
 
 ALTER TABLE bookings
-    ADD CONSTRAINT fk_campsites
+    ADD CONSTRAINT fk_campsites_id
         FOREIGN KEY (campsite_id) REFERENCES campsites(id)
             ON DELETE RESTRICT ON UPDATE RESTRICT;
