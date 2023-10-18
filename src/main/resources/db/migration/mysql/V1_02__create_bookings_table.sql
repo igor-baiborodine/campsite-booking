@@ -1,16 +1,16 @@
 CREATE TABLE bookings
 (
-    id          BIGINT AUTO_INCREMENT NOT NULL,
-    created_at  datetime     NOT NULL,
-    updated_at  datetime     NULL,
+    id          BIGINT       NOT NULL AUTO_INCREMENT,
     uuid        VARCHAR(255) NOT NULL,
     version     BIGINT       NOT NULL,
     campsite_id BIGINT       NOT NULL,
     email       VARCHAR(50)  NOT NULL,
     full_name   VARCHAR(50)  NOT NULL,
-    start_date  date         NOT NULL,
-    end_date    date         NOT NULL,
-    active      BIT(1)       NOT NULL,
+    start_date  DATE         NOT NULL,
+    end_date    DATE         NOT NULL,
+    active      BOOLEAN      NOT NULL,
+    created_at  TIMESTAMP    NOT NULL,
+    updated_at  TIMESTAMP    NOT NULL,
     CONSTRAINT pk_bookings PRIMARY KEY (id)
 );
 
