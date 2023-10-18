@@ -193,5 +193,7 @@ buildNumber.properties
 # End of https://www.gitignore.io/api/java,maven,eclipse,intellij+all
 
 ### Derby ###
-
 campsitedb/
+
+### IntelliJ/JPA Buddy plugin ###
+.jpb/

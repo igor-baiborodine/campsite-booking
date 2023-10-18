@@ -37,6 +37,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>17</java.version>
     <testcontainers.version>1.19.1</testcontainers.version>
+    <flyway.core.version>9.22.3</flyway.core.version>
     <!-- Sonar Cloud -->
     <sonar.organization>igor-baiborodine-github</sonar.organization>
     <sonar.projectKey>igor-baiborodine_campsite-booking</sonar.projectKey>
@@ -149,6 +150,16 @@
       <artifactId>mapstruct-processor</artifactId>
       <version>1.5.3.Final</version>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+      <version>${flyway.core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-mysql</artifactId>
+      <version>${flyway.core.version}</version>
     </dependency>
     <!--TESTS-->
     <dependency>
