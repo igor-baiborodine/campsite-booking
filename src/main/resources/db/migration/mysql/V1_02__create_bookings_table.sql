@@ -9,8 +9,8 @@ CREATE TABLE bookings
     start_date  DATE         NOT NULL,
     end_date    DATE         NOT NULL,
     active      BOOLEAN      NOT NULL,
-    created_at  TIMESTAMP    NOT NULL,
-    updated_at  TIMESTAMP    NOT NULL,
+    created_at  TIMESTAMP(6) NOT NULL,
+    updated_at  TIMESTAMP(6) NOT NULL,
     CONSTRAINT pk_bookings PRIMARY KEY (id)
 );
 

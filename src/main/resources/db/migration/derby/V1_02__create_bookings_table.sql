@@ -1,6 +1,6 @@
 CREATE TABLE bookings
 (
-    id          BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    id          BIGINT       NOT NULL GENERATED ALWAYS AS IDENTITY,
     uuid        VARCHAR(255) NOT NULL,
     version     BIGINT       NOT NULL,
     campsite_id BIGINT       NOT NULL,
