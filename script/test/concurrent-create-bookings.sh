@@ -6,19 +6,19 @@ start_date="$1"
 end_date="$2"
 base_url="$3"
 
-payload1=$(< concurrent-test/booking-payload.json sed -e "s/EMAIL/john.smith.1@email.com/g" \
+payload1=$(< script/test/booking-payload.json sed -e "s/EMAIL/john.smith.1@email.com/g" \
   | sed -e "s/FULL_NAME/John Smith 1/g" \
   | sed -e "s/START_DATE/${start_date}/g" \
   | sed -e "s/END_DATE/${end_date}/g")
 printf "Create payload 1: %s\n" "$payload1"
 
-payload2=$(< concurrent-test/booking-payload.json sed -e "s/EMAIL/john.smith.2@email.com/g" \
+payload2=$(< script/test/booking-payload.json sed -e "s/EMAIL/john.smith.2@email.com/g" \
   | sed -e "s/FULL_NAME/John Smith 2/g" \
   | sed -e "s/START_DATE/${start_date}/g" \
   | sed -e "s/END_DATE/${end_date}/g")
 printf "Create payload 2: %s\n" "$payload2"
 
-payload3=$(< concurrent-test/booking-payload.json sed -e "s/EMAIL/john.smith.3@email.com/g" \
+payload3=$(< script/test/booking-payload.json sed -e "s/EMAIL/john.smith.3@email.com/g" \
   | sed -e "s/FULL_NAME/John Smith 3/g" \
   | sed -e "s/START_DATE/${start_date}/g" \
   | sed -e "s/END_DATE/${end_date}/g")

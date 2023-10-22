@@ -6,7 +6,7 @@ start_date="$1"
 end_date="$2"
 base_url="$3"
 
-payload=$(< concurrent-test/booking-payload.json sed -e "s/EMAIL/john.smith.1@email.com/g" \
+payload=$(< script/test/booking-payload.json sed -e "s/EMAIL/john.smith.1@email.com/g" \
   | sed -e "s/FULL_NAME/John Smith 1/g" \
   | sed -e "s/START_DATE/$start_date/g" \
   | sed -e "s/END_DATE/$end_date/g")
