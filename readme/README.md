@@ -157,11 +157,12 @@ $ docker-compose.yml up -d
 ```
 
 #### Bookings Creation
-Execute the [create-bookings.sh](../script/test/create-bookings.sh) script to simulate concurrent
-booking creation for the same booking dates:
+
+Execute the [concurrent-create-bookings.sh](../script/test/concurrent-create-bookings.sh) script to
+simulate concurrent booking creation for the same booking dates:
 
 ```bash
-$ ./script/test/create-bookings.sh 2023-10-16 2023-10-17 http:/localhost:80
+$ ./script/test/concurrent-create-bookings.sh 2023-10-16 2023-10-17 http:/localhost:80
 ```
 The response should be as follows after formatting, i.e., only one booking was created:
 ```json
@@ -195,11 +196,12 @@ The response should be as follows after formatting, i.e., only one booking was c
 ```
 
 #### Booking Update
-Execute the [update-booking.sh](../script/test/update-booking.sh) script to simulate concurrent
-updates for the same booking:
+
+Execute the [concurrent-update-booking.sh](../script/test/concurrent-update-booking.sh) script to
+simulate concurrent updates for the same booking:
 
 ```bash
-$ ./script/test/update-booking.sh 2022-10-25 2022-10-26 http:/localhost:80
+$ ./script/test/concurrent-update-booking.sh 2022-10-25 2022-10-26 http:/localhost:80
 ```
 The response should be as follows after formatting, i.e., only one booking was updated:
 ```json
