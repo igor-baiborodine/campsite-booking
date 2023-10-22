@@ -77,31 +77,35 @@ The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
 ```bash
 $ git clone https://github.com/igor-baiborodine/campsite-booking.git
 $ cd campsite-booking
-$ docker build --rm -t campsite-booking .
-$ docker run -e "SPRING_PROFILES_ACTIVE=in-memory-db" --name campsite-booking -d campsite-booking
-$ docker logs -f campsite-booking 
+$ docker build --rm --file container/Dockerfile --tag campsite-booking-service .
+$ docker run -e "SPRING_PROFILES_ACTIVE=in-memory-db" --name campsite-booking-service -d campsite-booking-service
+$ docker logs -f campsite-booking-service 
 ```
-The Swagger UI is available at `http://container-ip:8080/swagger-ui.html`. To get the container IP address, execute the following command:
+
+The Swagger UI is available at `http://<container-ip>:8080/swagger-ui.html`. To get the container IP
+address, execute the following command:
+
 ```console
-$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' campsite-booking
+$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' campsite-booking-service
 ```
+
 Via the host machine on port 80:
 ```console
-$ docker run -e "SPRING_PROFILES_ACTIVE=in-memory-db" --name campsite-booking -p 80:8080 -d campsite-booking
+$ docker run -e "SPRING_PROFILES_ACTIVE=in-memory-db" --name campsite-booking-service -p 80:8080 -d campsite-booking-service
 ```
 The Swagger UI is available at `http://localhost:80/swagger-ui.html` or `http://host-ip:80/swagger-ui.html`.
 
 ... or with an [image from Docker Hub](https://hub.docker.com/r/ibaiborodine/campsite-booking):
 ```console
-$ docker run -e "SPRING_PROFILES_ACTIVE=in-memory-db" --name campsite-booking -p 80:8080 -d ibaiborodine/campsite-booking
+$ docker run -e "SPRING_PROFILES_ACTIVE=in-memory-db" --name campsite-booking-service -p 80:8080 -d ibaiborodine/campsite-booking-service
 ```
-... or with in-memory DB [docker-compose](../docker-compose.yml):
+... or with in-memory DB [docker-compose](../container/docker-compose.yml):
 ```console
-$ docker-compose up -d
+$ docker compose -f container/docker-compose.yml up -d
 ```
-... or with MySQL [docker-compose](../mysql/docker-compose.yml):
+... or with MySQL [docker-compose](../container/campsite-booking-service-mysql/docker-compose.yml):
 ```console
-$ mysql/docker-compose up -d
+$ docker compose -f container/campsite-booking-service-mysql/docker-compose.yml up -d
 ```
  
 ## Tests
@@ -150,8 +154,10 @@ If the operation is successful, you will get the following response:
 
 ### Concurrent Tests
 
-Start an instance of the Campsite Booking API via Docker Compose either in [the in-memory-db](../docker-compose.yml) or
-in [mysql](../mysql/docker-compose.yml) profile.
+Start an instance of the Campsite Booking API via Docker Compose either
+in [the in-memory-db](../container/docker-compose.yml) or
+in [mysql](../container/campsite-booking-service-mysql/docker-compose.yml) profile.
+
 ```bash
 $ docker-compose.yml up -d
 ```

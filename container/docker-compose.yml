@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  campsite-booking-service:
+    # build from the source
+    build:
+      context: ..
+      dockerfile: container/Dockerfile
+    # or use the latest image from Docker Hub
+    # image: ibaiborodine/campsite-booking:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=in-memory-db
+    ports:
+      - "80:8080"
