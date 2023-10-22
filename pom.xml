@@ -4,7 +4,7 @@
 
   <groupId>com.kiroule</groupId>
   <artifactId>campsite-booking</artifactId>
-  <version>5.5.1-SNAPSHOT</version>
+  <version>5.5.1</version>
   <packaging>jar</packaging>
 
   <name>campsite-booking</name>
@@ -21,7 +21,7 @@
     <connection>scm:git:${project.scm.url}</connection>
     <developerConnection>scm:git:${project.scm.url}</developerConnection>
     <url>https://github.com/igor-baiborodine/campsite-booking.git</url>
-    <tag>HEAD</tag>
+    <tag>v5.5.1</tag>
   </scm>
 
   <distributionManagement>
