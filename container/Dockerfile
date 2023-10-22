@@ -5,7 +5,7 @@ FROM maven:3-openjdk-17 AS builder
 
 WORKDIR /usr/src/app
 
-COPY . .
+COPY .. .
 
 RUN mvn --batch-mode package -DskipTests -DskipITs; \
     mv /usr/src/app/target/campsite-booking-$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout).jar \
@@ -39,7 +39,7 @@ RUN set -ex; \
     gosu nobody true
 
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /usr/src/app/target/app.jar ${APP_HOME}/app.jar
-COPY docker-entrypoint.sh /usr/local/bin/
+COPY container/docker-entrypoint.sh /usr/local/bin/
 
 RUN chmod a+x /usr/local/bin/docker-entrypoint.sh
 

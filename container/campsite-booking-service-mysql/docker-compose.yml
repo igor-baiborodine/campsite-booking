@@ -11,11 +11,15 @@ services:
       - "3316:3306"
       - "33070:33060"
     volumes:
-      - ../mysql/conf.d:/etc/mysql/conf.d
-      - ../mysql/initdb.d:/docker-entrypoint-initdb.d
+      - ../campsite-booking-service-mysql/mysql/conf.d:/etc/mysql/conf.d
+      - ../campsite-booking-service-mysql/mysql/initdb.d:/docker-entrypoint-initdb.d
 
-  api:
-    build: ..
+  campsite-booking-service:
+    # build from the source
+    build:
+      context: ../..
+      dockerfile: container/Dockerfile
+    # or use the latest image from Docker Hub
     # image: ibaiborodine/campsite-booking:latest
     depends_on:
       - db
