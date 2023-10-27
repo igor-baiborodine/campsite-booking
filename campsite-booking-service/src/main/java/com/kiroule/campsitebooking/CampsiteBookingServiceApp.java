@@ -3,7 +3,6 @@ package com.kiroule.campsitebooking;
 import com.kiroule.campsitebooking.repository.CampsiteRepository;
 import com.kiroule.campsitebooking.repository.entity.CampsiteEntity;
 import lombok.AllArgsConstructor;
-import lombok.Generated;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -16,14 +15,13 @@ import org.springframework.retry.annotation.EnableRetry;
 @EnableAspectJAutoProxy
 @EnableJpaAuditing
 @EnableRetry
-@Generated
 @AllArgsConstructor
-public class CampsiteBookingApiApp implements ApplicationRunner {
+public class CampsiteBookingServiceApp implements ApplicationRunner {
 
   private final CampsiteRepository campsiteRepository;
 
   public static void main(String[] args) {
-    SpringApplication.run(CampsiteBookingApiApp.class, args);
+    SpringApplication.run(CampsiteBookingServiceApp.class, args);
   }
 
   @Override

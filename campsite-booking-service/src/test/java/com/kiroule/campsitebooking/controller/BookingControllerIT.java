@@ -33,8 +33,7 @@ class BookingControllerIT extends BaseIT {
 
   @Autowired BookingRepository bookingRepository;
 
-  @Autowired
-  TestDataHelper testDataHelper;
+  @Autowired TestDataHelper testDataHelper;
 
   @LocalServerPort int port;
 
@@ -278,7 +277,10 @@ class BookingControllerIT extends BaseIT {
               .as(ApiError.class);
       // then
       assertThat(apiError.getStatus()).isEqualTo(CONFLICT);
-      String message = "Optimistic locking error - booking was updated by another transaction";
+      var message =
+          format(
+              "Optimistic locking error: %s with id %s was updated by another transaction",
+              BookingEntity.class.getCanonicalName(), bookingEntity.getId());
       assertThat(apiError.getMessage()).isEqualTo(message);
     }
   }

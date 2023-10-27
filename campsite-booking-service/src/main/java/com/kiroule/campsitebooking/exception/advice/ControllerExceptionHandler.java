@@ -1,5 +1,6 @@
 package com.kiroule.campsitebooking.exception.advice;
 
+import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 import static org.springframework.http.HttpStatus.*;
@@ -101,12 +102,11 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(StaleObjectStateException.class)
   public ResponseEntity<Object> handleStaleObjectStateException(StaleObjectStateException ex) {
 
-    var apiError =
-        ApiError.builder()
-            .timestamp(now())
-            .status(CONFLICT)
-            .message("Optimistic locking error - booking was updated by another transaction")
-            .build();
+    var message =
+        format(
+            "Optimistic locking error: %s with id %s was updated by another transaction",
+            ex.getEntityName(), ex.getIdentifier());
+    var apiError = ApiError.builder().timestamp(now()).status(CONFLICT).message(message).build();
 
     return buildResponseEntity(apiError);
   }
