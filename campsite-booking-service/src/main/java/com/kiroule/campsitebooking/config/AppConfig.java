@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @ConfigurationPropertiesScan(basePackageClasses = {QueryProperties.class})
-public class CampsiteBookingApiConfig {
+public class AppConfig {
 
   @Bean
   @Profile("in-memory-db")

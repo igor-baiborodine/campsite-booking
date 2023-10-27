@@ -32,7 +32,6 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 @BookingAllowedStartDate
 @BookingMaximumStay
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Generated
 public class BookingDto {
 
   /** Business ID */

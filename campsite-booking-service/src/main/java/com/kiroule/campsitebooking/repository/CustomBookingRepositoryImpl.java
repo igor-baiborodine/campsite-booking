@@ -8,11 +8,12 @@ import com.kiroule.campsitebooking.repository.context.CustomRepositoryContext;
 import jakarta.persistence.Query;
 import java.time.LocalDate;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class CustomBookingRepositoryImpl implements CustomBookingRepository {
 
   private final CustomRepositoryContext customRepositoryContext;

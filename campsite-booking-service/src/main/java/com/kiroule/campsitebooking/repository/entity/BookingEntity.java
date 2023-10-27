@@ -27,7 +27,6 @@ import org.hibernate.annotations.JdbcTypeCode;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Generated
 public class BookingEntity extends DateAuditEntity {
 
   /** Persistence ID */

@@ -22,7 +22,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@Generated
 public class CampsiteEntity extends DateAuditEntity {
 
   /** Persistence ID */

@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Generated;
 
 /**
  * DTO domain object representing a booking.
@@ -31,7 +30,6 @@ import lombok.Generated;
 @BookingAllowedStartDate
 @BookingMaximumStay
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Generated
 public class BookingDto {
 
   /** Persistence ID */

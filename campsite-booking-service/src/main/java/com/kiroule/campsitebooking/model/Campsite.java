@@ -11,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 @EqualsAndHashCode(callSuper = true)
-@Generated
 public class Campsite extends DateAudit {
 
   /** Persistence ID */

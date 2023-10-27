@@ -15,7 +15,6 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 @EqualsAndHashCode(callSuper = true)
-@Generated
 public class Booking extends DateAudit {
 
   /** Persistence ID */

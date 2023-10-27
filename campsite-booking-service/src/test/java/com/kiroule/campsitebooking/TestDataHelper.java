@@ -15,7 +15,6 @@ import com.kiroule.campsitebooking.repository.entity.BookingEntity;
 import com.kiroule.campsitebooking.repository.entity.BookingEntity.BookingEntityBuilder;
 import com.kiroule.campsitebooking.repository.entity.CampsiteEntity;
 import lombok.AllArgsConstructor;
-import lombok.Generated;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-@Generated
 public class TestDataHelper {
 
   private static final EasyRandom EASY_RANDOM =
