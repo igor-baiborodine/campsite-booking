@@ -67,8 +67,6 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/../campsite-booking-service/target/site/jacoco-merged-test-coverage-report/jacoco.xml,
-            <!-- the next extra directory is not strictly necessary, but suppresses a warning when running on the reactor pom -->
-            ${project.basedir}/campsite-booking-service/target/site/jacoco-merged-test-coverage-report/jacoco.xml,
         </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
