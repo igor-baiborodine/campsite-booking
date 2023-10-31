@@ -45,14 +45,8 @@ class ControllerExceptionHandlerTest {
     }
   }
 
-  @Test
-  void handleMethodArgumentNotValid() {}
-
-  @Test
-  void handleHttpMessageNotReadable() {}
-
   @Nested
-  class handleStaleObjectStateException {
+  class HandleStaleObjectStateException {
     @Test
     void happy_path() {
       // given

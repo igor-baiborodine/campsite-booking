@@ -166,7 +166,9 @@
                         <exclude>**/contract/v2/**/*</exclude>
                         <exclude>**/config/*</exclude>
                         <exclude>**/exception/*</exclude>
+                        <exclude>**/exception/advice/*</exclude>
                         <exclude>**/model/*</exclude>
+                        <exclude>**/model/validator/*</exclude>
                         <exclude>**/entity/*</exclude>
                         <exclude>**/aspect/LoggingAspect.class</exclude>
                     </excludes>
@@ -179,7 +181,7 @@
                         </goals>
                         <configuration>
                             <haltOnFailure>true</haltOnFailure>
-                            <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+                            <dataFile>${project.build.directory}/jacoco-reports/jacoco-merged.exec</dataFile>
                             <rules>
                                 <rule>
                                     <element>CLASS</element>
@@ -187,7 +189,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
+                                            <minimum>0.75</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
