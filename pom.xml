@@ -32,8 +32,9 @@
     </modules>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Spring Boot -->
@@ -61,10 +62,13 @@
         <!-- Sonar Cloud -->
         <sonar.organization>igor-baiborodine-github</sonar.organization>
         <sonar.projectKey>igor-baiborodine_campsite-booking</sonar.projectKey>
-        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.coverage.jacoco.xmlReportPaths>
-            ${project.reporting.outputDirectory}/jacoco-merged-test-coverage-report/jacoco.xml
+            ${project.basedir}/../campsite-booking-service/target/site/jacoco-merged-test-coverage-report/jacoco.xml,
+            <!-- the next extra directory is not strictly necessary, but suppresses a warning when running on the reactor pom -->
+            ${project.basedir}/campsite-booking-service/target/site/jacoco-merged-test-coverage-report/jacoco.xml,
         </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
