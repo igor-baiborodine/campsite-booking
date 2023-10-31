@@ -63,6 +63,9 @@
         <sonar.projectKey>igor-baiborodine_campsite-booking</sonar.projectKey>
         <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.reporting.outputDirectory}/jacoco-merged-test-coverage-report/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencyManagement>
