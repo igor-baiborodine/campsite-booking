@@ -60,11 +60,7 @@ public class BookingServiceImpl implements BookingService {
   @Transactional(readOnly = true)
   public Booking findByUuid(UUID uuid) {
 
-    Supplier<BookingNotFoundException> exceptionSupplier =
-        () -> new BookingNotFoundException(format("Booking was not found for uuid=%s", uuid));
-    var bookingEntity = bookingRepository.findByUuid(uuid).orElseThrow(exceptionSupplier);
-
-    return bookingMapper.toBooking(bookingEntity);
+    return findByUuidNotTransactional(uuid);
   }
 
   @Override
