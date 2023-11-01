@@ -184,7 +184,7 @@ class BookingServiceImplConcurrentIT extends BaseIT {
 
       filteredBookingUpdates.stream()
           .map(b -> bookingRepository.findByUuid(b.getUuid()))
-          .forEach(e -> assertThat(e.get().getVersion()).isEqualTo(0L));
+          .forEach(e -> assertThat(e.get().getVersion()).isZero());
     }
 
     private Booking buildBookingUpdate(
