@@ -96,7 +96,7 @@ public class BookingServiceImpl implements BookingService {
 
     // update should not be used to cancel booking
     checkArgument(booking.isActive(), "Booking must be active");
-    var existingBooking = findByUuid(booking.getUuid());
+    var existingBooking = findByUuidNotTransactional(booking.getUuid());
     checkState(existingBooking.isActive(), "Non-active booking cannot be updated");
     validateVacantDates(booking);
 
@@ -111,12 +111,22 @@ public class BookingServiceImpl implements BookingService {
   @Transactional
   public boolean cancelBooking(UUID uuid) {
 
-    var booking = findByUuid(uuid);
+    var booking = findByUuidNotTransactional(uuid);
     booking.setActive(false);
     var bookingEntity = bookingMapper.toBookingEntity(booking);
     booking = bookingMapper.toBooking(bookingRepository.save(bookingEntity));
 
     return !booking.isActive();
+  }
+
+  // Fix for S6809: Methods with Spring proxy should not be called via "this"
+  private Booking findByUuidNotTransactional(UUID uuid) {
+
+    Supplier<BookingNotFoundException> exceptionSupplier =
+            () -> new BookingNotFoundException(format("Booking was not found for uuid=%s", uuid));
+    var bookingEntity = bookingRepository.findByUuid(uuid).orElseThrow(exceptionSupplier);
+
+    return bookingMapper.toBooking(bookingEntity);
   }
 
   private void validateVacantDates(Booking booking) {
