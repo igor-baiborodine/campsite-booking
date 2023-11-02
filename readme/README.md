@@ -68,8 +68,8 @@ The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
 ```bash
 $ git clone https://github.com/igor-baiborodine/campsite-booking.git
 $ cd campsite-booking
-$ mvn package -DskipTests
-$ java -jar -Dspring.profiles.active=in-memory-db target/campsite-booking-<version>.jar
+$ mvn package -DskipTests -DskipITs
+$ java -jar -Dspring.profiles.active=in-memory-db campsite-booking-service/target/campsite-booking-service-<version>.jar
 ```
 The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
 
