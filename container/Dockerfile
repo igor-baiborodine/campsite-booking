@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 
 COPY .. .
 
-RUN mvn --batch-mode package -DskipTests -DskipITs; \
+RUN mvn clean package spring-boot:repackage --batch-mode -DskipTests -DskipITs; \
     mv /usr/src/app/campsite-booking-service/target/campsite-booking-service-$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout).jar \
         /usr/src/app/app.jar
 

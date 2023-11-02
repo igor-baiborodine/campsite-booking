@@ -11,6 +11,10 @@
 
     <artifactId>campsite-booking-service</artifactId>
 
+    <properties>
+        <start-class>com.kiroule.campsitebooking.CampsiteBookingServiceApp</start-class>
+    </properties>
+
     <dependencies>
         <!-- Spring Boot -->
         <dependency>
@@ -124,17 +128,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>com.kiroule.campsitebooking.CampsiteBookingServiceApp</mainClass>
-                    <layout>JAR</layout>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
