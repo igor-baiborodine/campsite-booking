@@ -7,9 +7,9 @@ WORKDIR /usr/src/app
 
 COPY .. .
 
-RUN mvn --batch-mode package -DskipTests -DskipITs; \
-    mv /usr/src/app/target/campsite-booking-$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout).jar \
-        /usr/src/app/target/app.jar
+RUN mvn clean package spring-boot:repackage --batch-mode -DskipTests -DskipITs; \
+    mv /usr/src/app/campsite-booking-service/target/campsite-booking-service-$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout).jar \
+        /usr/src/app/app.jar
 
 ################################################################################
 # Build stage 1: actual campsite-booking api image
@@ -38,7 +38,7 @@ RUN set -ex; \
     rm -rf /var/lib/apt/lists/*; \
     gosu nobody true
 
-COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /usr/src/app/target/app.jar ${APP_HOME}/app.jar
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /usr/src/app/app.jar ${APP_HOME}/app.jar
 COPY container/docker-entrypoint.sh /usr/local/bin/
 
 RUN chmod a+x /usr/local/bin/docker-entrypoint.sh

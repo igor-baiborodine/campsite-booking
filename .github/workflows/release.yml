@@ -15,7 +15,8 @@ jobs:
     name: Maven Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repo
+        uses: actions/checkout@v4
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
@@ -47,7 +48,8 @@ jobs:
     needs: [ maven_release ]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repo
+        uses: actions/checkout@v4
         with:
           ref: v${{ github.event.inputs.releaseVersion }}
 
