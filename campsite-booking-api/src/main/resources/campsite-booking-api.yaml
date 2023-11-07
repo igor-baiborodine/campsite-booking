@@ -1,0 +1,194 @@
+openapi: 3.0.1
+info:
+  title: Campsite Booking API
+  version: 'v2'
+servers:
+  - url: /v3
+tags:
+  - name: booking
+    description: Manage campsite bookings
+paths:
+  /api/v2/booking/{uuid}:
+    get:
+      tags:
+        - booking
+      summary: Fetch booking for a given UUID
+      operationId: getBooking
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2_booking'
+        "404":
+          description: "Not found: booking for a given UUID does not exist"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2_booking'
+    put:
+      tags:
+        - booking
+      summary: Update existing booking
+      operationId: updateBooking
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v2_booking'
+        required: true
+      responses:
+        "200":
+          description: "Success: booking was updated"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2_booking'
+        "400":
+          description: "Bad request: existing booking was not updated"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2_booking'
+        "404":
+          description: "Not found: booking for a given UUID does not exist"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2_booking'
+        "409":
+          description: "Conflict: booking was updated by another transaction"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2_booking'
+    delete:
+      tags:
+        - booking
+      summary: Cancel existing booking
+      operationId: cancelBooking
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: "Success: booking was cancelled"
+        "400":
+          description: "Bad request: existing booking was not updated"
+        "404":
+          description: "Not found: booking for a given UUID does not exist"
+  /api/v2/booking:
+    post:
+      tags:
+        - booking
+      summary: Add new booking
+      operationId: addBooking
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v2_booking'
+        required: true
+      responses:
+        "201":
+          description: "Created: new booking was added"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2_booking'
+        "400":
+          description: "Bad request: new booking was not added"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2_booking'
+  /api/v2/booking/vacant-dates:
+    get:
+      tags:
+        - booking
+      summary: Get vacant dates within a given period
+      operationId: getVacantDates
+      parameters:
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: campsite_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: date
+components:
+  schemas:
+    v2_booking:
+      required:
+        - campsiteId
+        - email
+        - endDate
+        - fullName
+        - startDate
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        version:
+          type: integer
+          format: int64
+        campsiteId:
+          type: integer
+          format: int64
+        email:
+          maxLength: 50
+          minLength: 0
+          type: string
+        fullName:
+          maxLength: 50
+          minLength: 0
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        active:
+          type: boolean
