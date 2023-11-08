@@ -12,7 +12,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import com.kiroule.campsitebooking.BaseIT;
 import com.kiroule.campsitebooking.TestDataHelper;
 import com.kiroule.campsitebooking.contract.v2.dto.BookingDto;
-import com.kiroule.campsitebooking.contract.v2.error.ApiError;
+import com.kiroule.campsitebooking.contract.v2.error.ApiErrorDto;
 import com.kiroule.campsitebooking.repository.BookingRepository;
 import com.kiroule.campsitebooking.repository.entity.BookingEntity;
 import com.kiroule.campsitebooking.repository.entity.CampsiteEntity;
@@ -132,13 +132,13 @@ class BookingControllerIT extends BaseIT {
               .endDate(bookingEntity.getEndDate())
               .build();
       // when
-      ApiError apiError =
+      ApiErrorDto apiError =
           given()
               .contentType(APPLICATION_JSON_VALUE)
               .body(bookingDto)
               .when()
               .post(BASE_PATH)
-              .as(ApiError.class);
+              .as(ApiErrorDto.class);
       // then
       assertThat(apiError.getStatus()).isEqualTo(BAD_REQUEST);
       String message =
@@ -161,13 +161,13 @@ class BookingControllerIT extends BaseIT {
               .endDate(now.plusDays(5))
               .build();
       // when
-      ApiError apiError =
+      ApiErrorDto apiError =
           given()
               .contentType(APPLICATION_JSON_VALUE)
               .body(bookingDto)
               .when()
               .post(BASE_PATH)
-              .as(ApiError.class);
+              .as(ApiErrorDto.class);
       // then
       assertThat(apiError.getStatus()).isEqualTo(BAD_REQUEST);
       assertThat(apiError.getMessage()).isEqualTo("Validation error");
@@ -233,14 +233,14 @@ class BookingControllerIT extends BaseIT {
               .active(bookingEntity1.isActive())
               .build();
       // when
-      ApiError apiError =
+      ApiErrorDto apiError =
           given()
               .pathParam("uuid", bookingDto1.getUuid())
               .contentType(APPLICATION_JSON_VALUE)
               .body(bookingDto1)
               .when()
               .put(BASE_PATH + "/{uuid}")
-              .as(ApiError.class);
+              .as(ApiErrorDto.class);
       // then
       assertThat(apiError.getStatus()).isEqualTo(BAD_REQUEST);
       String message =
@@ -267,14 +267,14 @@ class BookingControllerIT extends BaseIT {
       testDataHelper.updateBookingEntity(
           bookingEntity.toBuilder().endDate(bookingEntity.getEndDate().plusDays(5)).build());
       // when
-      ApiError apiError =
+      ApiErrorDto apiError =
           given()
               .pathParam("uuid", bookingDto.getUuid())
               .contentType(APPLICATION_JSON_VALUE)
               .body(bookingDto)
               .when()
               .put(BASE_PATH + "/{uuid}")
-              .as(ApiError.class);
+              .as(ApiErrorDto.class);
       // then
       assertThat(apiError.getStatus()).isEqualTo(CONFLICT);
       var message =

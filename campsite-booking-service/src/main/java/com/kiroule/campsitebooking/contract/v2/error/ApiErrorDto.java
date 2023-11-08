@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiError {
+public class ApiErrorDto {
 
   private HttpStatus status;
 

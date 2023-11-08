@@ -5,7 +5,7 @@ import static java.time.LocalDateTime.now;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 import static org.springframework.http.HttpStatus.*;
 
-import com.kiroule.campsitebooking.contract.v2.error.ApiError;
+import com.kiroule.campsitebooking.contract.v2.error.ApiErrorDto;
 import com.kiroule.campsitebooking.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsitebooking.exception.BookingNotFoundException;
 import java.util.stream.Collectors;
@@ -37,7 +37,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
   protected ResponseEntity<Object> handleBookingNotFound(BookingNotFoundException ex) {
 
     var apiError =
-        ApiError.builder().timestamp(now()).status(NOT_FOUND).message(ex.getMessage()).build();
+        ApiErrorDto.builder().timestamp(now()).status(NOT_FOUND).message(ex.getMessage()).build();
     return buildResponseEntity(apiError);
   }
 
@@ -45,7 +45,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
   protected ResponseEntity<Object> handleBookingDatesNotAvailable(RuntimeException ex) {
 
     var apiError =
-        ApiError.builder().timestamp(now()).status(BAD_REQUEST).message(ex.getMessage()).build();
+        ApiErrorDto.builder().timestamp(now()).status(BAD_REQUEST).message(ex.getMessage()).build();
     return buildResponseEntity(apiError);
   }
 
@@ -66,7 +66,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
             .toList());
 
     var apiError =
-        ApiError.builder()
+        ApiErrorDto.builder()
             .timestamp(now())
             .status(BAD_REQUEST)
             .message("Validation error")
@@ -90,7 +90,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         servletWebRequest.getRequest().getServletPath());
 
     var apiError =
-        ApiError.builder()
+        ApiErrorDto.builder()
             .timestamp(now())
             .status(BAD_REQUEST)
             .message("Malformed JSON request")
@@ -106,12 +106,12 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         format(
             "Optimistic locking error: %s with id %s was updated by another transaction",
             ex.getEntityName(), ex.getIdentifier());
-    var apiError = ApiError.builder().timestamp(now()).status(CONFLICT).message(message).build();
+    var apiError = ApiErrorDto.builder().timestamp(now()).status(CONFLICT).message(message).build();
 
     return buildResponseEntity(apiError);
   }
 
-  private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
+  private ResponseEntity<Object> buildResponseEntity(ApiErrorDto apiError) {
     return new ResponseEntity<>(apiError, apiError.getStatus());
   }
 }

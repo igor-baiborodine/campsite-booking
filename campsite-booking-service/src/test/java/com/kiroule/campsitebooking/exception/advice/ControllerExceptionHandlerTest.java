@@ -3,7 +3,7 @@ package com.kiroule.campsitebooking.exception.advice;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.*;
 
-import com.kiroule.campsitebooking.contract.v2.error.ApiError;
+import com.kiroule.campsitebooking.contract.v2.error.ApiErrorDto;
 import com.kiroule.campsitebooking.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsitebooking.exception.BookingNotFoundException;
 import org.hibernate.StaleObjectStateException;
@@ -26,7 +26,7 @@ class ControllerExceptionHandlerTest {
       ResponseEntity<Object> result = classUnderTest.handleBookingNotFound(exception);
       // then
       assertThat(result.getStatusCode()).isEqualTo(NOT_FOUND);
-      assertThat(((ApiError) result.getBody()).getMessage()).isEqualTo("Not found");
+      assertThat(((ApiErrorDto) result.getBody()).getMessage()).isEqualTo("Not found");
     }
   }
 
@@ -41,7 +41,7 @@ class ControllerExceptionHandlerTest {
       ResponseEntity<Object> result = classUnderTest.handleBookingDatesNotAvailable(exception);
       // then
       assertThat(result.getStatusCode()).isEqualTo(BAD_REQUEST);
-      assertThat(((ApiError) result.getBody()).getMessage()).isEqualTo("Dates not available");
+      assertThat(((ApiErrorDto) result.getBody()).getMessage()).isEqualTo("Dates not available");
     }
   }
 
@@ -57,7 +57,7 @@ class ControllerExceptionHandlerTest {
       assertThat(result.getStatusCode()).isEqualTo(CONFLICT);
       var message =
           "Optimistic locking error: BookingEntity with id 1 was updated by another transaction";
-      assertThat(((ApiError) result.getBody()).getMessage()).isEqualTo(message);
+      assertThat(((ApiErrorDto) result.getBody()).getMessage()).isEqualTo(message);
     }
   }
 }
