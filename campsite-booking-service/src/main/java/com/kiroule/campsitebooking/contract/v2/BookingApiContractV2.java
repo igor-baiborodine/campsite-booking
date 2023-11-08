@@ -37,13 +37,13 @@ public interface BookingApiContractV2 {
       @ApiResponse(responseCode = "200", description = "Success"),
       @ApiResponse(responseCode = "404", description = "Not found: booking for a given UUID does not exist")})
   @GetMapping(value = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<EntityModel<BookingDto>> getBooking(@PathVariable() UUID uuid);
+  ResponseEntity<BookingDto> getBooking(@PathVariable() UUID uuid);
 
   @Operation(summary = "Add new booking", responses = {
       @ApiResponse(responseCode = "201", description = "Created: new booking was added"),
       @ApiResponse(responseCode = "400", description = "Bad request: new booking was not added")})
   @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<EntityModel<BookingDto>> addBooking(@RequestBody() @Valid BookingDto bookingDto);
+  ResponseEntity<BookingDto> addBooking(@RequestBody() @Valid BookingDto bookingDto);
 
   @Operation(summary = "Update existing booking", responses = {
       @ApiResponse(responseCode = "200", description = "Success: booking was updated"),
@@ -51,7 +51,7 @@ public interface BookingApiContractV2 {
       @ApiResponse(responseCode = "404", description = "Not found: booking for a given UUID does not exist"),
       @ApiResponse(responseCode = "409", description = "Conflict: booking was updated by another transaction")})
   @PutMapping(value = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<EntityModel<BookingDto>> updateBooking(@PathVariable("uuid") UUID uuid, @RequestBody @Valid BookingDto bookingDto);
+  ResponseEntity<BookingDto> updateBooking(@PathVariable("uuid") UUID uuid, @RequestBody @Valid BookingDto bookingDto);
 
   @Operation(summary = "Cancel existing booking", responses = {
       @ApiResponse(responseCode = "200", description = "Success: booking was cancelled"),
