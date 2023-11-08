@@ -3,12 +3,12 @@ info:
   title: Campsite Booking API
   version: 'v2'
 servers:
-  - url: /v3
+  - url: /v2
 tags:
   - name: booking
     description: Manage campsite bookings
 paths:
-  /api/v2/booking/{uuid}:
+  /booking/{uuid}:
     get:
       tags:
         - booking
@@ -27,13 +27,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v2_booking'
+                $ref: '#/components/schemas/Booking'
         "404":
           description: "Not found: booking for a given UUID does not exist"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v2_booking'
+                $ref: '#/components/schemas/Booking'
     put:
       tags:
         - booking
@@ -50,7 +50,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/v2_booking'
+              $ref: '#/components/schemas/Booking'
         required: true
       responses:
         "200":
@@ -58,25 +58,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v2_booking'
+                $ref: '#/components/schemas/Booking'
         "400":
           description: "Bad request: existing booking was not updated"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v2_booking'
+                $ref: '#/components/schemas/Booking'
         "404":
           description: "Not found: booking for a given UUID does not exist"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v2_booking'
+                $ref: '#/components/schemas/Booking'
         "409":
           description: "Conflict: booking was updated by another transaction"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v2_booking'
+                $ref: '#/components/schemas/Booking'
     delete:
       tags:
         - booking
@@ -96,7 +96,7 @@ paths:
           description: "Bad request: existing booking was not updated"
         "404":
           description: "Not found: booking for a given UUID does not exist"
-  /api/v2/booking:
+  /booking:
     post:
       tags:
         - booking
@@ -106,7 +106,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/v2_booking'
+              $ref: '#/components/schemas/Booking'
         required: true
       responses:
         "201":
@@ -114,14 +114,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v2_booking'
+                $ref: '#/components/schemas/Booking'
         "400":
           description: "Bad request: new booking was not added"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v2_booking'
-  /api/v2/booking/vacant-dates:
+                $ref: '#/components/schemas/Booking'
+  /booking/vacant-dates:
     get:
       tags:
         - booking
@@ -158,7 +158,7 @@ paths:
                   format: date
 components:
   schemas:
-    v2_booking:
+    Booking:
       required:
         - campsiteId
         - email
@@ -192,3 +192,18 @@ components:
           format: date
         active:
           type: boolean
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int16
+        message:
+          type: string
+        timeStamp:
+          type: string
+          format: date-time
+        subErrors:
+          type: array
+          items:
+            type: string

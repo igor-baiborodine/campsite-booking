@@ -26,6 +26,7 @@
     </distributionManagement>
 
     <modules>
+        <module>campsite-booking-api</module>
         <module>campsite-booking-service</module>
     </modules>
 
@@ -44,9 +45,12 @@
         <derby.version>10.14.2.0</derby.version>
         <lombok.version>1.18.30</lombok.version>
         <guava.version>32.0.0-jre</guava.version>
-        <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
+        <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
         <mapstruct.version>1.5.3.Final</mapstruct.version>
         <flyway.core.version>9.22.3</flyway.core.version>
+        <jackson-nullable.version>0.2.6</jackson-nullable.version>
+        <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
+        <swagger.core.v3.version>2.2.15</swagger.core.v3.version>
         <!-- Tests -->
         <rest-assured.version>5.3.2</rest-assured.version>
         <testcontainers.version>1.19.1</testcontainers.version>
@@ -57,6 +61,7 @@
         <maven-failsafe-plugin.version>3.2.1</maven-failsafe-plugin.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
         <maven-jacoco-plugin.version>0.8.10</maven-jacoco-plugin.version>
+        <openapi-generator-maven-plugin.version>6.5.0</openapi-generator-maven-plugin.version>
         <!-- Sonar Cloud -->
         <sonar.organization>igor-baiborodine-github</sonar.organization>
         <sonar.projectKey>igor-baiborodine_campsite-booking</sonar.projectKey>
@@ -156,6 +161,30 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-mysql</artifactId>
                 <version>${flyway.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openapitools</groupId>
+                <artifactId>jackson-databind-nullable</artifactId>
+                <version>${jackson-nullable.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation-api.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger.core.v3.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-models</artifactId>
+                <version>${swagger.core.v3.version}</version>
+                <scope>compile</scope>
             </dependency>
             <!-- Test -->
             <dependency>
@@ -313,6 +342,11 @@
                             </configuration>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openapi-generator-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
