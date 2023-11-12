@@ -1,9 +1,9 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
   title: Campsite Booking API
-  version: 'v2'
+  version: 2.0.0
 servers:
-  - url: /v2
+  - url: /api/v2
 tags:
   - name: booking
     description: Manage campsite bookings

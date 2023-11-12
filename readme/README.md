@@ -60,7 +60,8 @@ date(s). Demonstrate with appropriate test cases that the system can gracefully 
 ```bash
 $ git clone https://github.com/igor-baiborodine/campsite-booking.git
 $ cd campsite-booking
-$ mvn spring-boot:run -Dspring-boot.run.profiles=in-memory-db
+$ mvn clean install -DskipTests -DskipITs
+$ mvn spring-boot:run -Dspring-boot.run.profiles=in-memory-db -f campsite-booking-service/pom.xml
 ```
 The Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
 
@@ -126,7 +127,7 @@ $ mvn clean verify
 ```
 * Run SonarCloud analysis, including test coverage, code smells, vulnerabilities, etc.:
 ```bash
-$ mvn clean verify sonar:sonar -Dsonar.login=<SONAR_TOKEN> -Pcoverage
+$ mvn clean verify sonar:sonar -Dsonar.login=<SONAR_TOKEN>
 ```
 
 ### Swagger UI
@@ -169,35 +170,32 @@ Execute the [concurrent-create-bookings.sh](../script/test/concurrent-create-boo
 simulate concurrent booking creation for the same booking dates:
 
 ```bash
-$ ./script/test/concurrent-create-bookings.sh 2023-10-16 2023-10-17 http:/localhost:80
+$ ./script/test/concurrent-create-bookings.sh 2023-11-16 2023-11-17 http:/localhost:80
 ```
 The response should be as follows after formatting, i.e., only one booking was created:
 ```json
 [
   {
-    "status": "BAD_REQUEST",
-    "timestamp": "2023-10-15T16:36:53.563620238",
-    "message": "No vacant dates available from 2023-10-16 to 2023-10-17"
-  },
-  {
-    "status": "BAD_REQUEST",
-    "timestamp": "2023-10-15T16:36:53.568417093",
-    "message": "No vacant dates available from 2023-10-16 to 2023-10-17"
-  },
-  {
-    "uuid": "870cdaaa-592e-4f9e-92e4-8168f7d427b7",
+    "uuid": "4da1818c-2d9e-4efe-b59d-38915d6bc5d3",
     "version": 0,
     "campsiteId": 1,
-    "email": "john.smith.3@email.com",
-    "fullName": "John Smith 3",
-    "startDate": "2023-10-16",
-    "endDate": "2023-10-17",
-    "active": true,
-    "_links": {
-      "self": {
-        "href": "http://localhost:8080/v2/booking/870cdaaa-592e-4f9e-92e4-8168f7d427b7"
-      }
-    }
+    "email": "john.smith.2@email.com",
+    "fullName": "John Smith 2",
+    "startDate": "2023-11-16",
+    "endDate": "2023-11-17",
+    "active": true
+  },
+  {
+    "status": 400,
+    "message": "No vacant dates available from 2023-11-16 to 2023-11-17",
+    "timestamp": "2023-11-12T20:31:23.751+00:00",
+    "subErrors": []
+  },
+  {
+    "status": 400,
+    "message": "No vacant dates available from 2023-11-16 to 2023-11-17",
+    "timestamp": "2023-11-12T20:31:23.756+00:00",
+    "subErrors": []
   }
 ]
 ```
@@ -208,30 +206,26 @@ Execute the [concurrent-update-booking.sh](../script/test/concurrent-update-book
 simulate concurrent updates for the same booking:
 
 ```bash
-$ ./script/test/concurrent-update-booking.sh 2022-10-25 2022-10-26 http:/localhost:80
+$ ./script/test/concurrent-update-booking.sh 2023-11-15 2023-11-16 http:/localhost:80
 ```
 The response should be as follows after formatting, i.e., only one booking was updated:
 ```json
 [
   {
-    "uuid": "cbf91bf1-c533-4c3d-a9c5-c1e3b0396306",
-    "version": 0,
+    "uuid": "ea10008b-c60e-41f9-97bb-313e9502e7f4",
+    "version": 1,
     "campsiteId": 3,
     "email": "john.smith.1@email.com",
     "fullName": "John Smith 1",
-    "startDate": "2023-10-25",
-    "endDate": "2023-10-26",
-    "active": true,
-    "_links": {
-      "self": {
-        "href": "http://localhost:8080/v2/booking/cbf91bf1-c533-4c3d-a9c5-c1e3b0396306"
-      }
-    }
+    "startDate": "2023-11-15",
+    "endDate": "2023-11-16",
+    "active": true
   },
   {
-    "status": "CONFLICT",
-    "timestamp": "2023-10-15T17:04:18.606047801",
-    "message": "Optimistic locking error - booking was updated by another transaction"
+    "status": 409,
+    "message": "Optimistic locking error: com.kiroule.campsitebooking.repository.entity.BookingEntity with id 1 was updated by another transaction",
+    "timestamp": "2023-11-12T20:29:55.008+00:00",
+    "subErrors": []
   }
 ]
 ```
@@ -240,7 +234,7 @@ The response should be as follows after formatting, i.e., only one booking was u
 Basic load testing for retrieving vacant dates can be performed with the ApacheBench by executing the following command:
 ```Bash
 $ docker-compose.yml up -d
-$ ab -n 10000 -c 100 -k http://localhost:80/v2/booking/vacant-dates
+$ ab -n 10000 -c 100 -k http://localhost:80/api/v2/booking/vacant-dates
 ```
 * **-n 10000** is the number of requests to make
 * **-c 100** is the number of concurrent requests to make at a time
@@ -261,43 +255,43 @@ Completed 9000 requests
 Completed 10000 requests
 Finished 10000 requests
 
-
 Server Software:        
 Server Hostname:        localhost
 Server Port:            80
 
-Document Path:          /v2/booking/vacant-dates
-Document Length:        365 bytes
+Document Path:          /api/v2/booking/vacant-dates
+Document Length:        159 bytes
 
 Concurrency Level:      100
-Time taken for tests:   4.250 seconds
+Time taken for tests:   2.134 seconds
 Complete requests:      10000
 Failed requests:        0
+Non-2xx responses:      10000
 Keep-Alive requests:    0
-Total transferred:      4700000 bytes
-HTML transferred:       3650000 bytes
-Requests per second:    2352.71 [#/sec] (mean)
-Time per request:       42.504 [ms] (mean)
-Time per request:       0.425 [ms] (mean, across all concurrent requests)
-Transfer rate:          1079.86 [Kbytes/sec] received
+Total transferred:      2720000 bytes
+HTML transferred:       1590000 bytes
+Requests per second:    4685.95 [#/sec] (mean)
+Time per request:       21.340 [ms] (mean)
+Time per request:       0.213 [ms] (mean, across all concurrent requests)
+Transfer rate:          1244.70 [Kbytes/sec] received
 
 Connection Times (ms)
               min  mean[+/-sd] median   max
-Connect:        0    0   0.6      0       9
-Processing:     3   42  33.4     32     339
-Waiting:        2   41  33.0     32     338
-Total:          3   42  33.5     32     339
+Connect:        0    1   0.8      1       7
+Processing:     2   20   9.6     19      88
+Waiting:        1   19   9.0     18      87
+Total:          2   21   9.3     19      88
 
 Percentage of the requests served within a certain time (ms)
-  50%     32
-  66%     50
-  75%     56
-  80%     59
-  90%     85
-  95%    107
-  98%    144
-  99%    156
- 100%    339 (longest request)
+  50%     19
+  66%     23
+  75%     25
+  80%     27
+  90%     32
+  95%     38
+  98%     47
+  99%     55
+ 100%     88 (longest request)
 ```
 
 ## Continuous Integration
