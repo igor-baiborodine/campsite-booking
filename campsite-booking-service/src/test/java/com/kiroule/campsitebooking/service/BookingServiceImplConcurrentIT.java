@@ -155,8 +155,8 @@ class BookingServiceImplConcurrentIT extends BaseIT {
       BookingEntity bookingEntity3 =
           testDataHelper.createBookingEntity(campsiteEntity.getId(), 3, 4);
 
-      LocalDate newStartDate = now();
-      LocalDate newEndDate = newStartDate.plusDays(1);
+      LocalDate newStartDate = now().plusDays(1);
+      LocalDate newEndDate = newStartDate.plusDays(2);
       List<Booking> bookingUpdates =
           List.of(
               buildBookingUpdate(bookingEntity1, newStartDate, newEndDate), //
