@@ -28,6 +28,7 @@ public class BookingApiControllerImpl implements BookingApiDelegate {
 
   private BookingMapper bookingMapper;
 
+  @Override
   public ResponseEntity<List<LocalDate>> getVacantDates(
           Long campsiteId, LocalDate startDate, LocalDate endDate) {
     if (isNull(startDate)) {
@@ -40,11 +41,13 @@ public class BookingApiControllerImpl implements BookingApiDelegate {
     return new ResponseEntity<>(vacantDates, OK);
   }
 
+  @Override
   public ResponseEntity<BookingDto> getBooking(UUID uuid) {
     var booking = bookingService.findByUuid(uuid);
     return new ResponseEntity<>(bookingMapper.toBookingDto(booking), OK);
   }
 
+  @Override
   public ResponseEntity<BookingDto> addBooking(BookingDto bookingDto) {
     var booking = bookingService.createBooking(bookingMapper.toBooking(bookingDto));
     var selfLink = WebMvcLinkBuilder.linkTo(this.getClass()).slash(booking.getUuid()).withSelfRel();
@@ -54,11 +57,13 @@ public class BookingApiControllerImpl implements BookingApiDelegate {
     return new ResponseEntity<>(bookingMapper.toBookingDto(booking), headers, CREATED);
   }
 
+  @Override
   public ResponseEntity<BookingDto> updateBooking(UUID uuid, BookingDto bookingDto) {
     var booking = bookingService.updateBooking(bookingMapper.toBooking(bookingDto));
     return new ResponseEntity<>(bookingMapper.toBookingDto(booking), OK);
   }
 
+  @Override
   public ResponseEntity<Void> cancelBooking(UUID uuid) {
     var cancelled = bookingService.cancelBooking(uuid);
     if (cancelled) {
