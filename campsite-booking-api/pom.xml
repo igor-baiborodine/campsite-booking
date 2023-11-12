@@ -10,9 +10,10 @@
     </parent>
 
     <artifactId>campsite-booking-api</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
-        <default.package>com.kiroule.campsitebooking.api</default.package>
+        <base.package>com.kiroule.campsitebooking.api</base.package>
     </properties>
 
     <dependencies>
@@ -64,22 +65,28 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/campsite-booking-api.yaml</inputSpec>
+                            <inputSpec>
+                                ${project.basedir}/src/main/resources/campsite-booking-api.yaml
+                            </inputSpec>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generateApis>true</generateApis>
                             <generateApiDocumentation>true</generateApiDocumentation>
                             <generateApiTests>false</generateApiTests>
+
                             <generateModels>true</generateModels>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
                             <generateSupportingFiles>true</generateSupportingFiles>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.util.Date</typeMapping>
+                            </typeMappings>
 
                             <output>${project.build.directory}/generated-sources</output>
-                            <modelPackage>${default.package}.v2.dto</modelPackage>
+                            <modelPackage>${base.package}.v2.dto</modelPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
-                            <apiPackage>${default.package}.v2</apiPackage>
+                            <apiPackage>${base.package}.v2</apiPackage>
                             <configOptions>
                                 <sourceFolder>main/java</sourceFolder>
                                 <dateLibrary>java8</dateLibrary>
@@ -94,7 +101,10 @@
                                 <interfaceOnly>false</interfaceOnly>
                                 <delegatePattern>true</delegatePattern>
                                 <useOptional>false</useOptional>
-                                <additionalModelTypeAnnotations>@lombok.Builder(toBuilder = true) @lombok.AllArgsConstructor</additionalModelTypeAnnotations>
+                                <additionalModelTypeAnnotations>
+                                    @lombok.Builder(toBuilder = true)
+                                    @lombok.AllArgsConstructor
+                                </additionalModelTypeAnnotations>
                             </configOptions>
                         </configuration>
                     </execution>

@@ -9,15 +9,10 @@
 
     <artifactId>campsite-booking-service</artifactId>
 
-    <properties>
-        <start-class>com.kiroule.campsitebooking.CampsiteBookingServiceApp</start-class>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.kiroule</groupId>
             <artifactId>campsite-booking-api</artifactId>
-            <version>5.6.1-SNAPSHOT</version>
         </dependency>
         <!-- Spring Boot -->
         <dependency>
@@ -56,12 +51,16 @@
         </dependency>
         <!-- Auxiliary -->
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
@@ -78,14 +77,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>spring-mock-mvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
@@ -116,6 +107,10 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>mysql</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>spring-mock-mvc</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -126,11 +121,15 @@
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.kiroule.campsitebooking.CampsiteBookingServiceApp</mainClass>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

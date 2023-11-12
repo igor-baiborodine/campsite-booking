@@ -4,8 +4,8 @@ import static java.time.LocalDate.now;
 import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-import com.kiroule.campsitebooking.contract.v2.dto.BookingDto;
-import com.kiroule.campsitebooking.contract.v2.dto.BookingDto.BookingDtoBuilder;
+import com.kiroule.campsitebooking.api.v2.dto.BookingDto;
+import com.kiroule.campsitebooking.api.v2.dto.BookingDto.BookingDtoBuilder;
 import com.kiroule.campsitebooking.model.Booking;
 import com.kiroule.campsitebooking.model.Booking.BookingBuilder;
 import com.kiroule.campsitebooking.model.Campsite;

@@ -3,7 +3,7 @@ package com.kiroule.campsitebooking.exception.advice;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.*;
 
-import com.kiroule.campsitebooking.contract.v2.error.ApiErrorDto;
+import com.kiroule.campsitebooking.api.v2.dto.ApiErrorDto;
 import com.kiroule.campsitebooking.exception.BookingDatesNotAvailableException;
 import com.kiroule.campsitebooking.exception.BookingNotFoundException;
 import org.hibernate.StaleObjectStateException;
@@ -38,7 +38,7 @@ class ControllerExceptionHandlerTest {
       BookingDatesNotAvailableException exception =
           new BookingDatesNotAvailableException("Dates not available");
       // when
-      ResponseEntity<Object> result = classUnderTest.handleBookingDatesNotAvailable(exception);
+      ResponseEntity<Object> result = classUnderTest.handleServiceMethodArgumentNotValid(exception);
       // then
       assertThat(result.getStatusCode()).isEqualTo(BAD_REQUEST);
       assertThat(((ApiErrorDto) result.getBody()).getMessage()).isEqualTo("Dates not available");

@@ -1,6 +1,6 @@
 package com.kiroule.campsitebooking.model.validator;
 
-import com.kiroule.campsitebooking.contract.v2.dto.BookingDto;
+import com.kiroule.campsitebooking.model.Booking;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidatorContext;
  * @author Igor Baiborodine
  */
 public class BookingStartDateBeforeEndDateValidator
-    implements ConstraintValidator<BookingStartDateBeforeEndDate, BookingDto> {
+    implements ConstraintValidator<BookingStartDateBeforeEndDate, Booking> {
 
   @Override
   public void initialize(BookingStartDateBeforeEndDate constraintAnnotation) {
@@ -16,8 +16,7 @@ public class BookingStartDateBeforeEndDateValidator
   }
 
   @Override
-  public boolean isValid(
-      BookingDto booking, ConstraintValidatorContext constraintValidatorContext) {
+  public boolean isValid(Booking booking, ConstraintValidatorContext constraintValidatorContext) {
     return booking.getStartDate().isBefore(booking.getEndDate());
   }
 }

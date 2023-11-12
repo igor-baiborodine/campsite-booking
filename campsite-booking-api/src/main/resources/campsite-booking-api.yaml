@@ -193,6 +193,10 @@ components:
         active:
           type: boolean
     ApiError:
+      required:
+        - status
+        - message
+        - timestamp
       type: object
       properties:
         status:
@@ -200,9 +204,10 @@ components:
           format: int16
         message:
           type: string
-        timeStamp:
+        timestamp:
           type: string
           format: date-time
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonFormat(shape = com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING)'
         subErrors:
           type: array
           items:

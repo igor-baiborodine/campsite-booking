@@ -39,13 +39,13 @@
         <!-- Spring Boot -->
         <spring-boot.version>3.1.5</spring-boot.version>
         <!-- Auxiliary -->
-        <snakeyaml.version>2.2</snakeyaml.version>
         <spring-retry.version>2.0.3</spring-retry.version>
+        <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
+        <snakeyaml.version>2.2</snakeyaml.version>
         <mysql-connector-j.version>8.0.33</mysql-connector-j.version>
         <derby.version>10.14.2.0</derby.version>
         <lombok.version>1.18.30</lombok.version>
         <guava.version>32.0.0-jre</guava.version>
-        <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
         <mapstruct.version>1.5.3.Final</mapstruct.version>
         <flyway.core.version>9.22.3</flyway.core.version>
         <jackson-nullable.version>0.2.6</jackson-nullable.version>
@@ -77,6 +77,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.kiroule</groupId>
+                <artifactId>campsite-booking-api</artifactId>
+                <version>5.6.1-SNAPSHOT</version>
+            </dependency>
             <!-- Spring Boot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -98,14 +103,25 @@
             </dependency>
             <!-- Auxiliary -->
             <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>${snakeyaml.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.springframework.retry</groupId>
                 <artifactId>spring-retry</artifactId>
                 <version>${spring-retry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc-openapi.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.yaml</groupId>
+                        <artifactId>snakeyaml</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.mysql</groupId>
@@ -130,17 +146,6 @@
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
                 <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>${springdoc-openapi.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.yaml</groupId>
-                        <artifactId>snakeyaml</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.mapstruct</groupId>
@@ -194,12 +199,6 @@
                 <version>${easy-random-core.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.rest-assured</groupId>
-                <artifactId>spring-mock-mvc</artifactId>
-                <version>${rest-assured.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
                 <version>${testcontainers.version}</version>
@@ -209,6 +208,12 @@
                 <groupId>org.testcontainers</groupId>
                 <artifactId>mysql</artifactId>
                 <version>${testcontainers.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>spring-mock-mvc</artifactId>
+                <version>${rest-assured.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

@@ -3,9 +3,9 @@ package com.kiroule.campsitebooking.controller;
 import static java.util.Objects.isNull;
 import static org.springframework.http.HttpStatus.*;
 
-import com.kiroule.campsitebooking.contract.v2.BookingApiContractV2;
-import com.kiroule.campsitebooking.contract.v2.dto.BookingDto;
-import com.kiroule.campsitebooking.mapper.BookingMapperImpl;
+import com.kiroule.campsitebooking.api.v2.BookingApiDelegate;
+import com.kiroule.campsitebooking.api.v2.dto.BookingDto;
+import com.kiroule.campsitebooking.mapper.BookingMapper;
 import com.kiroule.campsitebooking.service.BookingService;
 import java.net.URI;
 import java.time.LocalDate;
@@ -15,21 +15,21 @@ import lombok.AllArgsConstructor;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Igor Baiborodine
  */
-@RestController
+@Service
 @AllArgsConstructor
-public class BookingController implements BookingApiContractV2 {
+public class BookingApiControllerImpl implements BookingApiDelegate {
 
   private BookingService bookingService;
 
-  private BookingMapperImpl bookingMapper;
+  private BookingMapper bookingMapper;
 
   public ResponseEntity<List<LocalDate>> getVacantDates(
-      LocalDate startDate, LocalDate endDate, Long campsiteId) {
+          Long campsiteId, LocalDate startDate, LocalDate endDate) {
     if (isNull(startDate)) {
       startDate = LocalDate.now().plusDays(1);
     }
