@@ -31,7 +31,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 class BookingApiControllerIT extends BaseIT {
 
-  private static final String BASE_PATH = "/v2/booking";
+  private static final String BASE_PATH = "/api/v2/booking";
 
   @Autowired BookingRepository bookingRepository;
 
