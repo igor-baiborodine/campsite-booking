@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
+
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.retry.annotation.Backoff;
@@ -69,11 +71,11 @@ public class BookingServiceImpl implements BookingService {
       retryFor = CannotAcquireLockException.class,
       maxAttempts = 2,
       backoff = @Backoff(delay = 500, maxDelay = 1000))
-  public Booking createBooking(Booking booking) {
+  public Booking createBooking(@Valid Booking booking) {
 
     checkArgument(isNull(booking.getUuid()), "New booking must not have UUID");
     checkArgument(isNull(booking.getVersion()), "New booking must not have version");
-    checkArgument(booking.isActive(), "Booking must be active");
+    checkArgument(booking.isActive(), "New booking must be active");
 
     validateVacantDates(booking);
     booking.setUuid(randomUUID());
@@ -88,7 +90,7 @@ public class BookingServiceImpl implements BookingService {
       retryFor = CannotAcquireLockException.class,
       maxAttempts = 5,
       backoff = @Backoff(delay = 500, maxDelay = 1000))
-  public Booking updateBooking(Booking booking) {
+  public Booking updateBooking(@Valid Booking booking) {
 
     // update should not be used to cancel booking
     checkArgument(booking.isActive(), "Booking must be active");

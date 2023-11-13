@@ -3,7 +3,7 @@ package com.kiroule.campsitebooking.mapper;
 import static org.mapstruct.InjectionStrategy.CONSTRUCTOR;
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
-import com.kiroule.campsitebooking.contract.v2.dto.BookingDto;
+import com.kiroule.campsitebooking.api.v2.dto.BookingDto;
 import com.kiroule.campsitebooking.model.Booking;
 import com.kiroule.campsitebooking.repository.entity.BookingEntity;
 import java.util.List;

@@ -24,9 +24,9 @@ payload3=$(< script/test/booking-payload.json sed -e "s/EMAIL/john.smith.3@email
   | sed -e "s/END_DATE/${end_date}/g")
 printf "Create payload 3: %s\n" "$payload3"
 
-curl -X POST -H "Content-Type: application/json" -d "$payload1" "$base_url"/v2/booking & \
-  curl -X POST -H "Content-Type: application/json" -d "$payload2" "$base_url"/v2/booking & \
-  curl -X POST -H "Content-Type: application/json" -d "$payload3" "$base_url"/v2/booking &
+curl -X POST -H "Content-Type: application/json" -d "$payload1" "$base_url"/api/v2/booking & \
+  curl -X POST -H "Content-Type: application/json" -d "$payload2" "$base_url"/api/v2/booking & \
+  curl -X POST -H "Content-Type: application/json" -d "$payload3" "$base_url"/api/v2/booking &
 
 sleep 1
 printf "\nConcurrent bookings creation completed\n"

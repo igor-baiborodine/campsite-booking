@@ -1,5 +1,6 @@
 package com.kiroule.campsitebooking.controller;
 
+import static com.kiroule.campsitebooking.TestDataHelper.nextBookingDto;
 import static io.restassured.RestAssured.given;
 import static java.lang.String.format;
 import static java.time.LocalDate.now;
@@ -9,10 +10,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kiroule.campsitebooking.BaseIT;
 import com.kiroule.campsitebooking.TestDataHelper;
-import com.kiroule.campsitebooking.contract.v2.dto.BookingDto;
-import com.kiroule.campsitebooking.contract.v2.error.ApiError;
+import com.kiroule.campsitebooking.api.v2.dto.ApiErrorDto;
+import com.kiroule.campsitebooking.api.v2.dto.BookingDto;
 import com.kiroule.campsitebooking.repository.BookingRepository;
 import com.kiroule.campsitebooking.repository.entity.BookingEntity;
 import com.kiroule.campsitebooking.repository.entity.CampsiteEntity;
@@ -27,13 +29,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-class BookingControllerIT extends BaseIT {
+class BookingApiControllerIT extends BaseIT {
 
-  private static final String BASE_PATH = "/v2/booking";
+  private static final String BASE_PATH = "/api/v2/booking";
 
   @Autowired BookingRepository bookingRepository;
 
   @Autowired TestDataHelper testDataHelper;
+
+  @Autowired ObjectMapper objectMapper;
 
   @LocalServerPort int port;
 
@@ -64,7 +68,7 @@ class BookingControllerIT extends BaseIT {
       // given
       LocalDate now = now();
       // when
-      List<String> vacantDates =
+      List<String> result =
           given()
               .param("start_date", now.plusDays(1).toString())
               .param("end_date", now.plusDays(3).toString())
@@ -78,7 +82,7 @@ class BookingControllerIT extends BaseIT {
       // then
       List<String> expected =
           now.plusDays(1).datesUntil(now.plusDays(4)).map(String::valueOf).toList();
-      assertThat(vacantDates).hasSameElementsAs(expected);
+      assertThat(result).containsExactlyElementsOf(expected);
     }
   }
 
@@ -91,14 +95,14 @@ class BookingControllerIT extends BaseIT {
       CampsiteEntity campsiteEntity = testDataHelper.createCampsiteEntity();
       BookingEntity bookingEntity = testDataHelper.createBookingEntity(campsiteEntity.getId());
       // when
-      BookingDto bookingDto =
+      BookingDto result =
           given()
               .pathParam("uuid", bookingEntity.getUuid())
               .when()
               .get(BASE_PATH + "/{uuid}")
               .as(BookingDto.class);
       // then
-      assertThat(bookingDto).usingRecursiveComparison().isEqualTo(bookingEntity);
+      assertThat(result).usingRecursiveComparison().isEqualTo(bookingEntity);
     }
 
     @Test
@@ -124,7 +128,7 @@ class BookingControllerIT extends BaseIT {
       CampsiteEntity campsiteEntity = testDataHelper.createCampsiteEntity();
       BookingEntity bookingEntity = testDataHelper.createBookingEntity(campsiteEntity.getId());
       BookingDto bookingDto =
-          TestDataHelper.nextBookingDto().toBuilder()
+          nextBookingDto().toBuilder()
               .uuid(null)
               .version(null)
               .campsiteId(campsiteEntity.getId())
@@ -132,20 +136,20 @@ class BookingControllerIT extends BaseIT {
               .endDate(bookingEntity.getEndDate())
               .build();
       // when
-      ApiError apiError =
+      ApiErrorDto result =
           given()
               .contentType(APPLICATION_JSON_VALUE)
               .body(bookingDto)
               .when()
               .post(BASE_PATH)
-              .as(ApiError.class);
+              .as(ApiErrorDto.class);
       // then
-      assertThat(apiError.getStatus()).isEqualTo(BAD_REQUEST);
+      assertThat(result.getStatus()).isEqualTo(BAD_REQUEST.value());
       String message =
           format(
               "No vacant dates available from %s to %s",
               bookingDto.getStartDate(), bookingDto.getEndDate());
-      assertThat(apiError.getMessage()).isEqualTo(message);
+      assertThat(result.getMessage()).isEqualTo(message);
     }
 
     @Test
@@ -154,26 +158,24 @@ class BookingControllerIT extends BaseIT {
       LocalDate now = now();
       CampsiteEntity campsiteEntity = testDataHelper.createCampsiteEntity();
       BookingDto bookingDto =
-          TestDataHelper.nextBookingDto().toBuilder()
+          nextBookingDto().toBuilder()
               .uuid(null)
               .campsiteId(campsiteEntity.getId())
               .startDate(now.plusDays(1))
               .endDate(now.plusDays(5))
               .build();
       // when
-      ApiError apiError =
+      ApiErrorDto result =
           given()
               .contentType(APPLICATION_JSON_VALUE)
               .body(bookingDto)
               .when()
               .post(BASE_PATH)
-              .as(ApiError.class);
+              .as(ApiErrorDto.class);
       // then
-      assertThat(apiError.getStatus()).isEqualTo(BAD_REQUEST);
-      assertThat(apiError.getMessage()).isEqualTo("Validation error");
-      assertThat(apiError.getSubErrors()).hasSize(1);
-      assertThat(apiError.getSubErrors().get(0))
-          .isEqualTo("Booking stay length must be less or equal to three days");
+      assertThat(result.getStatus()).isEqualTo(BAD_REQUEST.value());
+      assertThat(result.getMessage()).isEqualTo("createBooking.booking: Booking stay length must be less or equal to three days");
+      assertThat(result.getSubErrors()).isEmpty();
     }
   }
 
@@ -193,7 +195,7 @@ class BookingControllerIT extends BaseIT {
       CampsiteEntity campsiteEntity = testDataHelper.createCampsiteEntity();
       BookingEntity bookingEntity = testDataHelper.createBookingEntity(campsiteEntity.getId());
       BookingDto bookingDto =
-          TestDataHelper.nextBookingDto().toBuilder()
+          nextBookingDto().toBuilder()
               .uuid(bookingEntity.getUuid())
               .version(bookingEntity.getVersion())
               .campsiteId(bookingEntity.getCampsiteId())
@@ -202,7 +204,7 @@ class BookingControllerIT extends BaseIT {
               .active(bookingEntity.isActive())
               .build();
       // when
-      BookingDto updatedBookingDto =
+      BookingDto result =
           given()
               .pathParam("uuid", bookingDto.getUuid())
               .contentType(APPLICATION_JSON_VALUE)
@@ -211,11 +213,8 @@ class BookingControllerIT extends BaseIT {
               .put(BASE_PATH + "/{uuid}")
               .as(BookingDto.class);
       // then
-      assertThat(updatedBookingDto)
-          .usingRecursiveComparison()
-          .ignoringFields("version")
-          .isEqualTo(bookingDto);
-      assertThat(updatedBookingDto.getVersion()).isEqualTo(1L);
+      assertThat(result).usingRecursiveComparison().ignoringFields("version").isEqualTo(bookingDto);
+      assertThat(result.getVersion()).isEqualTo(1L);
     }
 
     @Test
@@ -225,7 +224,7 @@ class BookingControllerIT extends BaseIT {
       BookingEntity bookingEntity1 = testDataHelper.createBookingEntity(campsiteEntity.getId());
       BookingEntity bookingEntity2 = testDataHelper.createBookingEntity(campsiteEntity.getId());
       BookingDto bookingDto1 =
-          TestDataHelper.nextBookingDto().toBuilder()
+          nextBookingDto().toBuilder()
               .uuid(bookingEntity1.getUuid())
               .campsiteId(bookingEntity1.getCampsiteId())
               .startDate(bookingEntity2.getStartDate())
@@ -233,21 +232,21 @@ class BookingControllerIT extends BaseIT {
               .active(bookingEntity1.isActive())
               .build();
       // when
-      ApiError apiError =
+      ApiErrorDto result =
           given()
               .pathParam("uuid", bookingDto1.getUuid())
               .contentType(APPLICATION_JSON_VALUE)
               .body(bookingDto1)
               .when()
               .put(BASE_PATH + "/{uuid}")
-              .as(ApiError.class);
+              .as(ApiErrorDto.class);
       // then
-      assertThat(apiError.getStatus()).isEqualTo(BAD_REQUEST);
+      assertThat(result.getStatus()).isEqualTo(BAD_REQUEST.value());
       String message =
           format(
               "No vacant dates available from %s to %s",
               bookingDto1.getStartDate(), bookingDto1.getEndDate());
-      assertThat(apiError.getMessage()).isEqualTo(message);
+      assertThat(result.getMessage()).isEqualTo(message);
     }
 
     @Test
@@ -256,7 +255,7 @@ class BookingControllerIT extends BaseIT {
       CampsiteEntity campsiteEntity = testDataHelper.createCampsiteEntity();
       BookingEntity bookingEntity = testDataHelper.createBookingEntity(campsiteEntity.getId());
       BookingDto bookingDto =
-          TestDataHelper.nextBookingDto().toBuilder()
+          nextBookingDto().toBuilder()
               .uuid(bookingEntity.getUuid())
               .version(bookingEntity.getVersion())
               .campsiteId(bookingEntity.getCampsiteId())
@@ -267,21 +266,21 @@ class BookingControllerIT extends BaseIT {
       testDataHelper.updateBookingEntity(
           bookingEntity.toBuilder().endDate(bookingEntity.getEndDate().plusDays(5)).build());
       // when
-      ApiError apiError =
+      ApiErrorDto result =
           given()
               .pathParam("uuid", bookingDto.getUuid())
               .contentType(APPLICATION_JSON_VALUE)
               .body(bookingDto)
               .when()
               .put(BASE_PATH + "/{uuid}")
-              .as(ApiError.class);
+              .as(ApiErrorDto.class);
       // then
-      assertThat(apiError.getStatus()).isEqualTo(CONFLICT);
+      assertThat(result.getStatus()).isEqualTo(CONFLICT.value());
       var message =
           format(
               "Optimistic locking error: %s with id %s was updated by another transaction",
               BookingEntity.class.getCanonicalName(), bookingEntity.getId());
-      assertThat(apiError.getMessage()).isEqualTo(message);
+      assertThat(result.getMessage()).isEqualTo(message);
     }
   }
 

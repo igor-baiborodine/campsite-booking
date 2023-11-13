@@ -3,7 +3,7 @@ package com.kiroule.campsitebooking.model.mapper;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.kiroule.campsitebooking.contract.v2.dto.BookingDto;
+import com.kiroule.campsitebooking.api.v2.dto.BookingDto;
 import com.kiroule.campsitebooking.mapper.BookingMapperImpl;
 import com.kiroule.campsitebooking.model.Booking;
 import com.kiroule.campsitebooking.repository.entity.BookingEntity;

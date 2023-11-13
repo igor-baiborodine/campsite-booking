@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import com.kiroule.campsitebooking.model.validator.BookingAllowedStartDate;
+import com.kiroule.campsitebooking.model.validator.BookingMaximumStay;
+import com.kiroule.campsitebooking.model.validator.BookingStartDateBeforeEndDate;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,6 +18,9 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 @EqualsAndHashCode(callSuper = true)
+@BookingStartDateBeforeEndDate
+@BookingAllowedStartDate
+@BookingMaximumStay
 public class Booking extends DateAudit {
 
   /** Persistence ID */
