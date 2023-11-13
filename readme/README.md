@@ -143,8 +143,8 @@ the `Request Body` text area, and click on the `Execute`:
   "campsiteId": 1,
   "email": "John Smith",
   "fullName": "john.smith@email.com",
-  "startDate": "2023-10-29",
-  "endDate": "2023-10-30",
+  "startDate": "2023-11-19",
+  "endDate": "2023-11-21",
   "active": true
 }
 ```
