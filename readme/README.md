@@ -325,8 +325,8 @@ the `Unit & SonarCloud Scan` job:
 
 ### Generate README TOC
 
-This workflow is executed automatically on any pull request and consists of
-the `Generate TOC` job
+This workflow is executed automatically on any update of the `readme/README.md` file pushed to
+the `master` branch and consists of the `Generate TOC` job:
 
 ![Generate README TOC Workflow](/readme/github-actions-generate-readme-toc.png)
 
