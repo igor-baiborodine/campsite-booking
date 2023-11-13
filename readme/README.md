@@ -55,6 +55,13 @@ date(s). Demonstrate with appropriate test cases that the system can gracefully 
 * The system should be able to handle large volume of requests for getting the campsite availability.
 * There are no restrictions on how reservations are stored as long as system constraints are not violated.
 
+## Implementation Details
+
+This project is implemented using an API-first(or contract-first) approach along with Maven's
+multi-module project structure. You can read
+more [here](https://swagger.io/resources/articles/adopting-an-api-first-approach/) on the API-first
+development approach.
+
 ## Up & Running
 ### Run with Maven
 ```bash
@@ -135,8 +142,8 @@ The API can be tested via the Swagger UI:
 
 ![Swagger UI Main View](/readme/swagger-main-view.png)
 
-For example, to add a new booking, expand the `POST` operation. Then click on the `Try it out`, add the payload below to
-the `Request Body` text area, and click on the `Execute`:
+For example, to add a new booking, expand the `POST` operation. Then click on the `Try it out`, add
+the payload below to the `Request Body` text area, and click on the `Execute`:
 
 ```json
 {
@@ -296,24 +303,32 @@ Percentage of the requests served within a certain time (ms)
 
 ## Continuous Integration
 
-Continuous integration is implemented using GitHub Actions, and it includes the `Build on Pull Request`
-, `Build Master Branch`, and `Perform Release` workflows:
+Continuous integration is implemented using GitHub Actions, and it includes
+the `Build Master Branch`, `Build on Pull Request`, `Generate README TOC`, and `Perform Release`
+workflows:
 
 ![GitHub Actions](/readme/github-actions.png)
 
+### Build Master Branch
+
+This workflow is executed automatically on any commit to the `master` branch and consists of
+the `SonarCloud Scan` and `Snapshot Publishing` jobs:
+
+![Build Master Branch Workflow](/readme/github-actions-build-master-branch.png)
+
 ### Build on Pull Request
 
-This workflow is executed automatically on any pull request and consists of the `Unit & Integrations Tests`
-and `SonarCloud Scan` job:
+This workflow is executed automatically on any pull request and consists of
+the `Unit & SonarCloud Scan` job:
 
 ![Build on Pull Request Workflow](/readme/github-actions-build-on-pull-request.png)
 
-### Build Master Branch
+### Generate README TOC
 
-This workflow is executed automatically on any commit to the `master` branch and consists of the `SonarCloud Scan`
-and `Snapshot Publishing` jobs:
+This workflow is executed automatically on any pull request and consists of
+the `Generate TOC` job
 
-![Build Master Branch Workflow](/readme/github-actions-build-master-branch.png)
+![Generate README TOC Workflow](/readme/github-actions-generate-readme-toc.png)
 
 ### Perform Release
 This workflow is executed manually and consists of the `Maven Release` and `Docker Image` jobs:
