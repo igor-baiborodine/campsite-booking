@@ -16,6 +16,7 @@ Read these articles to get more insights:
 - [Technical Task](#technical-task)
   - [Booking Constraints](#booking-constraints)
   - [System Requirements](#system-requirements)
+- [Implementation Details](#implementation-details)
 - [Up & Running](#up--running)
   - [Run with Maven](#run-with-maven)
   - [Executable JAR](#executable-jar)
@@ -28,8 +29,9 @@ Read these articles to get more insights:
     - [Booking Update](#booking-update)
   - [Basic Load Testing](#basic-load-testing)
 - [Continuous Integration](#continuous-integration)
-  - [Build on Pull Request](#build-on-pull-request)
   - [Build Master Branch](#build-master-branch)
+  - [Build on Pull Request](#build-on-pull-request)
+  - [Generate README TOC](#generate-readme-toc)
   - [Perform Release](#perform-release)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
