@@ -1,18 +1,17 @@
 package com.kiroule.campsitebooking.controller;
 
 import static java.util.Objects.isNull;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.http.HttpStatus.*;
 
 import com.kiroule.campsitebooking.api.v2.BookingApiDelegate;
 import com.kiroule.campsitebooking.api.v2.dto.BookingDto;
 import com.kiroule.campsitebooking.mapper.BookingMapper;
 import com.kiroule.campsitebooking.service.BookingService;
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class BookingApiControllerImpl implements BookingApiDelegate {
 
   @Override
   public ResponseEntity<List<LocalDate>> getVacantDates(
-          Long campsiteId, LocalDate startDate, LocalDate endDate) {
+      Long campsiteId, LocalDate startDate, LocalDate endDate) {
     if (isNull(startDate)) {
       startDate = LocalDate.now().plusDays(1);
     }
@@ -50,10 +49,12 @@ public class BookingApiControllerImpl implements BookingApiDelegate {
   @Override
   public ResponseEntity<BookingDto> addBooking(BookingDto bookingDto) {
     var booking = bookingService.createBooking(bookingMapper.toBooking(bookingDto));
-    var selfLink = WebMvcLinkBuilder.linkTo(this.getClass()).slash(booking.getUuid()).withSelfRel();
     var headers = new HttpHeaders();
-    headers.setLocation(URI.create(selfLink.getHref()));
-
+    headers.setLocation(
+        linkTo(BookingApiControllerImpl.class)
+            .slash("api/v2/booking")
+            .slash(booking.getUuid())
+            .toUri());
     return new ResponseEntity<>(bookingMapper.toBookingDto(booking), headers, CREATED);
   }
 
