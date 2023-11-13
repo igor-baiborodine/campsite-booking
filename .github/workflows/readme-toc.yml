@@ -8,8 +8,11 @@ on:
       - 'readme/README.md'
 
 jobs:
-  generateTOC:
+  generate-toc:
     name: Generate TOC
     runs-on: ubuntu-latest
     steps:
       - uses: technote-space/toc-generator@v4
+        with:
+          TARGET_PATHS: 'readme/README.md'
+          
