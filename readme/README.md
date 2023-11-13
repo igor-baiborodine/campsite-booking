@@ -335,6 +335,6 @@ This workflow is executed manually and consists of the `Maven Release` and `Dock
 
 ![Perform Release Workflow](/readme/github-actions-perform-release.png)
 
-The `Release Version` parameter value should be provided before executing this workflow:
+The `Release Version` parameter value should be provided before executing this  workflow:
 
 ![Perform Release Workflow](/readme/github-actions-perform-release-parameter.png)
