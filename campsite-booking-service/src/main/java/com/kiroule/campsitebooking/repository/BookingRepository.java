@@ -25,7 +25,7 @@ public interface BookingRepository
   Optional<BookingEntity> findByUuid(UUID uuid);
 
   /**
-   * Find active bookings for the given date range and campsite ID with pessimistic write locking.
+   * Find active bookings for the given date range and campsite ID without pessimistic write locking.
    *
    * @param startDate range start date
    * @param endDate range end date
