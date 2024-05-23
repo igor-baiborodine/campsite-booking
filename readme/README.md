@@ -1,4 +1,4 @@
-# Campsite Booking API  
+# Campsite Booking API (Java)  
 ![Master Branch](https://github.com/igor-baiborodine/campsite-booking/workflows/Build%20Master%20Branch/badge.svg)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=alert_status)](https://sonarcloud.io/dashboard?id=igor-baiborodine_campsite-booking) 
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=coverage)](https://sonarcloud.io/summary/new_code?id=igor-baiborodine_campsite-booking)
