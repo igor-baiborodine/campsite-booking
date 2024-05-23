@@ -3,6 +3,8 @@
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=alert_status)](https://sonarcloud.io/dashboard?id=igor-baiborodine_campsite-booking) 
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=igor-baiborodine_campsite-booking&metric=coverage)](https://sonarcloud.io/summary/new_code?id=igor-baiborodine_campsite-booking)
 
+🔥 A Go version is available in the [campsite-booking-go](https://github.com/igor-baiborodine/campsite-booking-go) repository. 
+
 ### A RESTful web service that manages campsite bookings. 
 
 Read these articles to get more insights:
