@@ -42,7 +42,7 @@
         <spring-retry.version>2.0.3</spring-retry.version>
         <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
         <snakeyaml.version>2.2</snakeyaml.version>
-        <mysql-connector-j.version>8.0.33</mysql-connector-j.version>
+        <mysql-connector-j.version>8.2.0</mysql-connector-j.version>
         <derby.version>10.17.1.0</derby.version>
         <lombok.version>1.18.30</lombok.version>
         <guava.version>32.0.0-jre</guava.version>
