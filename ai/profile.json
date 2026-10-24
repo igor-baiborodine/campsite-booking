@@ -1,0 +1,233 @@
+{
+  "version": 1,
+  "consumer": "campsite-booking",
+  "framework_path": "ai/framework",
+  "components": [
+    "core",
+    "java",
+    "house"
+  ],
+  "styles": {
+    "java": "google"
+  },
+  "guides": [
+    "AGENTS.md",
+    "ai/consumer-profile.md"
+  ],
+  "tool_sources": [
+    "pom.xml",
+    "campsite-booking-api/pom.xml",
+    "campsite-booking-service/pom.xml",
+    "scripts/ai/java.sh",
+    "scripts/ai/static-pom.xml",
+    "scripts/ai/imports.xml",
+    "scripts/ai/pmd.xml",
+    "scripts/ai/tool-sha256.txt",
+    "scripts/ai/framework.sh",
+    "scripts/ai/markdown.sh"
+  ],
+  "artifact_root": "ai/artifacts",
+  "issue_sync": "GitHub local-authority exact-body synchronization through authenticated gh or connected provider; explicit update permission and read-back; unavailable access blocks dependent work; ad hoc exempt",
+  "conflicts": "stop-and-report",
+  "commands": {
+    "unit": {
+      "owner": "scripts/ai/java.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/java.sh",
+        "unit"
+      ],
+      "prerequisites": "Java 17, Maven 3.9.9, AI_MAVEN_SETTINGS; integration/behavior require Docker/MySQL; dependency requires AI_DEPENDENCY_DATA complete current database",
+      "effects": "Maven target/cache output; tests own disposable containers; behavior temporarily injects and cleans retained fixture; scanner writes report/data locks",
+      "scope": "Original reactor unit tests; expected baseline 49, no skips"
+    },
+    "integration": {
+      "owner": "scripts/ai/java.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/java.sh",
+        "integration"
+      ],
+      "prerequisites": "Java 17, Maven 3.9.9, AI_MAVEN_SETTINGS; integration/behavior require Docker/MySQL; dependency requires AI_DEPENDENCY_DATA complete current database",
+      "effects": "Maven target/cache output; tests own disposable containers; behavior temporarily injects and cleans retained fixture; scanner writes report/data locks",
+      "scope": "Original 49 units/27 integration cases and original coverage gate"
+    },
+    "behavior": {
+      "owner": "scripts/ai/java.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/java.sh",
+        "behavior"
+      ],
+      "prerequisites": "Java 17, Maven 3.9.9, AI_MAVEN_SETTINGS; integration/behavior require Docker/MySQL; dependency requires AI_DEPENDENCY_DATA complete current database",
+      "effects": "Maven target/cache output; tests own disposable containers; behavior temporarily injects and cleans retained fixture; scanner writes report/data locks",
+      "scope": "49 original units plus isolated three-case retained HTTP/MySQL fixture; no full coverage claim"
+    },
+    "generate": {
+      "owner": "scripts/ai/java.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/java.sh",
+        "generate"
+      ],
+      "prerequisites": "Java 17, Maven 3.9.9, AI_MAVEN_SETTINGS; integration/behavior require Docker/MySQL; dependency requires AI_DEPENDENCY_DATA complete current database",
+      "effects": "Maven target/cache output; tests own disposable containers; behavior temporarily injects and cleans retained fixture; scanner writes report/data locks",
+      "scope": "Original API YAML/options and 19-file generation baseline"
+    },
+    "static": {
+      "owner": "scripts/ai/java.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/java.sh",
+        "static"
+      ],
+      "prerequisites": "Java 17, Maven 3.9.9, AI_MAVEN_SETTINGS; integration/behavior require Docker/MySQL; dependency requires AI_DEPENDENCY_DATA complete current database",
+      "effects": "Maven target/cache output; tests own disposable containers; behavior temporarily injects and cleans retained fixture; scanner writes report/data locks",
+      "scope": "Handwritten production Java; three PMD rules, plugin 3.26.0/PMD 7.7.0"
+    },
+    "dependency": {
+      "owner": "scripts/ai/java.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/java.sh",
+        "dependency"
+      ],
+      "prerequisites": "Java 17, Maven 3.9.9, AI_MAVEN_SETTINGS; integration/behavior require Docker/MySQL; dependency requires AI_DEPENDENCY_DATA complete current database",
+      "effects": "Maven target/cache output; tests own disposable containers; behavior temporarily injects and cleans retained fixture; scanner writes report/data locks",
+      "scope": "Dependency-Check 13.0.0, autoUpdate=false, failOnError=true, CVSS 7, OSS Index disabled"
+    },
+    "format": {
+      "owner": "scripts/ai/java.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/java.sh",
+        "format"
+      ],
+      "prerequisites": "Java 17; AI_JAVA_TOOLS with checksum-verified GJF 1.24.0 and Checkstyle 10.21.4",
+      "effects": "Selected handwritten source mutation",
+      "scope": "Append exact task-owned Java paths; exclude generated/vendor/unrelated files"
+    },
+    "format-check": {
+      "owner": "scripts/ai/java.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/java.sh",
+        "format-check"
+      ],
+      "prerequisites": "Java 17; AI_JAVA_TOOLS with checksum-verified GJF 1.24.0 and Checkstyle 10.21.4",
+      "effects": "Non-mutating selected handwritten checks",
+      "scope": "Append exact task-owned Java paths; exclude generated/vendor/unrelated files"
+    },
+    "imports": {
+      "owner": "scripts/ai/java.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/java.sh",
+        "imports"
+      ],
+      "prerequisites": "Java 17; AI_JAVA_TOOLS with checksum-verified GJF 1.24.0 and Checkstyle 10.21.4",
+      "effects": "Non-mutating selected handwritten checks",
+      "scope": "Append exact task-owned Java paths; exclude generated/vendor/unrelated files"
+    },
+    "integrity": {
+      "owner": "scripts/ai/framework.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/framework.sh",
+        "integrity"
+      ],
+      "prerequisites": "Explicit absolute PYTHON CPython 3.14.8; initialized dependency; source requires framework dev dependencies",
+      "effects": "Read-only source; owned scratch; freshness queries exact configured source/ref with 20-second bound",
+      "scope": "Index pin; composition checks Java API/test and both installed clients; no auto-repair"
+    },
+    "compose": {
+      "owner": "scripts/ai/framework.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/framework.sh",
+        "compose"
+      ],
+      "prerequisites": "Explicit absolute PYTHON CPython 3.14.8; initialized dependency; source requires framework dev dependencies",
+      "effects": "Read-only source; owned scratch; freshness queries exact configured source/ref with 20-second bound",
+      "scope": "Index pin; composition checks Java API/test and both installed clients; no auto-repair"
+    },
+    "freshness": {
+      "owner": "scripts/ai/framework.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/framework.sh",
+        "freshness"
+      ],
+      "prerequisites": "Explicit absolute PYTHON CPython 3.14.8; initialized dependency; source requires framework dev dependencies",
+      "effects": "Read-only source; owned scratch; freshness queries exact configured source/ref with 20-second bound",
+      "scope": "Index pin; composition checks Java API/test and both installed clients; no auto-repair"
+    },
+    "source": {
+      "owner": "scripts/ai/framework.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/framework.sh",
+        "source"
+      ],
+      "prerequisites": "Explicit absolute PYTHON CPython 3.14.8; initialized dependency; source requires framework dev dependencies",
+      "effects": "Read-only source; owned scratch; freshness queries exact configured source/ref with 20-second bound",
+      "scope": "Index pin; composition checks Java API/test and both installed clients; no auto-repair"
+    },
+    "markdown-format": {
+      "owner": "scripts/ai/markdown.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/markdown.sh",
+        "format"
+      ],
+      "prerequisites": "Node; AI_DOCTOC_DIR explicitly provisioned doctoc 2.5.0 package prefix",
+      "effects": "Selected Markdown mutation",
+      "scope": "Append exact task-owned paths; exact twelve generated adapters exempt from TOC only"
+    },
+    "markdown-check": {
+      "owner": "scripts/ai/markdown.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/markdown.sh",
+        "check"
+      ],
+      "prerequisites": "Node; AI_DOCTOC_DIR explicitly provisioned doctoc 2.5.0 package prefix",
+      "effects": "Owned temporary copies only",
+      "scope": "Append exact task-owned paths; exact twelve generated adapters exempt from TOC only"
+    },
+    "snapshot": {
+      "owner": "ai/framework/scripts/refresh_git_diff.sh",
+      "cwd": ".",
+      "argv": [
+        "ai/framework/scripts/refresh_git_diff.sh"
+      ],
+      "prerequisites": "Explicit verified absolute PYTHON; Git refs; preflighted existing artifact directory",
+      "effects": "Atomic local ignored snapshot",
+      "scope": "Append explicit consumer root, intended base, head, output; source-consumer artifact root only"
+    },
+    "artifact-preflight": {
+      "owner": "AGENTS.md",
+      "cwd": ".",
+      "argv": [
+        "git",
+        "check-ignore",
+        "-q"
+      ],
+      "prerequisites": "Exact /ai/artifacts/ local exclusion and empty artifact index/staging",
+      "effects": "Read-only",
+      "scope": "Append resolved ticket-content; also inspect exact exclude, ls-files and cached diff as root guide requires"
+    },
+    "issue-sync": {
+      "owner": "AGENTS.md",
+      "cwd": ".",
+      "argv": [
+        "gh",
+        "issue",
+        "view"
+      ],
+      "prerequisites": "Authenticated named repository/issue access",
+      "effects": "Read-only",
+      "scope": "Exact body comparison; publication separately authorized; ad hoc exempt"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+[submodule "ai/framework"]
+	path = ai/framework
+	url = git@github.com:igor-baiborodine/spec-first-ai-framework.git
+	branch = refs/heads/main

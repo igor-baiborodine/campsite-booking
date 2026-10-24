@@ -1,0 +1,12 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.kiroule.tooling</groupId><artifactId>campsite-static</artifactId><version>1</version>
+  <properties><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding></properties>
+  <build>
+    <sourceDirectory>${project.basedir}/../../campsite-booking-service/src/main/java</sourceDirectory>
+    <plugins><plugin>
+      <groupId>org.apache.maven.plugins</groupId><artifactId>maven-pmd-plugin</artifactId><version>3.26.0</version>
+      <configuration><targetJdk>17</targetJdk><typeResolution>false</typeResolution><linkXRef>false</linkXRef><failOnViolation>true</failOnViolation><rulesets><ruleset>${project.basedir}/pmd.xml</ruleset></rulesets></configuration>
+    </plugin></plugins>
+  </build>
+</project>
