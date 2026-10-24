@@ -1,0 +1,80 @@
+name: AI Consumer Validation
+
+on:
+  pull_request:
+    paths:
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'CONTINUE.md'
+      - 'CONTRIBUTING.md'
+      - 'ai/**'
+      - '.gitmodules'
+      - '.githooks/**'
+      - '.agents/**'
+      - 'scripts/ai/**'
+      - '.claude/**'
+      - '.continue/**'
+      - '.github/copilot-instructions.md'
+      - '.github/skills/**'
+      - '.github/workflows/ai-framework.yml'
+      - '**/pom.xml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ai-check:
+    name: Validate framework
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHON: ${{ github.workspace }}/ai/framework/.venv/bin/python
+      AI_DOCTOC_DIR: ${{ github.workspace }}/ai/framework
+    steps:
+      - name: Check out consumer and recorded framework pin
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Set up uv 0.13.1
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.13.1'
+          enable-cache: true
+          cache-dependency-glob: 'ai/framework/uv.lock'
+
+      - name: Set up managed Python 3.14.8
+        run: make -C ai/framework setup
+
+      - name: Set up Node 24.13.0
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24.13.0'
+
+      - name: Set up pinned doctoc
+        run: make -C ai/framework markdown-setup
+
+      - name: Check shared source, pinned dependency and consumer adapters
+        run: |
+          scripts/ai/framework.sh source
+          scripts/ai/framework.sh integrity
+          scripts/ai/framework.sh compose
+
+      - name: Check consumer AI Markdown tables of contents
+        shell: bash
+        run: |
+          git ls-files -z -- AGENTS.md CLAUDE.md CONTINUE.md CONTRIBUTING.md \
+            'ai/*.md' '.agents/*.md' '.claude/*.md' '.continue/*.md' \
+            '.github/skills/*.md' .github/copilot-instructions.md |
+            xargs -0 -r scripts/ai/markdown.sh check
+
+      - name: Test consumer validation tooling
+        run: |
+          scripts/ai/python.sh format-check
+          scripts/ai/python.sh lint
+          scripts/ai/python.sh test-collect
+          scripts/ai/python.sh test-fast
+          scripts/ai/python.sh test-integration
