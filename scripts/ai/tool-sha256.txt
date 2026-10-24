@@ -1,0 +1,2 @@
+812f805f58112460edf01bf202a8e61d0fd1f35c0d4fabd54220640776ec57a1  google-java-format-1.24.0-all-deps.jar
+3c1d94d6ecc83e02dff587c9ba5b6b4ec4fec38c7a958eb587efec9b28e2f318  checkstyle-10.21.4-all.jar

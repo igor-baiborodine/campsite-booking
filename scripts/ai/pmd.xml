@@ -1,0 +1,6 @@
+<ruleset name="Java pilot safeguards" xmlns="http://pmd.sourceforge.net/ruleset/2.0.0">
+  <description>Bounded Java exception and resource checks; not whole-program analysis.</description>
+  <rule ref="category/java/errorprone.xml/EmptyCatchBlock" />
+  <rule ref="category/java/errorprone.xml/CloseResource" />
+  <rule ref="category/java/errorprone.xml/BrokenNullCheck" />
+</ruleset>

@@ -1,0 +1,82 @@
+name: AI Framework and Java Adoption Validation
+
+on:
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  framework_java:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Integrity checks reject persisted local HTTP authentication overrides.
+          persist-credentials: false
+      - name: Prepare recorded framework pin over public HTTPS
+        shell: bash
+        run: |
+          git -c url.https://github.com/.insteadOf=git@github.com: submodule update --init --checkout -- ai/framework
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.13.0'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '17'
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.13.1'
+      - name: Explicit framework and Java tool setup
+        shell: bash
+        run: |
+          make -C ai/framework setup markdown-setup
+          export AI_JAVA_TOOLS="$RUNNER_TEMP/java-tools"
+          scripts/ai/tools_setup.sh
+          curl --fail --location --connect-timeout 10 --max-time 120 -o "$RUNNER_TEMP/maven.tar.gz" https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
+          curl --fail --location --connect-timeout 10 --max-time 30 -o "$RUNNER_TEMP/maven.sha512" https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz.sha512
+          expected=$(cat "$RUNNER_TEMP/maven.sha512")
+          printf '%s  %s\n' "$expected" "$RUNNER_TEMP/maven.tar.gz" | sha512sum -c -
+          tar -xzf "$RUNNER_TEMP/maven.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/apache-maven-3.9.9/bin" >> "$GITHUB_PATH"
+          echo "PYTHON=$PWD/ai/framework/.venv/bin/python" >> "$GITHUB_ENV"
+          echo "AI_DOCTOC_DIR=$PWD/ai/framework" >> "$GITHUB_ENV"
+          echo "AI_JAVA_TOOLS=$AI_JAVA_TOOLS" >> "$GITHUB_ENV"
+          echo "AI_MAVEN_SETTINGS=$RUNNER_TEMP/maven-settings.xml" >> "$GITHUB_ENV"
+          printf '<settings/>\n' > "$RUNNER_TEMP/maven-settings.xml"
+      - name: Offline source and consumer composition
+        run: |
+          scripts/ai/framework.sh source
+          scripts/ai/framework.sh integrity
+          scripts/ai/framework.sh compose
+          scripts/ai/markdown.sh check AGENTS.md CLAUDE.md CONTRIBUTING.md ai/consumer-profile.md
+      - name: Test report gate regression checks
+        run: |
+          scripts/ai/python.sh format-check
+          scripts/ai/python.sh lint
+          scripts/ai/python.sh test-collect
+          scripts/ai/python.sh test-fast
+          scripts/ai/python.sh test-integration
+      - name: Selected changed handwritten Java style
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || 'HEAD^' }}
+        run: |
+          git diff --name-only --diff-filter=ACMR -z "$BASE_SHA" HEAD -- 'campsite-booking-service/src/main/java/*.java' 'campsite-booking-service/src/test/java/*.java' 'scripts/ai/fixtures/*.java' > "$RUNNER_TEMP/changed-java"
+          mapfile -d '' files < "$RUNNER_TEMP/changed-java"
+          if ((${#files[@]})); then
+            scripts/ai/java.sh format-check "${files[@]}"
+            scripts/ai/java.sh imports "${files[@]}"
+          fi
+      - name: Original tests and isolated behavior
+        run: |
+          scripts/ai/java.sh integration
+          scripts/ai/java.sh behavior
+          scripts/ai/java.sh static
+      # Online freshness uses the approved SSH source and a separately authorized environment.
+      # Full-corpus style and dependency findings retain their nonzero local baseline records.
