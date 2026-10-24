@@ -18,6 +18,8 @@ Keep the API and service modules, their POMs, YAML, database profiles and Flyway
 unchanged unless a task explicitly changes behavior. Java 17 and Maven 3.9.9 are the accepted
 local validation tools. The Maven wrapper's historical 3.5.4 release is not an accepted substitute.
 Run commands from this root; scripts also resolve it correctly when called from a nested directory.
+The runner verifies both PATH Java and Maven's reported JVM are Java 17. A different `JAVA_HOME`
+fails before Maven clean/build effects; align it with the intended JDK instead of relying on PATH.
 
 Select an explicit Maven settings file through `AI_MAVEN_SETTINGS`. For credential-free local
 validation a private file containing `<settings/>` is sufficient with accessible public dependencies.
@@ -43,6 +45,38 @@ Generation retains OpenAPI Generator 6.5.0 and the original YAML/options; compar
 normalizing only known `@Generated` annotation timestamps. Never use replacement output as its own oracle.
 Static analysis uses a separate tool POM, Maven PMD 3.26.0 / PMD 7.7.0 and three declared rules;
 it is not whole-program or broad type-resolution validation.
+
+Unit, integration and behavior also require explicit absolute `PYTHON` selecting managed CPython
+3.14.8 (provisioning is described below). After Maven succeeds, `scripts/ai/test_reports.py` checks
+fresh Surefire/Failsafe XML against `scripts/ai/expected-test-cases.json`: missing, unexpected,
+duplicate, skipped, failed, malformed or stale results fail the gate. The manifest carries the
+independent pre-adoption case identities and retained behavior-fixture provenance. Review it
+alongside intentional test additions/renames/removals; never regenerate expected cases from a
+failing run to obtain a pass. The named C-U19 integration failure still returns nonzero.
+
+Fixed test gates reject nonempty `MAVEN_ARGS` and test-skip, failure-ignore or clean-skip properties
+in JVM option variables and project `.mvn` configuration before invoking Maven. Ordinary JVM memory
+options remain supported. Option values are not echoed. Report verification also catches skips,
+failure-ignore behavior and discovery overrides introduced through other Maven configuration.
+
+The report checker uses only the Python standard library. Its development commands reuse the
+framework-owned runtime/locked pytest and Ruff environment, without installing from a check:
+
+```sh
+scripts/ai/python.sh format
+scripts/ai/python.sh format-check
+scripts/ai/python.sh lint
+scripts/ai/python.sh test-collect
+scripts/ai/python.sh test-fast
+scripts/ai/python.sh test-integration
+```
+
+These commands own only `scripts/ai/test_reports.py` and `scripts/ai/tests/`; configuration is in
+`scripts/ai/pyproject.toml`. Fast cases use temporary XML/JSON fixtures. Integration cases execute
+the actual shell/report owners in disposable consumers with fake Java/Maven commands; they create
+no database and do not replace actual `java.sh` unit/integration/behavior validation. Default test
+discovery is confined to these tests and excludes full application acceptance. Only `format`
+changes source; other development commands write owned test scratch at most.
 
 ## Explicit Java tool setup and selected-file checks
 
@@ -109,7 +143,8 @@ scripts/ai/markdown.sh check AGENTS.md CLAUDE.md CONTRIBUTING.md ai/consumer-pro
 ```
 
 Integrity/composition are offline-capable after explicit preparation. Composition checks the Java
-API/test routes and both installed clients, including exact adapter bytes. Freshness independently
+API/test and auxiliary Python test routes in separate selections, their command bindings, and both
+installed clients, including exact adapter bytes. Freshness independently
 queries the configured upstream for at most 20 seconds and requires pin/HEAD/upstream equality;
 it never fetches, repairs or advances the pin. The index pin is checked while an adoption is staged;
 pass `--commit <consumer-sha>` for an explicit committed-state check where supported.

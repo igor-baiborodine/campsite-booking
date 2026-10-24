@@ -25,11 +25,24 @@ case "$action" in
     [[ $# == 0 ]] || { echo 'Maven gate arguments are fixed; select the named gate' >&2; exit 2; }
     : "${AI_MAVEN_SETTINGS:?explicit Maven settings file required}"
     [[ -f "$AI_MAVEN_SETTINGS" ]] || { echo 'Maven settings file missing' >&2; exit 2; }
-    [[ $(mvn -version) == *'Apache Maven 3.9.9 '* ]] || { echo 'Maven 3.9.9 required; wrapper is not an accepted substitute' >&2; exit 1; }
+    case "$action" in
+      unit|integration|behavior)
+        : "${PYTHON:?select an absolute managed CPython 3.14.8 interpreter for test report checks}"
+        [[ "$PYTHON" == /* ]] || { echo 'PYTHON must be absolute' >&2; exit 2; }
+        ai/framework/scripts/runtime_check.sh "$PYTHON"
+        started_ns=$("$PYTHON" -B scripts/ai/test_reports.py preflight) ;;
+    esac
+    maven_version=$(mvn -version)
+    [[ "$maven_version" == *'Apache Maven 3.9.9 '* ]] || { echo 'Maven 3.9.9 required; wrapper is not an accepted substitute' >&2; exit 1; }
+    [[ "$maven_version" =~ (^|$'\n')Java\ version:\ 17[.,] ]] || { echo 'Maven must run on Java 17; check JAVA_HOME and PATH' >&2; exit 1; }
     mvn_cmd=(mvn -B -s "$AI_MAVEN_SETTINGS")
     case "$action" in
-      unit) exec "${mvn_cmd[@]}" clean test ;;
-      integration) exec "${mvn_cmd[@]}" clean verify '-Dit.test=*IT,!FrameworkPilotIT' ;;
+      unit)
+        "${mvn_cmd[@]}" clean test
+        "$PYTHON" -B scripts/ai/test_reports.py verify unit "$started_ns" ;;
+      integration)
+        "${mvn_cmd[@]}" clean verify '-Dit.test=*IT,!FrameworkPilotIT'
+        "$PYTHON" -B scripts/ai/test_reports.py verify integration "$started_ns" ;;
       behavior)
         target=campsite-booking-service/src/test/java/com/kiroule/campsitebooking/FrameworkPilotIT.java
         [[ ! -e "$target" && ! -L "$target" ]] || { echo 'behavior fixture destination already exists; preserve it and stop' >&2; exit 1; }
@@ -43,7 +56,8 @@ case "$action" in
         trap cleanup EXIT
         trap 'exit 130' INT
         trap 'exit 143' TERM
-        "${mvn_cmd[@]}" clean verify -Dit.test=FrameworkPilotIT -Djacoco.skip=true ;;
+        "${mvn_cmd[@]}" clean verify -Dit.test=FrameworkPilotIT -Djacoco.skip=true
+        "$PYTHON" -B scripts/ai/test_reports.py verify behavior "$started_ns" ;;
       generate) exec "${mvn_cmd[@]}" -pl campsite-booking-api -am clean generate-sources ;;
       static) exec "${mvn_cmd[@]}" -f scripts/ai/static-pom.xml org.apache.maven.plugins:maven-pmd-plugin:3.26.0:check ;;
       dependency)

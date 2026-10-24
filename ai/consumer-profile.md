@@ -13,7 +13,7 @@
 ## Composition and local ownership
 
 The consumer root [AGENTS.md](../AGENTS.md) adopts the [shared contract](framework/consumer.md).
-[profile.json](profile.json) selects core, Java and house components, Google Java Style, and local
+[profile.json](profile.json) selects core, Java, auxiliary Python and house components, Google Java Style, and local
 command bindings. `.gitmodules` owns source and upstream main; the index gitlink owns the exact
 working revision. Do not add a second SHA lock. The dependency is the same unmodified revision
 used by Insurance Hub. Java selection is independent of that consumer's Go or legacy Java choices.
@@ -56,6 +56,17 @@ Unit/integration/generation preserve the original reactor. Behavior injects only
 three-case fixture for an isolated run and removes its unchanged owned copy on exit. It disables
 JaCoCo only for that focused run, never for full integration. Tests own disposable MySQL/Ryuk
 resources; record their actual identity and verify teardown. All setup remains separate from checks.
+
+Unit/integration/behavior additionally use the standard-library report checker and the independent
+case manifest under `scripts/ai/`. They require explicit managed CPython 3.14.8 and reject inherited
+skip/ignore settings plus missing, stale, skipped, failed or changed test discovery. Maven's own JVM
+must report Java 17 before any build. The original application POMs and coverage thresholds remain
+authoritative. Review manifest changes with intentional test changes; no automatic baseline refresh.
+
+Python is limited to auxiliary validation. Load its selected rules only for that boundary; Java
+application work does not acquire unrelated Python guidance. `scripts/ai/python.sh` owns scoped
+format/lint/collection/fast/disposable checks using framework-owned CPython/dev pins and lock,
+with `scripts/ai/pyproject.toml` owning consumer Ruff/pytest selection. The dependency remains immutable.
 
 Integrity is offline-capable and checks the index pin; freshness queries the configured exact
 upstream with a 20-second bound and never updates pins, refs or source. Composition explicitly

@@ -5,6 +5,7 @@
   "components": [
     "core",
     "java",
+    "python",
     "house"
   ],
   "styles": {
@@ -24,7 +25,11 @@
     "scripts/ai/pmd.xml",
     "scripts/ai/tool-sha256.txt",
     "scripts/ai/framework.sh",
-    "scripts/ai/markdown.sh"
+    "scripts/ai/markdown.sh",
+    "scripts/ai/test_reports.py",
+    "scripts/ai/expected-test-cases.json",
+    "scripts/ai/python.sh",
+    "scripts/ai/pyproject.toml"
   ],
   "artifact_root": "ai/artifacts",
   "issue_sync": "GitHub local-authority exact-body synchronization through authenticated gh or connected provider; explicit update permission and read-back; unavailable access blocks dependent work; ad hoc exempt",
@@ -37,9 +42,9 @@
         "scripts/ai/java.sh",
         "unit"
       ],
-      "prerequisites": "Java 17, Maven 3.9.9, AI_MAVEN_SETTINGS; integration/behavior require Docker/MySQL; dependency requires AI_DEPENDENCY_DATA complete current database",
-      "effects": "Maven target/cache output; tests own disposable containers; behavior temporarily injects and cleans retained fixture; scanner writes report/data locks",
-      "scope": "Original reactor unit tests; expected baseline 49, no skips"
+      "prerequisites": "PATH Java 17, Maven 3.9.9 running on Java 17, explicit AI_MAVEN_SETTINGS; explicit absolute PYTHON CPython 3.14.8; checked-in expected case manifest; no inherited test/clean overrides or MAVEN_ARGS",
+      "effects": "Maven clean removes reactor target output; compilation/test/cache writes; reads fresh Surefire reports; no database containers",
+      "scope": "49 independently recorded unit cases; no missing, unexpected, duplicate, skipped or failed cases"
     },
     "integration": {
       "owner": "scripts/ai/java.sh",
@@ -48,9 +53,9 @@
         "scripts/ai/java.sh",
         "integration"
       ],
-      "prerequisites": "Java 17, Maven 3.9.9, AI_MAVEN_SETTINGS; integration/behavior require Docker/MySQL; dependency requires AI_DEPENDENCY_DATA complete current database",
-      "effects": "Maven target/cache output; tests own disposable containers; behavior temporarily injects and cleans retained fixture; scanner writes report/data locks",
-      "scope": "Original 49 units/27 integration cases and original coverage gate"
+      "prerequisites": "PATH Java 17, Maven 3.9.9 running on Java 17, explicit AI_MAVEN_SETTINGS; explicit absolute PYTHON CPython 3.14.8; checked-in expected case manifest; no inherited test/clean overrides or MAVEN_ARGS; Docker for disposable MySQL",
+      "effects": "Maven clean/build/cache and Surefire/Failsafe/JaCoCo output; tests own disposable MySQL/Ryuk containers; reads fresh reports",
+      "scope": "49 units and 27 original integration cases; complete Failsafe verify and original coverage; named C-U19 failure remains nonzero"
     },
     "behavior": {
       "owner": "scripts/ai/java.sh",
@@ -59,9 +64,9 @@
         "scripts/ai/java.sh",
         "behavior"
       ],
-      "prerequisites": "Java 17, Maven 3.9.9, AI_MAVEN_SETTINGS; integration/behavior require Docker/MySQL; dependency requires AI_DEPENDENCY_DATA complete current database",
-      "effects": "Maven target/cache output; tests own disposable containers; behavior temporarily injects and cleans retained fixture; scanner writes report/data locks",
-      "scope": "49 original units plus isolated three-case retained HTTP/MySQL fixture; no full coverage claim"
+      "prerequisites": "PATH Java 17, Maven 3.9.9 running on Java 17, explicit AI_MAVEN_SETTINGS; explicit absolute PYTHON CPython 3.14.8; checked-in expected case manifest; no inherited test/clean overrides or MAVEN_ARGS; Docker for disposable MySQL; fixture destination absent",
+      "effects": "Maven clean/build/cache and test reports; temporarily injects and removes only the unchanged owned fixture; disposable MySQL/Ryuk containers",
+      "scope": "49 units plus three independently recorded HTTP/MySQL cases; JaCoCo disabled only for this isolated run; no full-suite coverage claim"
     },
     "generate": {
       "owner": "scripts/ai/java.sh",
@@ -70,9 +75,9 @@
         "scripts/ai/java.sh",
         "generate"
       ],
-      "prerequisites": "Java 17, Maven 3.9.9, AI_MAVEN_SETTINGS; integration/behavior require Docker/MySQL; dependency requires AI_DEPENDENCY_DATA complete current database",
-      "effects": "Maven target/cache output; tests own disposable containers; behavior temporarily injects and cleans retained fixture; scanner writes report/data locks",
-      "scope": "Original API YAML/options and 19-file generation baseline"
+      "prerequisites": "PATH Java 17, Maven 3.9.9 running on Java 17, explicit AI_MAVEN_SETTINGS",
+      "effects": "Cleans API-module target and regenerates contract sources; Maven cache writes; no tests or containers",
+      "scope": "Original API YAML/options with OpenAPI Generator 6.5.0; compare the independently recorded 19-file baseline"
     },
     "static": {
       "owner": "scripts/ai/java.sh",
@@ -81,9 +86,9 @@
         "scripts/ai/java.sh",
         "static"
       ],
-      "prerequisites": "Java 17, Maven 3.9.9, AI_MAVEN_SETTINGS; integration/behavior require Docker/MySQL; dependency requires AI_DEPENDENCY_DATA complete current database",
-      "effects": "Maven target/cache output; tests own disposable containers; behavior temporarily injects and cleans retained fixture; scanner writes report/data locks",
-      "scope": "Handwritten production Java; three PMD rules, plugin 3.26.0/PMD 7.7.0"
+      "prerequisites": "PATH Java 17, Maven 3.9.9 running on Java 17, explicit AI_MAVEN_SETTINGS",
+      "effects": "Tool-only Maven target/cache/PMD report writes; reads handwritten production Java; no application source changes, tests or containers",
+      "scope": "PMD plugin 3.26.0/engine 7.7.0; EmptyCatchBlock, CloseResource and BrokenNullCheck; no broad type-resolution claim"
     },
     "dependency": {
       "owner": "scripts/ai/java.sh",
@@ -92,9 +97,9 @@
         "scripts/ai/java.sh",
         "dependency"
       ],
-      "prerequisites": "Java 17, Maven 3.9.9, AI_MAVEN_SETTINGS; integration/behavior require Docker/MySQL; dependency requires AI_DEPENDENCY_DATA complete current database",
-      "effects": "Maven target/cache output; tests own disposable containers; behavior temporarily injects and cleans retained fixture; scanner writes report/data locks",
-      "scope": "Dependency-Check 13.0.0, autoUpdate=false, failOnError=true, CVSS 7, OSS Index disabled"
+      "prerequisites": "PATH Java 17, Maven 3.9.9 running on Java 17, explicit AI_MAVEN_SETTINGS; explicit AI_DEPENDENCY_DATA with independently verified complete/current Dependency-Check 13.0.0 data",
+      "effects": "Maven cache and aggregate JSON/HTML report writes, database read/lock effects; automatic database updates disabled; no tests or containers",
+      "scope": "Dependency-Check 13.0.0 aggregate; failOnError=true, CVSS 7, autoUpdate=false and OSS Index disabled; retain nonzero findings"
     },
     "format": {
       "owner": "scripts/ai/java.sh",
@@ -136,9 +141,9 @@
         "scripts/ai/framework.sh",
         "integrity"
       ],
-      "prerequisites": "Explicit absolute PYTHON CPython 3.14.8; initialized dependency; source requires framework dev dependencies",
-      "effects": "Read-only source; owned scratch; freshness queries exact configured source/ref with 20-second bound",
-      "scope": "Index pin; composition checks Java API/test and both installed clients; no auto-repair"
+      "prerequisites": "Explicit absolute PYTHON CPython 3.14.8; Git and initialized recorded framework pin",
+      "effects": "Offline read-only consumer/dependency inspection with owned scratch; no network, index, refs or source update",
+      "scope": "Validate initialized clean dependency against index gitlink; optional explicit consumer commit; no auto-repair"
     },
     "compose": {
       "owner": "scripts/ai/framework.sh",
@@ -147,9 +152,9 @@
         "scripts/ai/framework.sh",
         "compose"
       ],
-      "prerequisites": "Explicit absolute PYTHON CPython 3.14.8; initialized dependency; source requires framework dev dependencies",
-      "effects": "Read-only source; owned scratch; freshness queries exact configured source/ref with 20-second bound",
-      "scope": "Index pin; composition checks Java API/test and both installed clients; no auto-repair"
+      "prerequisites": "Explicit absolute PYTHON CPython 3.14.8; Git and initialized framework; consumer profile/guides/adapters/command owners",
+      "effects": "Offline read-only integrity and composition inspection with owned scratch; no commands executed or files repaired",
+      "scope": "Separate Java API/test and auxiliary Python test selections with required capabilities; check both Codex and Claude installed adapters"
     },
     "freshness": {
       "owner": "scripts/ai/framework.sh",
@@ -158,9 +163,9 @@
         "scripts/ai/framework.sh",
         "freshness"
       ],
-      "prerequisites": "Explicit absolute PYTHON CPython 3.14.8; initialized dependency; source requires framework dev dependencies",
-      "effects": "Read-only source; owned scratch; freshness queries exact configured source/ref with 20-second bound",
-      "scope": "Index pin; composition checks Java API/test and both installed clients; no auto-repair"
+      "prerequisites": "Explicit absolute PYTHON CPython 3.14.8; Git, initialized clean pin and network/access to configured upstream ref",
+      "effects": "Read-only local integrity plus bounded upstream ref query; owned scratch; no fetch, pin/index/ref/source update",
+      "scope": "Require exact index pin/HEAD/fresh upstream equality within 20 seconds; optional explicit consumer commit; no cached-ref pass"
     },
     "source": {
       "owner": "scripts/ai/framework.sh",
@@ -169,9 +174,9 @@
         "scripts/ai/framework.sh",
         "source"
       ],
-      "prerequisites": "Explicit absolute PYTHON CPython 3.14.8; initialized dependency; source requires framework dev dependencies",
-      "effects": "Read-only source; owned scratch; freshness queries exact configured source/ref with 20-second bound",
-      "scope": "Index pin; composition checks Java API/test and both installed clients; no auto-repair"
+      "prerequisites": "Explicit absolute PYTHON CPython 3.14.8 and framework development dependencies including PyYAML 6.0.3; initialized source",
+      "effects": "Offline read-only canonical source/catalog/link/template validation; no consumer composition or upstream query",
+      "scope": "Validate pinned shared framework source; does not certify consumer installation or online freshness"
     },
     "markdown-format": {
       "owner": "scripts/ai/markdown.sh",
@@ -228,6 +233,72 @@
       "prerequisites": "Authenticated named repository/issue access",
       "effects": "Read-only",
       "scope": "Exact body comparison; publication separately authorized; ad hoc exempt"
+    },
+    "python-format": {
+      "owner": "scripts/ai/python.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/python.sh",
+        "format"
+      ],
+      "prerequisites": "Explicit absolute managed CPython 3.14.8; framework-owned locked dev environment (pytest 9.1.1, Ruff 0.17.1, PyYAML 6.0.3, uv 0.13.1); no install in checks",
+      "effects": "Mutates only declared report-helper/test Python files",
+      "scope": "Consumer report helper and its tests only; framework source remains immutable"
+    },
+    "python-format-check": {
+      "owner": "scripts/ai/python.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/python.sh",
+        "format-check"
+      ],
+      "prerequisites": "Explicit absolute managed CPython 3.14.8; framework-owned locked dev environment (pytest 9.1.1, Ruff 0.17.1, PyYAML 6.0.3, uv 0.13.1); no install in checks",
+      "effects": "Non-mutating selected source inspection; no test execution",
+      "scope": "Consumer report helper and its tests only; framework source remains immutable"
+    },
+    "python-lint": {
+      "owner": "scripts/ai/python.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/python.sh",
+        "lint"
+      ],
+      "prerequisites": "Explicit absolute managed CPython 3.14.8; framework-owned locked dev environment (pytest 9.1.1, Ruff 0.17.1, PyYAML 6.0.3, uv 0.13.1); no install in checks",
+      "effects": "Non-mutating selected source inspection; no test execution",
+      "scope": "Consumer report helper and its tests only; framework source remains immutable"
+    },
+    "python-test-collect": {
+      "owner": "scripts/ai/python.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/python.sh",
+        "test-collect"
+      ],
+      "prerequisites": "Explicit absolute managed CPython 3.14.8; framework-owned locked dev environment (pytest 9.1.1, Ruff 0.17.1, PyYAML 6.0.3, uv 0.13.1); no install in checks",
+      "effects": "Non-mutating selected source inspection; no test execution",
+      "scope": "Consumer report helper and its tests only; framework source remains immutable"
+    },
+    "python-test-fast": {
+      "owner": "scripts/ai/python.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/python.sh",
+        "test-fast"
+      ],
+      "prerequisites": "Explicit absolute managed CPython 3.14.8; framework-owned locked dev environment (pytest 9.1.1, Ruff 0.17.1, PyYAML 6.0.3, uv 0.13.1); no install in checks",
+      "effects": "Owned pytest temporary report fixtures; no subprocess or database",
+      "scope": "Consumer report helper and its tests only; framework source remains immutable"
+    },
+    "python-test-integration": {
+      "owner": "scripts/ai/python.sh",
+      "cwd": ".",
+      "argv": [
+        "scripts/ai/python.sh",
+        "test-integration"
+      ],
+      "prerequisites": "Explicit absolute managed CPython 3.14.8; framework-owned locked dev environment (pytest 9.1.1, Ruff 0.17.1, PyYAML 6.0.3, uv 0.13.1); no install in checks",
+      "effects": "Owned pytest scratch and disposable fake Java/Maven processes; no real application build or database",
+      "scope": "Consumer report helper and its tests only; framework source remains immutable"
     }
   }
 }

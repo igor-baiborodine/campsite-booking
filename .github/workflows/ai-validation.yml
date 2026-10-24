@@ -55,6 +55,13 @@ jobs:
           scripts/ai/framework.sh integrity
           scripts/ai/framework.sh compose
           scripts/ai/markdown.sh check AGENTS.md CLAUDE.md CONTRIBUTING.md ai/consumer-profile.md
+      - name: Test report gate regression checks
+        run: |
+          scripts/ai/python.sh format-check
+          scripts/ai/python.sh lint
+          scripts/ai/python.sh test-collect
+          scripts/ai/python.sh test-fast
+          scripts/ai/python.sh test-integration
       - name: Selected changed handwritten Java style
         shell: bash
         env:
