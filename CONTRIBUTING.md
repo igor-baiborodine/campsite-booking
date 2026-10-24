@@ -153,6 +153,16 @@ The Markdown owner uses doctoc 2.5.0 on named files; checks use temporary copies
 canonical adapters in each client directory are exempt from TOC transformation; unrelated or
 lookalike skills retain the ordinary check. Exact-template validation still rejects adapter drift.
 
+The [AI consumer workflow](.github/workflows/ai-framework.yml) prepares the recorded pin, sets up
+managed Python and Markdown tools, validates shared source/integrity/composition, checks tracked
+consumer AI Markdown, and tests local validation tooling. It uses the `AI Consumer Validation`
+name, `ai-check` job, Ubuntu 24.04, a 20-minute
+timeout, path-filtered PRs and manual dispatch. PR runs check the PR head; manual runs check the
+selected revision. Campsite Booking's command bindings are `make -C ai/framework setup`,
+`scripts/ai/framework.sh`, `scripts/ai/markdown.sh check` and `scripts/ai/python.sh`.
+Online freshness remains separate. The existing Java application commands and setup are preserved in
+[Java adoption validation](.github/workflows/java-adoption.yml); their redesign is separate work.
+
 Before writing local evidence, manually add `/ai/artifacts/` to `.git/info/exclude`. The root
 agent guide requires ignored content and empty tracked/staged artifact listings; tools never
 repair this setup. Shared snapshots require output inside the source consumer's ignored artifact

@@ -1,4 +1,4 @@
-name: AI Framework and Java Adoption Validation
+name: Java Adoption Validation
 
 on:
   pull_request:
@@ -49,19 +49,6 @@ jobs:
           echo "AI_JAVA_TOOLS=$AI_JAVA_TOOLS" >> "$GITHUB_ENV"
           echo "AI_MAVEN_SETTINGS=$RUNNER_TEMP/maven-settings.xml" >> "$GITHUB_ENV"
           printf '<settings/>\n' > "$RUNNER_TEMP/maven-settings.xml"
-      - name: Offline source and consumer composition
-        run: |
-          scripts/ai/framework.sh source
-          scripts/ai/framework.sh integrity
-          scripts/ai/framework.sh compose
-          scripts/ai/markdown.sh check AGENTS.md CLAUDE.md CONTRIBUTING.md ai/consumer-profile.md
-      - name: Test report gate regression checks
-        run: |
-          scripts/ai/python.sh format-check
-          scripts/ai/python.sh lint
-          scripts/ai/python.sh test-collect
-          scripts/ai/python.sh test-fast
-          scripts/ai/python.sh test-integration
       - name: Selected changed handwritten Java style
         shell: bash
         env:
