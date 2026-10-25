@@ -1,5 +1,6 @@
 {
-  "version": 1,
+  "version": 2,
+  "upstream_ref": "refs/tags/v1.1.1",
   "consumer": "campsite-booking",
   "framework_path": "ai/framework",
   "components": [
